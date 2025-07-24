@@ -49,18 +49,23 @@ export const useLogin = () => {
           default:
             navigate("/");
         }
+      } else {
+        dispatch(loginFailure(data.message));
       }
     },
     onError: (error) => {
-      dispatch(loginFailure(error.message));
+      const errorMessage = error.response?.data?.message || error.message;
+      dispatch(loginFailure(errorMessage));
 
       // Check if error is about email verification
-      if (error.message.includes("not verified")) {
+      if (error.response?.data?.statusCode === 403 && 
+          errorMessage.includes("not verified")) {
         // Navigate to OTP verification with user data
         navigate("/verify-otp", {
           state: {
             emailAddress: error.response?.data?.data?.emailAddress,
             userId: error.response?.data?.data?.userId,
+            message: errorMessage,
           },
         });
       }
@@ -85,15 +90,17 @@ export const useRegister = () => {
         // Navigate to login page after successful registration
         navigate("/login", {
           state: {
-            message:
-              "Registration successful! Please login with your credentials.",
+            message: "Registration successful! Please login with your credentials.",
             emailAddress: data.data.emailAddress,
           },
         });
+      } else {
+        dispatch(registrationFailure(data.message));
       }
     },
     onError: (error) => {
-      dispatch(registrationFailure(error.message));
+      const errorMessage = error.response?.data?.message || error.message;
+      dispatch(registrationFailure(errorMessage));
     },
   });
 };
@@ -111,10 +118,13 @@ export const useSendOTP = () => {
     onSuccess: (data) => {
       if (data.success) {
         dispatch(sendOtpSuccess());
+      } else {
+        dispatch(sendOtpFailure(data.message));
       }
     },
     onError: (error) => {
-      dispatch(sendOtpFailure(error.message));
+      const errorMessage = error.response?.data?.message || error.message;
+      dispatch(sendOtpFailure(errorMessage));
     },
   });
 };
@@ -137,13 +147,16 @@ export const useVerifyOTP = () => {
         navigate("/login", {
           state: {
             message: "Account verified successfully! Please login.",
-            emailAddress: null,
+            emailAddress: data.data?.emailAddress,
           },
         });
+      } else {
+        dispatch(otpVerificationFailure(data.message));
       }
     },
     onError: (error) => {
-      dispatch(otpVerificationFailure(error.message));
+      const errorMessage = error.response?.data?.message || error.message;
+      dispatch(otpVerificationFailure(errorMessage));
     },
   });
 };

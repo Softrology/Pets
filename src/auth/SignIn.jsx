@@ -1,10 +1,19 @@
 import { useEffect, useState } from "react";
 import { useLogin } from "../hooks/useAuth";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
+import {
+  FaEnvelope,
+  FaLock,
+  FaSpinner,
+  FaExclamationCircle,
+  FaCheckCircle,
+  FaChevronRight
+} from "react-icons/fa";
 
 const Signin = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { isLoading, error } = useSelector((state) => state.auth);
   const { mutate: login } = useLogin();
 
@@ -35,167 +44,199 @@ const Signin = () => {
     if (!formData.emailAddress || !formData.password) {
       return;
     }
-    login(formData);
+    login(formData, {
+      onError: (error) => {
+        if (error.response?.data?.statusCode === 403 &&
+          error.response?.data?.message?.includes("not verified")) {
+          navigate('/verify-otp', {
+            state: {
+              emailAddress: error.response?.data?.data?.emailAddress,
+              userId: error.response?.data?.data?.userId,
+              message: errorMessage,
+            }
+          });
+        }
+      }
+    });
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <Link to="/" className="flex justify-center">
-            <h2 className="text-3xl font-bold text-indigo-600">PetCare</h2>
-          </Link>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{" "}
+    <div className="h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4 overflow-hidden">
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          {/* Decorative header */}
+          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 py-6 px-6">
+            <div className="flex justify-center">
+              <Link to="/" className="inline-block">
+                <h2 className="text-2xl font-bold text-white">PetCare</h2>
+              </Link>
+            </div>
+            <h2 className="mt-2 text-center text-xl font-bold text-white">
+              Welcome Back!
+            </h2>
+            <p className="mt-1 text-center text-indigo-100 text-sm">
+              Sign in to continue to your account
+            </p>
+          </div>
+
+          <div className="p-6">
+            {/* Success Message */}
+            {showMessage && location.state?.message && (
+              <div className="mb-4 animate-fade-in">
+                <div className="bg-green-50 border-l-4 border-green-400 p-3 rounded-r-lg">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <FaCheckCircle className="h-4 w-4 text-green-400" />
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-xs text-green-700">
+                        {location.state.message}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Error Message */}
+            {error && error.response?.data?.statusCode !== 403 && (
+              <div className="mb-4 animate-fade-in">
+                <div className="bg-red-50 border-l-4 border-red-400 p-3 rounded-r-lg">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <FaExclamationCircle className="h-4 w-4 text-red-400" />
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-xs text-red-700">{error.response?.data?.message || error.message}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div className="space-y-3">
+                <div>
+                  <label
+                    htmlFor="emailAddress"
+                    className="block text-xs font-medium text-gray-700 mb-1"
+                  >
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="emailAddress"
+                      name="emailAddress"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      className="block w-full px-3 py-2 text-sm rounded-lg border border-gray-300 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                      placeholder="your@email.com"
+                      value={formData.emailAddress}
+                      onChange={handleInputChange}
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <FaEnvelope className="h-3 w-3 text-gray-400" />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <label
+                      htmlFor="password"
+                      className="block text-xs font-medium text-gray-700"
+                    >
+                      Password
+                    </label>
+                    <Link
+                      to="/forgot-password"
+                      className="text-xs font-medium text-indigo-600 hover:text-indigo-500"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
+                  <div className="relative">
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      autoComplete="current-password"
+                      required
+                      className="block w-full px-3 py-2 text-sm rounded-lg border border-gray-300 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+                      placeholder="••••••••"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <FaLock className="h-3 w-3 text-gray-400" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-70 disabled:cursor-not-allowed transition duration-200"
+                >
+                  {isLoading ? (
+                    <>
+                      <FaSpinner className="animate-spin -ml-1 mr-2 h-3 w-3 text-white" />
+                      Signing in...
+                    </>
+                  ) : (
+                    <>
+                      Sign in <FaChevronRight className="ml-1 h-3 w-3" />
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+
+            <div className="mt-4">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300"></div>
+                </div>
+                <div className="relative flex justify-center text-xs">
+                  <span className="px-2 bg-white text-gray-500">
+                    Don't have an account?
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-3">
+                <Link
+                  to="/register"
+                  className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200"
+                >
+                  Create new account
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 text-center text-xs text-gray-600">
+          <p>
+            By signing in, you agree to our{" "}
             <Link
-              to="/register"
+              to="/terms"
               className="font-medium text-indigo-600 hover:text-indigo-500"
             >
-              create a new account
+              Terms
+            </Link>{" "}
+            and{" "}
+            <Link
+              to="/privacy"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              Privacy
             </Link>
           </p>
         </div>
-
-        {/* Success Message */}
-        {showMessage && location.state?.message && (
-          <div className="bg-green-50 border border-green-200 rounded-md p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg
-                  className="h-5 w-5 text-green-400"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-green-800">
-                  {location.state.message}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Error Message */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-md p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg
-                  className="h-5 w-5 text-red-400"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-red-800">{error}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="emailAddress"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Email Address
-              </label>
-              <input
-                id="emailAddress"
-                name="emailAddress"
-                type="email"
-                autoComplete="email"
-                required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Enter your email"
-                value={formData.emailAddress}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleInputChange}
-              />
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <svg
-                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-              ) : null}
-              {isLoading ? "Signing in..." : "Sign in"}
-            </button>
-          </div>
-
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              Don't have an account?{" "}
-              <Link
-                to="/register"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
-              >
-                Register here
-              </Link>
-            </p>
-          </div>
-        </form>
       </div>
     </div>
   );
