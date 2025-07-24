@@ -12,7 +12,7 @@ import {
 
 export default function Sidebar({ onClose, collapsed }) {
   const navItems = [
-    { name: 'Dashboard', icon: FiBarChart2, to: '' },
+    { name: 'Dashboard', icon: FiBarChart2, to: 'dashboard' },
     { name: 'Users', icon: FiUsers, to: 'users' },
     { name: 'Vets', icon: FiUser, to: 'vets' },
     { name: 'Settings', icon: FiSettings, to: 'settings' },
