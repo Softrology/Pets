@@ -65,7 +65,7 @@ const Signin = () => {
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Decorative header */}
-          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 py-6 px-6">
+          <div className="bg-gradient-to-br from-teal-600 to-teal-700 py-6 px-6">
             <div className="flex justify-center">
               <Link to="/" className="inline-block">
                 <h2 className="text-2xl font-bold text-white">PetCare</h2>
@@ -179,7 +179,7 @@ const Signin = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-70 disabled:cursor-not-allowed transition duration-200"
+                  className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-br from-teal-600 to-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-70 disabled:cursor-not-allowed transition duration-200"
                 >
                   {isLoading ? (
                     <>

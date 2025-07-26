@@ -6,7 +6,7 @@ export default function SuperHeader({
   sidebarCollapsed 
 }) {
   return (
-    <header className="bg-white shadow-sm">
+    <header className="bg-white shadow-sm border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Left Section */}
@@ -14,7 +14,7 @@ export default function SuperHeader({
             {/* Mobile menu button */}
             <button
               type="button"
-              className="lg:hidden text-gray-500 hover:text-gray-600 mr-2"
+              className="lg:hidden text-gray-500 hover:text-[#39a2a1] mr-2"
               onClick={onMenuClick}
             >
               <FiMenu className="h-6 w-6" />
@@ -23,7 +23,7 @@ export default function SuperHeader({
             {/* Desktop sidebar toggle */}
             <button
               type="button"
-              className="hidden lg:block text-gray-500 hover:text-gray-600 mr-2"
+              className="hidden lg:block text-gray-500 hover:text-[#39a2a1] mr-2"
               onClick={onToggleSidebar}
             >
               {sidebarCollapsed ? (
@@ -42,7 +42,7 @@ export default function SuperHeader({
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-[#39a2a1] focus:border-[#39a2a1] sm:text-sm transition-colors duration-200"
                 />
               </div>
             </div>
@@ -50,12 +50,12 @@ export default function SuperHeader({
 
           {/* Right Section */}
           <div className="flex items-center space-x-4">
-            <button className="p-1 rounded-full text-gray-400 hover:text-gray-500">
+            <button className="p-1 rounded-full text-gray-400 hover:text-[#39a2a1] transition-colors duration-200">
               <FiBell className="h-6 w-6" />
             </button>
             
             <div className="flex-shrink-0">
-              <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-medium">
+              <div className="h-8 w-8 rounded-full bg-gradient-to-r from-[#39a2a1] to-[#21527b] flex items-center justify-center text-white font-medium">
                 SA
               </div>
             </div>

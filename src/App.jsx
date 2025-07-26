@@ -1,5 +1,3 @@
-// App.jsx
-
 import {
   BrowserRouter as Router,
   Routes,
@@ -16,13 +14,24 @@ import SignUp from "./auth/SignUp";
 import OTPVerificationPage from "./auth/OTPVerificationPage";
 import PetOwnerDashboard from "./page/pet-owner/PetOwnerDashboard";
 import VetDashboard from "./page/vet/VetDashboard";
-import SuperAdminLayout from "./layouts/SuperAdminLayout"; // Add this import
+import SuperAdminLayout from "./layouts/SuperAdminLayout";
 import SuperAdminDashboard from "./page/super-admin/SuperAdminDashboard";
-import UserManagement from "./page/super-admin/UserManagement"; // Add these imports
+import UserManagement from "./page/super-admin/UserManagement";
 import VetManagement from "./page/super-admin/VetManagement";
 import Settings from "./page/super-admin/Settings";
 import Store from "./redux/Store";
 import NotFoundPage from "./page/not-found/NotFoundPage";
+import Header from "./components/Header";
+import FooterSection from "./components/FooterSection";
+import AboutUs from "./page/about-us/AboutUs";
+import ContactUs from "./page/contact-us/ContactUs";
+import FindDoctor from "./page/find-doctor/FindDoctor";
+import Blog from "./page/blog/Blog";
+import JoinasVet from "./page/join-as-vet/JoinasVet";
+import TermsOfService from "./page/footer-pages/TermOfServices";
+import PrivacyPolicy from "./page/footer-pages/PrivacyPolicy";
+import CookiePolicy from "./page/footer-pages/CookiePolicy";
+import Sitemap from "./page/footer-pages/siteMap";
 
 // Create QueryClient instance
 const queryClient = new QueryClient({
@@ -35,6 +44,16 @@ const queryClient = new QueryClient({
   },
 });
 
+function PublicLayout({ children }) {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-grow">{children}</main>
+      <FooterSection />
+    </div>
+  );
+}
+
 function App() {
   return (
     <Provider store={Store}>
@@ -42,44 +61,116 @@ function App() {
         <Router>
           <div className="App">
             <Routes>
-              {/* Public Routes */}
-              <Route
-                path="/"
-                element={
-                  <PublicRoute>
-                    <HomePage />
-                  </PublicRoute>
-                }
-              />
+              {/* Public Routes with Header & Footer */}
+              <Route element={<PublicLayout />}>
+                <Route
+                  path="/"
+                  element={
+                    <PublicRoute>
+                      <HomePage />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/about-us"
+                  element={
+                    <PublicRoute>
+                      <AboutUs />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/contact-us"
+                  element={
+                    <PublicRoute>
+                      <ContactUs />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/find-doctor"
+                  element={
+                    <PublicRoute>
+                      <FindDoctor />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/blog"
+                  element={
+                    <PublicRoute>
+                      <Blog />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/join-as-vet"
+                  element={
+                    <PublicRoute>
+                      <JoinasVet />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/privacy-policy"
+                  element={
+                    <PublicRoute>
+                      <PrivacyPolicy />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/cookie-policy"
+                  element={
+                    <PublicRoute>
+                      <CookiePolicy />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/site-map"
+                  element={
+                    <PublicRoute>
+                      <Sitemap />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/terms-of-service"
+                  element={
+                    <PublicRoute>
+                      <TermsOfService />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/login"
+                  element={
+                    <PublicRoute>
+                      <Signin />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/register"
+                  element={
+                    <PublicRoute>
+                      <SignUp />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/verify-otp"
+                  element={
+                    <PublicRoute>
+                      <OTPVerificationPage />
+                    </PublicRoute>
+                  }
+                />
+                <Route path="/404" element={<NotFoundPage />} />
+              </Route>
 
-              <Route
-                path="/login"
-                element={
-                  <PublicRoute>
-                    <Signin />
-                  </PublicRoute>
-                }
-              />
-
-              <Route
-                path="/register"
-                element={
-                  <PublicRoute>
-                    <SignUp />
-                  </PublicRoute>
-                }
-              />
-
-              <Route
-                path="/verify-otp"
-                element={
-                  <PublicRoute>
-                    <OTPVerificationPage />
-                  </PublicRoute>
-                }
-              />
-
-              {/* Protected Routes - Pet Owner */}
+              {/* Protected Routes - Pet Owner (no header/footer) */}
               <Route
                 path="/pet-owner/*"
                 element={
@@ -89,7 +180,7 @@ function App() {
                 }
               />
 
-              {/* Protected Routes - Vet */}
+              {/* Protected Routes - Vet (no header/footer) */}
               <Route
                 path="/vet/*"
                 element={
@@ -99,7 +190,7 @@ function App() {
                 }
               />
 
-              {/* Protected Routes - Super Admin - Updated with nested routes */}
+              {/* Protected Routes - Super Admin (no header/footer) */}
               <Route
                 path="/super-admin/*"
                 element={
@@ -113,9 +204,6 @@ function App() {
                 <Route path="vets" element={<VetManagement />} />
                 <Route path="settings" element={<Settings />} />
               </Route>
-
-              {/* 404 Route */}
-              <Route path="/404" element={<NotFoundPage />} />
 
               {/* Catch all route - redirect to 404 */}
               <Route path="*" element={<Navigate to="/404" replace />} />

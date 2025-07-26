@@ -1,6 +1,11 @@
 import React from "react";
-import Header from "../../components/Header";
-import HomeContent from "../../components/HomeContent"
+import HeroSearchSection from "../../components/HeroSearchSection";
+import SymptomsDiseasesSection from "../../components/SymptomsDiseasesSection";
+import AffiliatedClinicSection from "../../components/AffiliatedClinicSection";
+import ReviewsSection from "../../components/ReviewsSection";
+import AppointmentBookingSection from "../../components/AppointmentBookingSection";
+import ServicesSection from "../../components/ServicesSection";
+import TestimonialsSection from "../../components/TestimonialsSection";
 
 
 const HomePage = () => {
@@ -8,8 +13,14 @@ const HomePage = () => {
 
   return (
     <>
-      <Header />
-      <HomeContent />
+      
+      <HeroSearchSection/>
+      <SymptomsDiseasesSection/>
+      <AffiliatedClinicSection/>
+      <ReviewsSection/>
+      <AppointmentBookingSection/>
+      <ServicesSection/>
+      <TestimonialsSection/>
     </>
   );
 };

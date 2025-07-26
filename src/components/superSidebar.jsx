@@ -19,31 +19,29 @@ export default function Sidebar({ onClose, collapsed }) {
   ];
 
   return (
-    <div className={`flex flex-col h-full bg-indigo-700 ${collapsed ? 'w-20' : 'w-64'
+    <div className={`flex flex-col h-full bg-gradient-to-b from-[#39a2a1] to-[#21527b] ${collapsed ? 'w-20' : 'w-64'
       } transition-all duration-300 ease-in-out shadow-lg`}>
 
       {/* Attractive Header */}
-      <div className={`flex items-center justify-between p-4 border-b border-indigo-800 ${collapsed ? 'flex-col space-y-2' : ''
+      <div className={`flex items-center justify-between p-4 border-b border-[#2d8a89] ${collapsed ? 'flex-col space-y-2' : ''
         }`}>
         {!collapsed ? (
           <>
             <div className="flex items-center">
-              <div className="h-8 w-8 rounded-md bg-indigo-500 flex items-center justify-center text-white font-bold mr-3">
+              <div className="h-8 w-8 rounded-md bg-[#39a2a1] flex items-center PetCare-center text-white font-bold mr-3">
                 PC
               </div>
               <div>
                 <h1 className="text-xl font-bold text-white">PetCare</h1>
-                <p className="text-xs text-indigo-200">Super Admin</p>
+                <p className="text-xs text-teal-100">Super Admin</p>
               </div>
             </div>
-
           </>
         ) : (
           <>
-            <div className="h-8 w-8 rounded-md bg-indigo-500 flex items-center justify-center text-white font-bold">
+            <div className="h-8 w-8 rounded-md bg-[#39a2a1] flex items-center justify-center text-white font-bold">
               PC
             </div>
-
           </>
         )}
       </div>
@@ -57,7 +55,7 @@ export default function Sidebar({ onClose, collapsed }) {
             end
             className={({ isActive }) => `
               flex items-center px-4 py-3 rounded-md transition-all
-              ${isActive ? 'bg-indigo-800 text-white shadow-md' : 'text-indigo-100 hover:bg-indigo-600'}
+              ${isActive ? 'bg-[#21527b] text-white shadow-md' : 'text-teal-100 hover:bg-[#2d8a89]'}
               ${collapsed ? 'justify-center' : ''}
               duration-200
             `}
@@ -72,16 +70,16 @@ export default function Sidebar({ onClose, collapsed }) {
       </nav>
 
       {/* User Profile */}
-      <div className={`p-4 border-t border-indigo-800 ${collapsed ? 'flex justify-center' : ''
+      <div className={`p-4 border-t border-[#2d8a89] ${collapsed ? 'flex justify-center' : ''
         }`}>
         <div className={`flex items-center ${collapsed ? 'flex-col space-y-2' : ''}`}>
-          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-white shadow">
+          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#39a2a1] to-[#21527b] flex items-center justify-center text-white shadow">
             SA
           </div>
           {!collapsed && (
             <div className="ml-3 overflow-hidden">
               <p className="text-sm font-medium text-white truncate">Super Admin</p>
-              <p className="text-xs font-medium text-indigo-200 truncate">admin@petcare.com</p>
+              <p className="text-xs font-medium text-teal-100 truncate">admin@PetCare.com</p>
             </div>
           )}
         </div>
