@@ -38,17 +38,18 @@ export const apiService = async (url, method, body = null, token = null) => {
         attempt++;
         continue; // Retry the request once
       } else {
-        // Handle errors as before
+        // Handle errors - PRESERVE the original error response
         if (error.response) {
+          // Show the alert dialog
           AlertDialog(
             "",
             error.response.data.message || error.response.statusText,
             "error",
             1500
           );
-          throw new Error(
-            error.response.data.message || error.response.statusText
-          );
+
+          // IMPORTANT: Throw the original error to preserve response data
+          throw error;
         } else if (error.request) {
           AlertDialog(
             "",
