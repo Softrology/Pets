@@ -54,12 +54,24 @@ export const useLogin = () => {
       }
     },
     onError: (error) => {
+      console.log("Full error object:", error);
+      console.log("Error response:", error.response);
+      console.log("Error response data:", error.response?.data);
+
       const errorMessage = error.response?.data?.message || error.message;
+      const statusCode = error.response?.data?.statusCode;
+
+      console.log("Status Code:", statusCode);
+      console.log("Error Message:", errorMessage);
+
       dispatch(loginFailure(errorMessage));
 
-      // Check if error is about email verification
-      if (error.response?.data?.statusCode === 403 && 
-          errorMessage.includes("not verified")) {
+      // Check if error is about email verification (403 status code)
+      if (statusCode === 403) {
+        console.log("403 error detected, navigating to verify-otp");
+        console.log("Email:", error.response?.data?.data?.emailAddress);
+        console.log("UserId:", error.response?.data?.data?.userId);
+
         // Navigate to OTP verification with user data
         navigate("/verify-otp", {
           state: {
@@ -90,7 +102,8 @@ export const useRegister = () => {
         // Navigate to login page after successful registration
         navigate("/login", {
           state: {
-            message: "Registration successful! Please login with your credentials.",
+            message:
+              "Registration successful! Please login with your credentials.",
             emailAddress: data.data.emailAddress,
           },
         });

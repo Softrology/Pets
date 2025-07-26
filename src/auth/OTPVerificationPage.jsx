@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useSendOTP, useVerifyOTP } from "../hooks/useAuth";
-import { 
+import {
   FaEnvelope,
   FaLock,
   FaSpinner,
   FaExclamationCircle,
   FaCheckCircle,
-  FaArrowLeft
+  FaArrowLeft,
 } from "react-icons/fa";
 
 const OTPVerificationPage = () => {
@@ -38,33 +38,39 @@ const OTPVerificationPage = () => {
   const handleSendOTP = () => {
     if (!emailAddress || !userId) return;
 
-    sendOTP({
-      emailAddress,
-      userId,
-    }, {
-      onSuccess: () => {
-        setOtpSent(true);
+    sendOTP(
+      {
+        emailAddress,
+        userId,
+      },
+      {
+        onSuccess: () => {
+          setOtpSent(true);
+        },
       }
-    });
+    );
   };
 
   const handleVerifyOTP = (e) => {
     e.preventDefault();
     if (!otpCode || !emailAddress) return;
 
-    verifyOTP({
-      emailAddress,
-      otpCode,
-    }, {
-      onSuccess: () => {
-        navigate("/login", {
-          state: {
-            emailAddress,
-            message: "Your account has been verified. Please login."
-          }
-        });
+    verifyOTP(
+      {
+        emailAddress,
+        otpCode,
+      },
+      {
+        onSuccess: () => {
+          navigate("/login", {
+            state: {
+              emailAddress,
+              message: "Your account has been verified. Please login.",
+            },
+          });
+        },
       }
-    });
+    );
   };
 
   const handleOtpChange = (e) => {
@@ -148,7 +154,9 @@ const OTPVerificationPage = () => {
               <div className="text-center mb-4">
                 <p className="text-sm text-gray-600">
                   Email:{" "}
-                  <span className="font-medium text-gray-900">{emailAddress}</span>
+                  <span className="font-medium text-gray-900">
+                    {emailAddress}
+                  </span>
                 </p>
               </div>
 
@@ -165,9 +173,9 @@ const OTPVerificationPage = () => {
                       id="otpCode"
                       name="otpCode"
                       type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      maxLength="6"
+                      // inputMode="numeric"
+                      // pattern="[0-9]*"
+                      // maxLength="6"
                       required
                       className="block w-full px-4 py-3 text-center text-lg tracking-widest rounded-lg border border-gray-300 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
                       placeholder="------"

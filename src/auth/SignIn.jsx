@@ -8,7 +8,7 @@ import {
   FaSpinner,
   FaExclamationCircle,
   FaCheckCircle,
-  FaChevronRight
+  FaChevronRight,
 } from "react-icons/fa";
 
 const Signin = () => {
@@ -44,20 +44,8 @@ const Signin = () => {
     if (!formData.emailAddress || !formData.password) {
       return;
     }
-    login(formData, {
-      onError: (error) => {
-        if (error.response?.data?.statusCode === 403 &&
-          error.response?.data?.message?.includes("not verified")) {
-          navigate('/verify-otp', {
-            state: {
-              emailAddress: error.response?.data?.data?.emailAddress,
-              userId: error.response?.data?.data?.userId,
-              message: errorMessage,
-            }
-          });
-        }
-      }
-    });
+    // Remove the onError handler since useLogin hook handles it
+    login(formData);
   };
 
   return (
@@ -107,7 +95,9 @@ const Signin = () => {
                       <FaExclamationCircle className="h-4 w-4 text-red-400" />
                     </div>
                     <div className="ml-3">
-                      <p className="text-xs text-red-700">{error.response?.data?.message || error.message}</p>
+                      <p className="text-xs text-red-700">
+                        {error.response?.data?.message || error.message}
+                      </p>
                     </div>
                   </div>
                 </div>
