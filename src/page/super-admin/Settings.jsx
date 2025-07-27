@@ -1,9 +1,8 @@
-import React from 'react'
+import React from "react";
+import ComingSoonPage from "../not-found/ComingSoonPage";
 
 const Settings = () => {
-  return (
-    <div>Settings</div>
-  )
-}
+  return <ComingSoonPage />;
+};
 
-export default Settings
+export default Settings;

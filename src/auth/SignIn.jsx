@@ -96,7 +96,7 @@ const Signin = () => {
                     </div>
                     <div className="ml-3">
                       <p className="text-xs text-red-700">
-                        {error.response?.data?.message || error.message}
+                        {error || error.message}
                       </p>
                     </div>
                   </div>
@@ -199,7 +199,7 @@ const Signin = () => {
 
               <div className="mt-3">
                 <Link
-                  to="/register"
+                  to="/signup"
                   className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200"
                 >
                   Create new account

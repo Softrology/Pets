@@ -1,5 +1,5 @@
-import React from 'react';
-import { MapPin, Search, ChevronDown } from 'lucide-react';
+import React from "react";
+import { MapPin, Search, ChevronDown } from "lucide-react";
 
 const HeroSearchSection = () => {
   return (
@@ -9,7 +9,7 @@ const HeroSearchSection = () => {
         {/* Add your background image here */}
         <div className="absolute inset-0 bg-black/10"></div>
       </div>
-      
+
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
         {/* Main heading */}
@@ -27,13 +27,19 @@ const HeroSearchSection = () => {
               <div className="flex items-center bg-teal-600 text-white px-4 py-4 sm:py-3 min-w-0 sm:min-w-[200px]">
                 <MapPin className="w-5 h-5 mr-2 flex-shrink-0" />
                 <select className="bg-transparent text-white outline-none flex-1 appearance-none cursor-pointer">
-                  <option value="lahore" className="text-gray-800">LAHORE</option>
-                  <option value="karachi" className="text-gray-800">KARACHI</option>
-                  <option value="islamabad" className="text-gray-800">ISLAMABAD</option>
+                  <option value="Specility" className="text-gray-800">
+                    Specility
+                  </option>
+                  <option value="Disease" className="text-gray-800">
+                    Disease
+                  </option>
+                  <option value="VET" className="text-gray-800">
+                    VET
+                  </option>
                 </select>
                 <ChevronDown className="w-5 h-5 ml-2 flex-shrink-0" />
               </div>
-              
+
               {/* Search Input */}
               <div className="flex-1 flex items-center">
                 <input

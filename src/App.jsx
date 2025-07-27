@@ -62,113 +62,135 @@ function App() {
           <div className="App">
             <Routes>
               {/* Public Routes with Header & Footer */}
-              <Route element={<PublicLayout />}>
-                <Route
-                  path="/"
-                  element={
-                    <PublicRoute>
+              <Route
+                path="/"
+                element={
+                  <PublicRoute>
+                    <PublicLayout>
                       <HomePage />
-                    </PublicRoute>
-                  }
-                />
-                <Route
-                  path="/about-us"
-                  element={
-                    <PublicRoute>
+                    </PublicLayout>
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/about-us"
+                element={
+                  <PublicRoute>
+                    <PublicLayout>
                       <AboutUs />
-                    </PublicRoute>
-                  }
-                />
-                <Route
-                  path="/contact-us"
-                  element={
-                    <PublicRoute>
+                    </PublicLayout>
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/contact-us"
+                element={
+                  <PublicRoute>
+                    <PublicLayout>
                       <ContactUs />
-                    </PublicRoute>
-                  }
-                />
-                <Route
-                  path="/find-doctor"
-                  element={
-                    <PublicRoute>
+                    </PublicLayout>
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/find-doctor"
+                element={
+                  <PublicRoute>
+                    <PublicLayout>
                       <FindDoctor />
-                    </PublicRoute>
-                  }
-                />
-                <Route
-                  path="/blog"
-                  element={
-                    <PublicRoute>
+                    </PublicLayout>
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/blog"
+                element={
+                  <PublicRoute>
+                    <PublicLayout>
                       <Blog />
-                    </PublicRoute>
-                  }
-                />
-                <Route
-                  path="/join-as-vet"
-                  element={
-                    <PublicRoute>
+                    </PublicLayout>
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/join-as-vet"
+                element={
+                  <PublicRoute>
+                    <PublicLayout>
                       <JoinasVet />
-                    </PublicRoute>
-                  }
-                />
-                <Route
-                  path="/privacy-policy"
-                  element={
-                    <PublicRoute>
+                    </PublicLayout>
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/privacy-policy"
+                element={
+                  <PublicRoute>
+                    <PublicLayout>
                       <PrivacyPolicy />
-                    </PublicRoute>
-                  }
-                />
-                <Route
-                  path="/cookie-policy"
-                  element={
-                    <PublicRoute>
+                    </PublicLayout>
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/cookie-policy"
+                element={
+                  <PublicRoute>
+                    <PublicLayout>
                       <CookiePolicy />
-                    </PublicRoute>
-                  }
-                />
-                <Route
-                  path="/site-map"
-                  element={
-                    <PublicRoute>
+                    </PublicLayout>
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/site-map"
+                element={
+                  <PublicRoute>
+                    <PublicLayout>
                       <Sitemap />
-                    </PublicRoute>
-                  }
-                />
-                <Route
-                  path="/terms-of-service"
-                  element={
-                    <PublicRoute>
+                    </PublicLayout>
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/terms-of-service"
+                element={
+                  <PublicRoute>
+                    <PublicLayout>
                       <TermsOfService />
-                    </PublicRoute>
-                  }
-                />
-                <Route
-                  path="/login"
-                  element={
-                    <PublicRoute>
-                      <Signin />
-                    </PublicRoute>
-                  }
-                />
-                <Route
-                  path="/register"
-                  element={
-                    <PublicRoute>
-                      <SignUp />
-                    </PublicRoute>
-                  }
-                />
-                <Route
-                  path="/verify-otp"
-                  element={
-                    <PublicRoute>
-                      <OTPVerificationPage />
-                    </PublicRoute>
-                  }
-                />
-                <Route path="/404" element={<NotFoundPage />} />
-              </Route>
+                    </PublicLayout>
+                  </PublicRoute>
+                }
+              />
+
+              {/* Authentication Routes - Special handling without header/footer */}
+              <Route
+                path="/signin"
+                element={
+                  <PublicRoute>
+                    <Signin />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/signup"
+                element={
+                  <PublicRoute>
+                    <SignUp />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/verify-otp"
+                element={
+                  <PublicRoute>
+                    <OTPVerificationPage />
+                  </PublicRoute>
+                }
+              />
+
+              {/* 404 Page */}
+              <Route path="/404" element={<NotFoundPage />} />
 
               {/* Protected Routes - Pet Owner (no header/footer) */}
               <Route
@@ -200,8 +222,8 @@ function App() {
                 }
               >
                 <Route path="dashboard" element={<SuperAdminDashboard />} />
-                <Route path="users" element={<UserManagement />} />
                 <Route path="vets" element={<VetManagement />} />
+                <Route path="users" element={<UserManagement />} />
                 <Route path="settings" element={<Settings />} />
               </Route>
 

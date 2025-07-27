@@ -1,9 +1,8 @@
-import React from 'react'
+import React from "react";
+import ComingSoonPage from "../not-found/ComingSoonPage";
 
 const UserManagement = () => {
-  return (
-    <div>UserManagement</div>
-  )
-}
+  return <ComingSoonPage />;
+};
 
-export default UserManagement
+export default UserManagement;

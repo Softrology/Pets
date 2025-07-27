@@ -1,34 +1,44 @@
-import React, { useRef } from 'react';
-import { ChevronRight, Heart, Thermometer, Wind, Eye, Activity, Brain, Zap, Stethoscope } from 'lucide-react';
+import React, { useRef } from "react";
+import {
+  ChevronRight,
+  Heart,
+  Thermometer,
+  Wind,
+  Eye,
+  Activity,
+  Brain,
+  Zap,
+  Stethoscope,
+} from "lucide-react";
 
 const SymptomsDiseasesSection = () => {
   const symptomsRef = useRef(null);
   const diseasesRef = useRef(null);
 
   const symptoms = [
-    { name: 'LOSS OF APPETITE', icon: Heart, color: 'bg-teal-600' },
-    { name: 'HOT EARS OR NOSE', icon: Thermometer, color: 'bg-teal-600' },
-    { name: 'BAD BREATH', icon: Wind, color: 'bg-teal-600' },
-    { name: 'SWOLLEN EYES', icon: Eye, color: 'bg-purple-600' },
-    { name: 'FEVER', icon: Activity, color: 'bg-teal-600' },
-    { name: 'LETHARGY', icon: Brain, color: 'bg-teal-600' }
+    { name: "LOSS OF APPETITE", icon: Heart, color: "bg-teal-600" },
+    { name: "HOT EARS OR NOSE", icon: Thermometer, color: "bg-teal-600" },
+    { name: "BAD BREATH", icon: Wind, color: "bg-teal-600" },
+    { name: "SWOLLEN EYES", icon: Eye, color: "bg-teal-600" },
+    { name: "FEVER", icon: Activity, color: "bg-teal-600" },
+    { name: "LETHARGY", icon: Brain, color: "bg-teal-600" },
   ];
 
   const diseases = [
-    { name: 'HEARTWORM DISEASE', icon: Heart, color: 'bg-teal-600' },
-    { name: 'HYPOTHYROIDISM', icon: Zap, color: 'bg-teal-600' },
-    { name: 'BRUCELLOSIS', icon: Stethoscope, color: 'bg-teal-600' },
-    { name: 'ASPERGILLOSIS', icon: Activity, color: 'bg-teal-600' },
-    { name: 'DIABETES', icon: Activity, color: 'bg-teal-600' },
-    { name: 'ARTHRITIS', icon: Activity, color: 'bg-teal-600' }
+    { name: "HEARTWORM DISEASE", icon: Heart, color: "bg-teal-600" },
+    { name: "HYPOTHYROIDISM", icon: Zap, color: "bg-teal-600" },
+    { name: "BRUCELLOSIS", icon: Stethoscope, color: "bg-teal-600" },
+    { name: "ASPERGILLOSIS", icon: Activity, color: "bg-teal-600" },
+    { name: "DIABETES", icon: Activity, color: "bg-teal-600" },
+    { name: "ARTHRITIS", icon: Activity, color: "bg-teal-600" },
   ];
 
   const scrollLeft = (ref) => {
-    ref.current.scrollBy({ left: -300, behavior: 'smooth' });
+    ref.current.scrollBy({ left: -300, behavior: "smooth" });
   };
 
   const scrollRight = (ref) => {
-    ref.current.scrollBy({ left: 300, behavior: 'smooth' });
+    ref.current.scrollBy({ left: 300, behavior: "smooth" });
   };
 
   return (
@@ -37,18 +47,20 @@ const SymptomsDiseasesSection = () => {
         {/* Symptoms Section */}
         <div className="mb-16">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-teal-500">SYMPTOMS</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-teal-500">
+              SYMPTOMS
+            </h2>
             <button className="flex items-center text-teal-600 hover:text-teal-700 font-semibold transition-colors group">
               VIEW ALL
               <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
-          
+
           <div className="relative">
-            <div 
+            <div
               ref={symptomsRef}
               className="flex space-x-4 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {symptoms.map((symptom, index) => {
                 const IconComponent = symptom.icon;
@@ -62,14 +74,16 @@ const SymptomsDiseasesSection = () => {
                         <IconComponent className="w-8 h-8 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold tracking-wide">{symptom.name}</h3>
+                        <h3 className="text-lg font-bold tracking-wide">
+                          {symptom.name}
+                        </h3>
                       </div>
                     </div>
                   </div>
                 );
               })}
             </div>
-            
+
             {/* Scroll buttons for larger screens */}
             <div className="hidden lg:block">
               <button
@@ -91,18 +105,20 @@ const SymptomsDiseasesSection = () => {
         {/* Diseases Section */}
         <div>
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-teal-500">DISEASES</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-teal-500">
+              DISEASES
+            </h2>
             <button className="flex items-center text-teal-600 hover:text-teal-700 font-semibold transition-colors group">
               VIEW ALL
               <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
-          
+
           <div className="relative">
-            <div 
+            <div
               ref={diseasesRef}
               className="flex space-x-4 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {diseases.map((disease, index) => {
                 const IconComponent = disease.icon;
@@ -116,14 +132,16 @@ const SymptomsDiseasesSection = () => {
                         <IconComponent className="w-8 h-8 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold tracking-wide">{disease.name}</h3>
+                        <h3 className="text-lg font-bold tracking-wide">
+                          {disease.name}
+                        </h3>
                       </div>
                     </div>
                   </div>
                 );
               })}
             </div>
-            
+
             {/* Scroll buttons for larger screens */}
             <div className="hidden lg:block">
               <button

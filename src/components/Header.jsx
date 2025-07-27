@@ -1,20 +1,16 @@
-import React, { useState } from 'react';
-import { Menu, X } from 'lucide-react';
-
+import React, { useState } from "react";
+import { Menu, X } from "lucide-react";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-
-
-
   const navItems = [
-    { name: 'HOME', href: '/' },
-    { name: 'ABOUTS', href: '/about-us' },
-    { name: 'FIND DOCTOR', href: '/find-doctor' },
-    { name: 'BLOG', href: '/blog' },
-    { name: 'CONTACT', href: '/contact-us' },
-    { name: 'JOIN AS VET', href: '/join-as-vet' }
+    { name: "HOME", href: "/" },
+    { name: "ABOUTS", href: "/about-us" },
+    { name: "FIND DOCTOR", href: "/find-doctor" },
+    { name: "BLOG", href: "/blog" },
+    { name: "CONTACT", href: "/contact-us" },
+    { name: "JOIN AS VET", href: "/join-as-vet" },
   ];
 
   return (
@@ -47,14 +43,14 @@ const Header = () => {
           <div className="hidden lg:flex items-center space-x-4">
             <div className="grid grid-cols-2 gap-3 w-full">
               <a
-                href="/login"
+                href="/signin"
                 onClick={() => setIsOpen(false)}
                 className="bg-white text-[#39a2a1] border border-[#39a2a1] hover:bg-[#39a2a1] hover:text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-xs sm:text-sm font-medium uppercase tracking-wide transition-colors duration-200 flex items-center justify-center whitespace-nowrap"
               >
                 LOGIN
               </a>
               <a
-                href="/register"
+                href="/signup"
                 onClick={() => setIsOpen(false)}
                 className="bg-gradient-to-r from-[#39a2a1] to-[#21527b] hover:from-[#2d8a89] hover:to-[#1a4062] text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-xs sm:text-sm font-medium uppercase tracking-wide transition-colors duration-200 flex items-center justify-center whitespace-nowrap"
               >
@@ -97,14 +93,14 @@ const Header = () => {
             <div className="pt-4 pb-2 space-y-3">
               <div className="grid grid-cols-2 gap-3 w-full">
                 <a
-                  href="/login"
+                  href="/signin"
                   onClick={() => setIsOpen(false)}
                   className="bg-white text-[#39a2a1] border border-[#39a2a1] hover:bg-[#39a2a1] hover:text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-xs sm:text-sm font-medium uppercase tracking-wide transition-colors duration-200 flex items-center justify-center whitespace-nowrap"
                 >
                   LOGIN
                 </a>
                 <a
-                  href="/register"
+                  href="/signup"
                   onClick={() => setIsOpen(false)}
                   className="bg-gradient-to-r from-[#39a2a1] to-[#21527b] hover:from-[#2d8a89] hover:to-[#1a4062] text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-xs sm:text-sm font-medium uppercase tracking-wide transition-colors duration-200 flex items-center justify-center whitespace-nowrap"
                 >

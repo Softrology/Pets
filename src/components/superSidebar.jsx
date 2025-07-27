@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink } from "react-router-dom";
 import {
   FiUsers,
   FiUser,
@@ -7,24 +7,29 @@ import {
   FiX,
   FiMenu,
   FiChevronLeft,
-  FiChevronRight
-} from 'react-icons/fi';
+  FiChevronRight,
+} from "react-icons/fi";
 
 export default function Sidebar({ onClose, collapsed }) {
   const navItems = [
-    { name: 'Dashboard', icon: FiBarChart2, to: 'dashboard' },
-    { name: 'Users', icon: FiUsers, to: 'users' },
-    { name: 'Vets', icon: FiUser, to: 'vets' },
-    { name: 'Settings', icon: FiSettings, to: 'settings' },
+    { name: "Dashboard", icon: FiBarChart2, to: "dashboard" },
+    { name: "Vets", icon: FiUser, to: "vets" },
+    { name: "Users", icon: FiUsers, to: "users" },
+    { name: "Settings", icon: FiSettings, to: "settings" },
   ];
 
   return (
-    <div className={`flex flex-col h-full bg-gradient-to-b from-[#39a2a1] to-[#21527b] ${collapsed ? 'w-20' : 'w-64'
-      } transition-all duration-300 ease-in-out shadow-lg`}>
-
+    <div
+      className={`flex flex-col h-full bg-gradient-to-b from-[#39a2a1] to-[#21527b] ${
+        collapsed ? "w-20" : "w-64"
+      } transition-all duration-300 ease-in-out shadow-lg`}
+    >
       {/* Attractive Header */}
-      <div className={`flex items-center justify-between p-4 border-b border-[#2d8a89] ${collapsed ? 'flex-col space-y-2' : ''
-        }`}>
+      <div
+        className={`flex items-center justify-between p-4 border-b border-[#2d8a89] ${
+          collapsed ? "flex-col space-y-2" : ""
+        }`}
+      >
         {!collapsed ? (
           <>
             <div className="flex items-center">
@@ -55,13 +60,17 @@ export default function Sidebar({ onClose, collapsed }) {
             end
             className={({ isActive }) => `
               flex items-center px-4 py-3 rounded-md transition-all
-              ${isActive ? 'bg-[#21527b] text-white shadow-md' : 'text-teal-100 hover:bg-[#2d8a89]'}
-              ${collapsed ? 'justify-center' : ''}
+              ${
+                isActive
+                  ? "bg-[#21527b] text-white shadow-md"
+                  : "text-teal-100 hover:bg-[#2d8a89]"
+              }
+              ${collapsed ? "justify-center" : ""}
               duration-200
             `}
-            title={collapsed ? item.name : ''}
+            title={collapsed ? item.name : ""}
           >
-            <item.icon className={`h-5 w-5 ${!collapsed ? 'mr-3' : ''}`} />
+            <item.icon className={`h-5 w-5 ${!collapsed ? "mr-3" : ""}`} />
             {!collapsed && (
               <span className="text-sm font-medium">{item.name}</span>
             )}
@@ -70,16 +79,27 @@ export default function Sidebar({ onClose, collapsed }) {
       </nav>
 
       {/* User Profile */}
-      <div className={`p-4 border-t border-[#2d8a89] ${collapsed ? 'flex justify-center' : ''
-        }`}>
-        <div className={`flex items-center ${collapsed ? 'flex-col space-y-2' : ''}`}>
+      <div
+        className={`p-4 border-t border-[#2d8a89] ${
+          collapsed ? "flex justify-center" : ""
+        }`}
+      >
+        <div
+          className={`flex items-center ${
+            collapsed ? "flex-col space-y-2" : ""
+          }`}
+        >
           <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#39a2a1] to-[#21527b] flex items-center justify-center text-white shadow">
             SA
           </div>
           {!collapsed && (
             <div className="ml-3 overflow-hidden">
-              <p className="text-sm font-medium text-white truncate">Super Admin</p>
-              <p className="text-xs font-medium text-teal-100 truncate">admin@PetCare.com</p>
+              <p className="text-sm font-medium text-white truncate">
+                Super Admin
+              </p>
+              <p className="text-xs font-medium text-teal-100 truncate">
+                admin@PetCare.com
+              </p>
             </div>
           )}
         </div>

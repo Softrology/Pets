@@ -1,10 +1,76 @@
-import { FiMenu, FiBell, FiSearch, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  FiMenu,
+  FiBell,
+  FiSearch,
+  FiChevronLeft,
+  FiChevronRight,
+  FiUser,
+  FiSettings,
+  FiLogOut,
+  FiChevronDown,
+} from "react-icons/fi";
 
-export default function SuperHeader({ 
-  onMenuClick, 
-  onToggleSidebar, 
-  sidebarCollapsed 
+export default function SuperHeader({
+  onMenuClick,
+  onToggleSidebar,
+  sidebarCollapsed,
 }) {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
+
+  // User data (in a real app, this would come from localStorage or an API)
+  const userData = {
+    availability: [],
+    city: null,
+    country: null,
+    createdAt: "2025-07-20T17:00:39.166Z",
+    dateOfBirth: null,
+    emailAddress: "muhammadmohsin004@gmail.com",
+    firstName: "Muhammad",
+    gender: "MALE",
+    isActivated: true,
+    isApproved: true,
+    isEmailVerified: true,
+    lastName: "Mohsin",
+    licenseImage: "",
+    password: null,
+    phoneNumber: "",
+    profilePicture: "",
+    qualifications: [],
+    role: "SUPER_ADMIN",
+    specialization: [],
+    updatedAt: "2025-07-20T17:00:39.166Z",
+    _id: "687d3001de3f37e8840ff6e1",
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("user");
+    navigate("/");
+    setDropdownOpen(false);
+  };
+
+  const getInitials = () => {
+    return `${userData.firstName.charAt(0)}${userData.lastName.charAt(0)}`;
+  };
+
   return (
     <header className="bg-white shadow-sm border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,11 +119,104 @@ export default function SuperHeader({
             <button className="p-1 rounded-full text-gray-400 hover:text-[#39a2a1] transition-colors duration-200">
               <FiBell className="h-6 w-6" />
             </button>
-            
-            <div className="flex-shrink-0">
-              <div className="h-8 w-8 rounded-full bg-gradient-to-r from-[#39a2a1] to-[#21527b] flex items-center justify-center text-white font-medium">
-                SA
-              </div>
+
+            {/* Profile Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center space-x-2 text-gray-700 hover:text-[#39a2a1] transition-colors duration-200"
+              >
+                <div className="h-8 w-8 rounded-full bg-gradient-to-r from-[#39a2a1] to-[#21527b] flex items-center justify-center text-white font-medium">
+                  {getInitials()}
+                </div>
+                <FiChevronDown
+                  className={`h-4 w-4 transition-transform duration-200 ${
+                    dropdownOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {/* Dropdown Menu */}
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                  {/* User Info Section */}
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <div className="flex items-center space-x-3">
+                      <div className="h-12 w-12 rounded-full bg-gradient-to-r from-[#39a2a1] to-[#21527b] flex items-center justify-center text-white font-medium">
+                        {getInitials()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {userData.firstName} {userData.lastName}
+                        </p>
+                        <p className="text-sm text-gray-500 truncate">
+                          {userData.emailAddress}
+                        </p>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#39a2a1] text-white">
+                          {userData.role.replace("_", " ")}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* User Details */}
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                      Account Details
+                    </h4>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Status:</span>
+                        <div className="flex space-x-1">
+                          {userData.isActivated && (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs bg-green-100 text-green-800">
+                              Active
+                            </span>
+                          )}
+                          {userData.isEmailVerified && (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs bg-blue-100 text-blue-800">
+                              Verified
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Gender:</span>
+                        <span className="text-gray-900">{userData.gender}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Joined:</span>
+                        <span className="text-gray-900">
+                          {new Date(userData.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Menu Items */}
+                  <div className="py-1">
+                    <button className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 w-full text-left transition-colors duration-200">
+                      <FiUser className="h-4 w-4 mr-3" />
+                      View Profile
+                    </button>
+                    <button className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 w-full text-left transition-colors duration-200">
+                      <FiSettings className="h-4 w-4 mr-3" />
+                      Settings
+                    </button>
+                  </div>
+
+                  {/* Logout */}
+                  <div className="border-t border-gray-100">
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full text-left transition-colors duration-200"
+                    >
+                      <FiLogOut className="h-4 w-4 mr-3" />
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
