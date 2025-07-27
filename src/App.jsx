@@ -32,7 +32,7 @@ import CookiePolicy from "./page/footer-pages/CookiePolicy";
 import Sitemap from "./page/footer-pages/siteMap";
 import TestimonialsSection from "./components/TestimonialsSection";
 import Signin from "./auth/SignIn";
-import Signup from "./auth/SignUp";
+import SignUp from "./auth/SignUp";
 
 // Create QueryClient instance
 const queryClient = new QueryClient({
