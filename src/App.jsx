@@ -9,8 +9,6 @@ import { Provider } from "react-redux";
 import PublicRoute from "./routes/PublicRoute";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import HomePage from "./page/home/HomePage";
-import Signin from "./auth/Signin";
-import SignUp from "./auth/SignUp";
 import OTPVerificationPage from "./auth/OTPVerificationPage";
 import PetOwnerDashboard from "./page/pet-owner/PetOwnerDashboard";
 import VetDashboard from "./page/vet/VetDashboard";
@@ -33,6 +31,8 @@ import PrivacyPolicy from "./page/footer-pages/PrivacyPolicy";
 import CookiePolicy from "./page/footer-pages/CookiePolicy";
 import Sitemap from "./page/footer-pages/siteMap";
 import TestimonialsSection from "./components/TestimonialsSection";
+import Signin from "./auth/SignIn";
+import Signup from "./auth/SignUp";
 
 // Create QueryClient instance
 const queryClient = new QueryClient({
@@ -50,7 +50,7 @@ function PublicLayout({ children }) {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow">{children}</main>
-      <TestimonialsSection/>
+      <TestimonialsSection />
       <FooterSection />
     </div>
   );
