@@ -21,30 +21,18 @@ export default function SuperHeader({
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  // User data (in a real app, this would come from localStorage or an API)
-  const userData = {
-    availability: [],
-    city: null,
-    country: null,
-    createdAt: "2025-07-20T17:00:39.166Z",
-    dateOfBirth: null,
-    emailAddress: "muhammadmohsin004@gmail.com",
-    firstName: "Muhammad",
-    gender: "MALE",
-    isActivated: true,
-    isApproved: true,
-    isEmailVerified: true,
-    lastName: "Mohsin",
-    licenseImage: "",
-    password: null,
-    phoneNumber: "",
-    profilePicture: "",
-    qualifications: [],
-    role: "SUPER_ADMIN",
-    specialization: [],
-    updatedAt: "2025-07-20T17:00:39.166Z",
-    _id: "687d3001de3f37e8840ff6e1",
+  // Parse user data from localStorage with null checking
+  const getUserData = () => {
+    try {
+      const userData = localStorage.getItem("user");
+      return userData ? JSON.parse(userData) : null;
+    } catch (error) {
+      console.error("Error parsing user data:", error);
+      return null;
+    }
   };
+
+  const userData = getUserData();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -68,8 +56,88 @@ export default function SuperHeader({
   };
 
   const getInitials = () => {
+    if (!userData || !userData.firstName || !userData.lastName) {
+      return "NA";
+    }
     return `${userData.firstName.charAt(0)}${userData.lastName.charAt(0)}`;
   };
+
+  const getDisplayValue = (value) => {
+    return value && value !== null && value !== "" ? value : "N/A";
+  };
+
+  const getFullName = () => {
+    if (!userData) return "N/A";
+    const firstName = userData.firstName || "";
+    const lastName = userData.lastName || "";
+    return firstName || lastName ? `${firstName} ${lastName}`.trim() : "N/A";
+  };
+
+  const getFormattedRole = () => {
+    if (!userData || !userData.role) return "N/A";
+    return userData.role.replace("_", " ");
+  };
+
+  // If no user data, show fallback
+  if (!userData) {
+    return (
+      <header className="bg-white shadow-sm border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            {/* Left Section */}
+            <div className="flex items-center">
+              {/* Mobile menu button */}
+              <button
+                type="button"
+                className="lg:hidden text-gray-500 hover:text-[#39a2a1] mr-2"
+                onClick={onMenuClick}
+              >
+                <FiMenu className="h-6 w-6" />
+              </button>
+
+              {/* Desktop sidebar toggle */}
+              <button
+                type="button"
+                className="hidden lg:block text-gray-500 hover:text-[#39a2a1] mr-2"
+                onClick={onToggleSidebar}
+              >
+                {sidebarCollapsed ? (
+                  <FiChevronRight className="h-6 w-6" />
+                ) : (
+                  <FiChevronLeft className="h-6 w-6" />
+                )}
+              </button>
+
+              {/* Search bar */}
+              <div className="flex-1 max-w-xs">
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <FiSearch className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-[#39a2a1] focus:border-[#39a2a1] sm:text-sm transition-colors duration-200"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Right Section - Fallback */}
+            <div className="flex items-center space-x-4">
+              <button className="p-1 rounded-full text-gray-400 hover:text-[#39a2a1] transition-colors duration-200">
+                <FiBell className="h-6 w-6" />
+              </button>
+
+              <div className="h-8 w-8 rounded-full bg-gray-400 flex items-center justify-center text-white font-medium">
+                NA
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-100">
@@ -147,13 +215,13 @@ export default function SuperHeader({
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 truncate">
-                          {userData.firstName} {userData.lastName}
+                          {getFullName()}
                         </p>
                         <p className="text-sm text-gray-500 truncate">
-                          {userData.emailAddress}
+                          {getDisplayValue(userData.emailAddress)}
                         </p>
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#39a2a1] text-white">
-                          {userData.role.replace("_", " ")}
+                          {getFormattedRole()}
                         </span>
                       </div>
                     </div>
@@ -178,16 +246,44 @@ export default function SuperHeader({
                               Verified
                             </span>
                           )}
+                          {!userData.isActivated &&
+                            !userData.isEmailVerified && (
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs bg-gray-100 text-gray-800">
+                                N/A
+                              </span>
+                            )}
                         </div>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-500">Gender:</span>
-                        <span className="text-gray-900">{userData.gender}</span>
+                        <span className="text-gray-900">
+                          {getDisplayValue(userData.gender)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Phone:</span>
+                        <span className="text-gray-900">
+                          {getDisplayValue(userData.phoneNumber)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">City:</span>
+                        <span className="text-gray-900">
+                          {getDisplayValue(userData.city)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Country:</span>
+                        <span className="text-gray-900">
+                          {getDisplayValue(userData.country)}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-500">Joined:</span>
                         <span className="text-gray-900">
-                          {new Date(userData.createdAt).toLocaleDateString()}
+                          {userData.createdAt
+                            ? new Date(userData.createdAt).toLocaleDateString()
+                            : "N/A"}
                         </span>
                       </div>
                     </div>

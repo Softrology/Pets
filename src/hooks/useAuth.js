@@ -100,7 +100,7 @@ export const useRegister = () => {
       if (data.success) {
         dispatch(registrationSuccess(data.data));
         // Navigate to login page after successful registration
-        navigate("/login", {
+        navigate("/signin", {
           state: {
             message:
               "Registration successful! Please login with your credentials.",
@@ -157,7 +157,7 @@ export const useVerifyOTP = () => {
       if (data.success) {
         dispatch(otpVerificationSuccess());
         // Navigate to login page after successful verification
-        navigate("/login", {
+        navigate("/signin", {
           state: {
             message: "Account verified successfully! Please login.",
             emailAddress: data.data?.emailAddress,

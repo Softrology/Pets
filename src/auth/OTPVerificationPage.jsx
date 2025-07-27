@@ -9,6 +9,8 @@ import {
   FaExclamationCircle,
   FaCheckCircle,
   FaArrowLeft,
+  FaClock,
+  FaRedo,
 } from "react-icons/fa";
 
 const OTPVerificationPage = () => {
@@ -23,21 +25,77 @@ const OTPVerificationPage = () => {
   const [userId, setUserId] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [message, setMessage] = useState("");
+  const [countdown, setCountdown] = useState(0);
+  const [isTimerActive, setIsTimerActive] = useState(false);
 
   useEffect(() => {
     if (location.state?.emailAddress && location.state?.userId) {
+      console.log("location.state?.emailAddress", location.state?.emailAddress);
+      console.log("location.state?.userId", location.state?.userId);
       setEmailAddress(location.state.emailAddress);
       setUserId(location.state.userId);
       setMessage(location.state.message || "");
-      handleSendOTP(); // Auto-send OTP when component mounts
     } else {
-      navigate("/login", { state: { message: "Please login first" } });
+      navigate("/signin", { state: { message: "Please login first" } });
     }
   }, [location.state, navigate]);
 
-  const handleSendOTP = () => {
-    if (!emailAddress || !userId) return;
+  // Separate useEffect to handle auto-sending OTP when emailAddress and userId are set
+  useEffect(() => {
+    if (emailAddress && userId && !otpSent) {
+      console.log("Auto-sending OTP for:", emailAddress, userId);
+      sendOTP(
+        {
+          emailAddress,
+          userId,
+        },
+        {
+          onSuccess: () => {
+            setOtpSent(true);
+            startTimer(); // Start the countdown timer
+          },
+        }
+      );
+    }
+  }, [emailAddress, userId, otpSent, sendOTP]);
 
+  // Countdown timer effect
+  useEffect(() => {
+    let interval = null;
+    if (isTimerActive && countdown > 0) {
+      interval = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown <= 1) {
+            setIsTimerActive(false);
+            return 0;
+          }
+          return prevCountdown - 1;
+        });
+      }, 1000);
+    } else if (countdown === 0) {
+      setIsTimerActive(false);
+    }
+    return () => clearInterval(interval);
+  }, [isTimerActive, countdown]);
+
+  const startTimer = () => {
+    setCountdown(120); // 2 minutes = 120 seconds
+    setIsTimerActive(true);
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const handleSendOTP = () => {
+    if (!emailAddress || !userId) {
+      console.log("Missing emailAddress or userId:", { emailAddress, userId });
+      return;
+    }
+
+    console.log("Sending OTP to:", emailAddress, "for user:", userId);
     sendOTP(
       {
         emailAddress,
@@ -45,7 +103,12 @@ const OTPVerificationPage = () => {
       },
       {
         onSuccess: () => {
+          console.log("OTP sent successfully");
           setOtpSent(true);
+          startTimer(); // Start the countdown timer
+        },
+        onError: (error) => {
+          console.log("Error sending OTP:", error);
         },
       }
     );
@@ -62,7 +125,7 @@ const OTPVerificationPage = () => {
       },
       {
         onSuccess: () => {
-          navigate("/login", {
+          navigate("/signin", {
             state: {
               emailAddress,
               message: "Your account has been verified. Please login.",
@@ -75,17 +138,17 @@ const OTPVerificationPage = () => {
 
   const handleOtpChange = (e) => {
     const value = e.target.value.replace(/\D/g, "");
-    if (value.length <= 6) {
+    if (value.length <= 4) {
       setOtpCode(value);
     }
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4 overflow-hidden">
+    <div className="h-screen bg-gradient-to-br from-teal-50 to-cyan-100 flex items-center justify-center p-4 overflow-hidden">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Decorative header */}
-          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 py-6 px-6">
+          <div className="bg-gradient-to-r from-teal-600 to-cyan-600 py-6 px-6">
             <div className="flex justify-center">
               <Link to="/" className="inline-block">
                 <h2 className="text-2xl font-bold text-white">PetCare</h2>
@@ -94,7 +157,7 @@ const OTPVerificationPage = () => {
             <h2 className="mt-2 text-center text-xl font-bold text-white">
               Verify Your Account
             </h2>
-            <p className="mt-1 text-center text-indigo-100 text-sm">
+            <p className="mt-1 text-center text-teal-100 text-sm">
               We've sent a verification code to your email
             </p>
           </div>
@@ -166,19 +229,16 @@ const OTPVerificationPage = () => {
                     htmlFor="otpCode"
                     className="block text-xs font-medium text-gray-700 mb-1"
                   >
-                    Enter 6-digit verification code
+                    Enter 4-digit verification code
                   </label>
                   <div className="relative">
                     <input
                       id="otpCode"
                       name="otpCode"
                       type="text"
-                      // inputMode="numeric"
-                      // pattern="[0-9]*"
-                      // maxLength="6"
                       required
-                      className="block w-full px-4 py-3 text-center text-lg tracking-widest rounded-lg border border-gray-300 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
-                      placeholder="------"
+                      className="block w-full px-4 py-3 text-center text-lg tracking-widest rounded-lg border border-gray-300 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent transition duration-200"
+                      placeholder="----"
                       value={otpCode}
                       onChange={handleOtpChange}
                     />
@@ -187,8 +247,8 @@ const OTPVerificationPage = () => {
 
                 <button
                   type="submit"
-                  disabled={isLoading || otpCode.length !== 6}
-                  className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-70 disabled:cursor-not-allowed transition duration-200"
+                  disabled={isLoading || otpCode.length !== 4}
+                  className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-70 disabled:cursor-not-allowed transition duration-200"
                 >
                   {isLoading ? (
                     <>
@@ -200,23 +260,40 @@ const OTPVerificationPage = () => {
                   )}
                 </button>
 
-                <div className="text-center">
-                  <button
-                    type="button"
-                    onClick={handleSendOTP}
-                    disabled={isLoading}
-                    className="text-xs text-indigo-600 hover:text-indigo-500 disabled:opacity-50"
-                  >
-                    Didn't receive code? Resend
-                  </button>
+                {/* Timer and Resend Button */}
+                <div className="text-center space-y-2">
+                  {isTimerActive && countdown > 0 ? (
+                    <div className="flex items-center justify-center space-x-2 text-teal-600">
+                      <FaClock className="h-4 w-4" />
+                      <span className="text-sm font-medium">
+                        Resend available in {formatTime(countdown)}
+                      </span>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleSendOTP}
+                      disabled={isLoading}
+                      className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white text-sm font-medium rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    >
+                      <FaRedo className="mr-2 h-3 w-3" />
+                      {otpSent ? "Resend Code" : "Send Code"}
+                    </button>
+                  )}
+
+                  {!isTimerActive && countdown === 0 && otpSent && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Didn't receive the code? Click resend above
+                    </p>
+                  )}
                 </div>
               </form>
             </div>
 
             <div className="mt-4 text-center">
               <Link
-                to="/login"
-                className="text-xs text-gray-600 hover:text-gray-900 flex items-center justify-center"
+                to="/signin"
+                className="text-xs text-gray-600 hover:text-gray-900 flex items-center justify-center transition duration-200"
               >
                 <FaArrowLeft className="mr-1 h-3 w-3" />
                 Back to login

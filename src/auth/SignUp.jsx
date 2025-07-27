@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useRegister } from "../hooks/useAuth";
-import { 
-  FaUser, 
-  FaEnvelope, 
-  FaLock, 
+import {
+  FaUser,
+  FaEnvelope,
+  FaLock,
   FaChevronDown,
   FaSpinner,
   FaExclamationCircle,
-  FaCheckCircle
+  FaCheckCircle,
 } from "react-icons/fa";
 
 const SignUp = () => {
@@ -31,6 +31,13 @@ const SignUp = () => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const handleRoleToggle = () => {
+    setFormData((prev) => ({
+      ...prev,
+      role: prev.role === "PET_OWNER" ? "VET" : "PET_OWNER",
     }));
   };
 
@@ -56,17 +63,17 @@ const SignUp = () => {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br  from-blue-50 to-indigo-100 flex items-center justify-center p-4 overflow-hidden">
-      <div className="w-full max-w-2xl my-14">
+    <div className=" bg-gradient-to-br h-[100vh]  from-blue-50 to-indigo-100 flex items-center justify-center p-4 overflow-hidden">
+      <div className="w-full max-w-2xl my-14 h-[98vh]">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Decorative header */}
-          <div className="bg-gradient-to-br from-teal-600 to-teal-700 py-6 px-8">
+          <div className="bg-gradient-to-br from-teal-600 to-teal-700 py-5 px-8 ">
             <div className="flex justify-center">
               <Link to="/" className="inline-block">
                 <h2 className="text-3xl font-bold text-white">PetCare</h2>
               </Link>
             </div>
-            <h2 className="mt-3 text-center text-2xl font-bold text-white">
+            <h2 className="mt-2 text-center text-2xl font-bold text-white">
               Join Our Community
             </h2>
             <p className="mt-1 text-center text-indigo-100 text-sm">
@@ -74,7 +81,7 @@ const SignUp = () => {
             </p>
           </div>
 
-          <div className="p-6 md:p-8">
+          <div className="px-6 md:px-8 md:py-3">
             {/* Error Message */}
             {error && (
               <div className="mb-4 animate-fade-in">
@@ -242,25 +249,49 @@ const SignUp = () => {
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="role"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Register as
                   </label>
-                  <div className="relative">
-                    <select
-                      id="role"
-                      name="role"
-                      className="block w-full px-4 py-2 rounded-lg border border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 appearance-none"
-                      value={formData.role}
-                      onChange={handleInputChange}
-                    >
-                      <option value="PET_OWNER">Pet Owner</option>
-                      <option value="VET">Veterinarian</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                      <FaChevronDown className="h-3 w-3 text-gray-400" />
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex items-center space-x-4">
+                      <span
+                        className={`text-sm font-medium transition-colors duration-200 ${
+                          formData.role === "VET"
+                            ? "text-teal-600"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        Veterinarian
+                      </span>
+                      <div className="relative">
+                        <button
+                          type="button"
+                          disabled
+                          onClick={handleRoleToggle}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 ${
+                            formData.role === "PET_OWNER"
+                              ? "bg-teal-600"
+                              : "bg-gray-300"
+                          }`}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-lg transition-transform duration-200 ease-in-out ${
+                              formData.role === "PET_OWNER"
+                                ? "translate-x-6"
+                                : "translate-x-1"
+                            }`}
+                          />
+                        </button>
+                      </div>
+                      <span
+                        className={`text-sm font-medium transition-colors duration-200 ${
+                          formData.role === "PET_OWNER"
+                            ? "text-teal-600"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        Pet Owner
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -284,7 +315,7 @@ const SignUp = () => {
               </div>
             </form>
 
-            <div className="mt-4">
+            <div className="mt-2">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300"></div>
@@ -298,7 +329,7 @@ const SignUp = () => {
 
               <div className="mt-3">
                 <Link
-                  to="/login"
+                  to="/signin"
                   className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200"
                 >
                   Sign in to existing account
