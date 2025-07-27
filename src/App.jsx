@@ -94,6 +94,7 @@ function App() {
                   </PublicRoute>
                 }
               />
+
               <Route
                 path="/find-doctor"
                 element={
