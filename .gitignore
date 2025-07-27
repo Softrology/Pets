@@ -1,24 +1,35 @@
-# Logs
-logs
-*.log
+# Node.js dependencies
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Environment files
+.env
+.env.local
+.env.*.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Logs
+logs
+*.log
+
+# OS / Editor junk
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Build output
+dist/
+build/
+out/
+coverage/
+
+# Optional lock files (if you only use one package manager)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
