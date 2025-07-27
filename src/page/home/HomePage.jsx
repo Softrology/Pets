@@ -20,7 +20,6 @@ const HomePage = () => {
       <ReviewsSection/>
       <AppointmentBookingSection/>
       <ServicesSection/>
-      <TestimonialsSection/>
     </>
   );
 };

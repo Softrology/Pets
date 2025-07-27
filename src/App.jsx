@@ -32,6 +32,7 @@ import TermsOfService from "./page/footer-pages/TermOfServices";
 import PrivacyPolicy from "./page/footer-pages/PrivacyPolicy";
 import CookiePolicy from "./page/footer-pages/CookiePolicy";
 import Sitemap from "./page/footer-pages/siteMap";
+import TestimonialsSection from "./components/TestimonialsSection";
 
 // Create QueryClient instance
 const queryClient = new QueryClient({
@@ -49,6 +50,7 @@ function PublicLayout({ children }) {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow">{children}</main>
+      <TestimonialsSection/>
       <FooterSection />
     </div>
   );
