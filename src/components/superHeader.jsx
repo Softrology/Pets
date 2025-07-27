@@ -49,10 +49,26 @@ export default function SuperHeader({
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("user");
-    navigate("/");
-    setDropdownOpen(false);
+    try {
+      // Clear all authentication data
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      localStorage.removeItem("userRole");
+
+      // Clear any other potential auth-related items
+      localStorage.clear(); // This clears everything, use with caution
+
+      // Close dropdown
+      setDropdownOpen(false);
+
+      // Use window.location for immediate redirect
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Error during logout:", error);
+      // Fallback redirect
+      window.location.href = "/";
+    }
   };
 
   const getInitials = () => {
