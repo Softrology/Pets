@@ -7,19 +7,17 @@ import AppointmentBookingSection from "../../components/AppointmentBookingSectio
 import ServicesSection from "../../components/ServicesSection";
 import TestimonialsSection from "../../components/TestimonialsSection";
 
-
 const HomePage = () => {
   console.log("homepage rendered");
 
   return (
     <>
-      
-      <HeroSearchSection/>
-      <SymptomsDiseasesSection/>
-      <AffiliatedClinicSection/>
-      <ReviewsSection/>
-      <AppointmentBookingSection/>
-      <ServicesSection/>
+      <HeroSearchSection />
+      <SymptomsDiseasesSection />
+      <AffiliatedClinicSection />
+      <ReviewsSection />
+      {/* <AppointmentBookingSection/> */}
+      <ServicesSection />
     </>
   );
 };

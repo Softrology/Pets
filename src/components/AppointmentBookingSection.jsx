@@ -1,41 +1,59 @@
-import React, { useState } from 'react';
-import { Calendar, Clock, User, Phone, Mail, Heart, ChevronDown, CheckCircle } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  Calendar,
+  Clock,
+  User,
+  Phone,
+  Mail,
+  Heart,
+  ChevronDown,
+  CheckCircle,
+} from "lucide-react";
 
 const AppointmentBookingSection = () => {
   const [formData, setFormData] = useState({
-    petName: '',
-    ownerName: '',
-    email: '',
-    phone: '',
-    service: '',
-    date: '',
-    time: '',
-    notes: ''
+    petName: "",
+    ownerName: "",
+    email: "",
+    phone: "",
+    service: "",
+    date: "",
+    time: "",
+    notes: "",
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const services = [
-    'General Checkup',
-    'Vaccination',
-    'Grooming',
-    'Surgery Consultation',
-    'Eye Care',
-    'Dental Care',
-    'Emergency Care'
+    "General Checkup",
+    "Vaccination",
+    "Grooming",
+    "Surgery Consultation",
+    "Eye Care",
+    "Dental Care",
+    "Emergency Care",
   ];
 
   const timeSlots = [
-    '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM',
-    '11:00 AM', '11:30 AM', '02:00 PM', '02:30 PM',
-    '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM'
+    "09:00 AM",
+    "09:30 AM",
+    "10:00 AM",
+    "10:30 AM",
+    "11:00 AM",
+    "11:30 AM",
+    "02:00 PM",
+    "02:30 PM",
+    "03:00 PM",
+    "03:30 PM",
+    "04:00 PM",
+    "04:30 PM",
   ];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -49,19 +67,19 @@ const AppointmentBookingSection = () => {
   const steps = [
     {
       icon: Calendar,
-      title: 'Choose Date & Time',
-      description: 'Select your preferred appointment date and time slot'
+      title: "Choose Date & Time",
+      description: "Select your preferred appointment date and time slot",
     },
     {
       icon: User,
-      title: 'Fill Details',
-      description: 'Provide your pet and contact information'
+      title: "Fill Details",
+      description: "Provide your pet and contact information",
     },
     {
       icon: CheckCircle,
-      title: 'Confirmation',
-      description: 'Receive confirmation and appointment details'
-    }
+      title: "Confirmation",
+      description: "Receive confirmation and appointment details",
+    },
   ];
 
   return (
@@ -73,7 +91,8 @@ const AppointmentBookingSection = () => {
             BOOK AN APPOINTMENT
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Schedule your pet's visit with our experienced veterinarians. Choose your preferred time and let us take care of the rest.
+            Schedule your pet's visit with our experienced veterinarians. Choose
+            your preferred time and let us take care of the rest.
           </p>
         </div>
 
@@ -88,19 +107,23 @@ const AppointmentBookingSection = () => {
                     <IconComponent className="w-8 h-8 text-white" />
                   </div>
                   <div className="absolute -top-2 -right-2 w-8 h-8 bg-teal-200 rounded-full flex items-center justify-center">
-                    <span className="text-teal-800 font-bold text-sm">{index + 1}</span>
+                    <span className="text-teal-800 font-bold text-sm">
+                      {index + 1}
+                    </span>
                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">{step.title}</h3>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  {step.title}
+                </h3>
                 <p className="text-gray-600 text-sm">{step.description}</p>
               </div>
             );
           })}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid">
           {/* Appointment Form */}
-          <div className="bg-white rounded-2xl shadow-lg p-8">
+          {/* <div className="bg-white rounded-2xl shadow-lg p-8">
             <h3 className="text-2xl font-bold text-gray-800 mb-6">Schedule Your Visit</h3>
             
             {isSubmitted ? (
@@ -255,58 +278,60 @@ const AppointmentBookingSection = () => {
                 </button>
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Contact Information */}
           <div className="space-y-8">
             <div className="bg-white rounded-2xl shadow-lg p-8">
-              <h3 className="text-2xl font-bold text-gray-800 mb-6">Contact Information</h3>
-              
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+              <h3 className="text-2xl font-bold text-gray-800 mb-6">
+                Contact Information
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mb-4">
                     <Phone className="w-6 h-6 text-teal-600" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-800 mb-1">Phone</h4>
-                    <p className="text-gray-600">Emergency: (555) 123-4567</p>
-                    <p className="text-gray-600">General: (555) 123-4568</p>
+                    <p className="text-gray-600 text-sm">
+                      Emergency: (555) 123-4567
+                    </p>
+                    <p className="text-gray-600 text-sm">
+                      General: (555) 123-4568
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex items-start">
-                  <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mb-4">
                     <Mail className="w-6 h-6 text-teal-600" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-800 mb-1">Email</h4>
-                    <p className="text-gray-600">info@vetclinic.com</p>
-                    <p className="text-gray-600">emergency@vetclinic.com</p>
+                    <p className="text-gray-600 text-sm">info@vetclinic.com</p>
+                    <p className="text-gray-600 text-sm">
+                      emergency@vetclinic.com
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex items-start">
-                  <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mb-4">
                     <Clock className="w-6 h-6 text-teal-600" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-800 mb-1">Hours</h4>
-                    <p className="text-gray-600">Mon-Fri: 9:00 AM - 6:00 PM</p>
-                    <p className="text-gray-600">Sat-Sun: 10:00 AM - 4:00 PM</p>
-                    <p className="text-teal-600 font-semibold">Emergency: 24/7</p>
+                    <p className="text-gray-600 text-sm">
+                      Mon-Fri: 9:00 AM - 6:00 PM
+                    </p>
+                    <p className="text-gray-600 text-sm">
+                      Sat-Sun: 10:00 AM - 4:00 PM
+                    </p>
+                    <p className="text-teal-600 font-semibold text-sm">
+                      Emergency: 24/7
+                    </p>
                   </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Image placeholder */}
-            <div className="bg-white rounded-2xl shadow-lg p-8">
-              <div className="aspect-video bg-gradient-to-br from-teal-100 to-teal-200 rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-teal-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <Calendar className="w-8 h-8 text-white" />
-                  </div>
-                  <p className="text-teal-700 font-semibold">Appointment Booking Image Placeholder</p>
                 </div>
               </div>
             </div>
