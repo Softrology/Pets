@@ -10,8 +10,8 @@ import PublicRoute from "./routes/PublicRoute";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import HomePage from "./page/home/HomePage";
 import OTPVerificationPage from "./auth/OTPVerificationPage";
-import PetOwnerDashboard from "./page/pet-owner/PetOwnerDashboard";
-import VetDashboard from "./page/vet/VetDashboard";
+import PetOwnerLayout from "./layouts/PetOwnerLayout";
+import VetLayout from "./layouts/VetLayout";
 import SuperAdminLayout from "./layouts/SuperAdminLayout";
 import SuperAdminDashboard from "./page/super-admin/SuperAdminDashboard";
 import UserManagement from "./page/super-admin/UserManagement";
@@ -33,6 +33,23 @@ import Sitemap from "./page/footer-pages/siteMap";
 import TestimonialsSection from "./components/TestimonialsSection";
 import Signin from "./auth/SignIn";
 import SignUp from "./auth/SignUp";
+
+// Pet Owner Pages
+import PetOwnerDashboard from "./page/pet-owner/PetOwnerDashboard";
+import MyPets from "./page/pet-owner/MyPet"
+
+// import Appointments from "./page/pet-owner/Appointments";
+// import VetSearch from "./page/pet-owner/VetSearch";
+// import PetOwnerProfile from "./page/pet-owner/Profile";
+// import PetOwnerSettings from "./page/pet-owner/Settings";
+
+// Vet Pages
+import VetDashboard from "./page/vet/VetDashboard";
+// import VetAppointments from "./page/vet/Appointments";
+// import PatientRecords from "./page/vet/PatientRecords";
+// import VetSchedule from "./page/vet/Schedule";
+// import VetProfile from "./page/vet/Profile";
+// import VetSettings from "./page/vet/Settings";
 
 // Create QueryClient instance
 const queryClient = new QueryClient({
@@ -94,7 +111,6 @@ function App() {
                   </PublicRoute>
                 }
               />
-
               <Route
                 path="/find-doctor"
                 element={
@@ -195,27 +211,43 @@ function App() {
               {/* 404 Page */}
               <Route path="/404" element={<NotFoundPage />} />
 
-              {/* Protected Routes - Pet Owner (no header/footer) */}
+              {/* Protected Routes - Pet Owner */}
               <Route
                 path="/pet-owner/*"
                 element={
                   <ProtectedRoute allowedRoles={["PET_OWNER"]}>
-                    <PetOwnerDashboard />
+                    <PetOwnerLayout />
                   </ProtectedRoute>
                 }
-              />
+              >
+                <Route path="dashboard" element={<PetOwnerDashboard />} />
+                <Route path="my-pets" element={<MyPets />} />
+                {/* <Route path="appointments" element={<Appointments />} />
+                <Route path="find-vet" element={<VetSearch />} />
+                <Route path="profile" element={<PetOwnerProfile />} />
+                <Route path="settings" element={<PetOwnerSettings />} /> */}
+                <Route path="" element={<Navigate to="dashboard" replace />} />
+              </Route>
 
-              {/* Protected Routes - Vet (no header/footer) */}
+              {/* Protected Routes - Vet */}
               <Route
                 path="/vet/*"
                 element={
                   <ProtectedRoute allowedRoles={["VET"]}>
-                    <VetDashboard />
+                    <VetLayout />
                   </ProtectedRoute>
                 }
-              />
+              >
+                <Route path="dashboard" element={<VetDashboard />} />
+                {/* <Route path="appointments" element={<VetAppointments />} />
+                <Route path="patients" element={<PatientRecords />} />
+                <Route path="schedule" element={<VetSchedule />} />
+                <Route path="profile" element={<VetProfile />} />
+                <Route path="settings" element={<VetSettings />} /> */}
+                <Route path="" element={<Navigate to="dashboard" replace />} />
+              </Route>
 
-              {/* Protected Routes - Super Admin (no header/footer) */}
+              {/* Protected Routes - Super Admin */}
               <Route
                 path="/super-admin/*"
                 element={
@@ -228,6 +260,7 @@ function App() {
                 <Route path="vets" element={<VetManagement />} />
                 <Route path="users" element={<UserManagement />} />
                 <Route path="settings" element={<Settings />} />
+                <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 
               {/* Catch all route - redirect to 404 */}

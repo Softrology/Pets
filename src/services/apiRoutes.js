@@ -9,3 +9,11 @@ export const AUTH_ROUTES = {
 export const GET_ALL_VETS = "/vet/get-all-vets";
 export const APPROVE_VET = "/vet/get-all-vets";
 export const CHANGE_VET_STATUS = "/vet/change-vet-activation-status";
+
+//pets 
+
+export const POST_PET = "/pet/add-pet";
+export const GET_ALL_PETS = "/pet/get-all-pets";
+export const DELETE_PET = (id) => `/pet/delete-pet/${id}`;
+export const UPDATE_PET = (id) => `/pet/update-pet/${id}`;
+export const GET_PET_BY_ID = (id) => `/pet/${id}`

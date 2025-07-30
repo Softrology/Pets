@@ -4,7 +4,7 @@ import RoleBasedSidebar from '../components/RoleBasedSidebar';
 import RoleBasedHeader from '../components/RoleBasedHeader';
 
 
-export default function SuperAdminLayout() {
+export default function VetLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -25,7 +25,7 @@ export default function SuperAdminLayout() {
         <RoleBasedSidebar
           onClose={() => setSidebarOpen(false)}
           collapsed={false} // Always expanded on mobile
-          userRole="SUPER_ADMIN"
+          userRole="VET"
         />
       </div>
 
@@ -36,7 +36,7 @@ export default function SuperAdminLayout() {
         <RoleBasedSidebar
           onClose={() => setSidebarCollapsed(!sidebarCollapsed)}
           collapsed={sidebarCollapsed}
-          userRole="SUPER_ADMIN"
+          userRole="VET"
         />
       </div>
 
@@ -48,7 +48,7 @@ export default function SuperAdminLayout() {
           onMenuClick={() => setSidebarOpen(!sidebarOpen)}
           onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
           sidebarCollapsed={sidebarCollapsed}
-          userRole="SUPER_ADMIN"
+          userRole="VET"
         />
        
         <main className="flex-1 overflow-auto p-4 sm:p-6">

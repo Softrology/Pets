@@ -47,6 +47,7 @@ export function formatTime(timestamp) {
 export const getUserToken = () => {
   try {
     return localStorage.getItem("authToken");
+
     // eslint-disable-next-line no-unused-vars
   } catch (error) {
     return null;
