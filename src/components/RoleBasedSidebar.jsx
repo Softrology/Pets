@@ -20,10 +20,10 @@ export default function RoleBasedSidebar({ onClose, collapsed, userRole }) {
       case "PET_OWNER":
         return [
           { name: "Dashboard", icon: FiBarChart2, to: "dashboard" },
-          { name: "My Pets", icon: FiHeart, to: "/pet-owner/my-pets" },
+          { name: "My Pets", icon: FiHeart, to: "my-pets" },
           { name: "Appointments", icon: FiCalendar, to: "appointments" },
           { name: "Find Vet", icon: FiSearch, to: "find-vet" },
-          { name: "Profile", icon: FiUser, to: "profile" },
+          { name: "Profile", icon: FiUser, to: "petowner-profile" },
           { name: "Settings", icon: FiSettings, to: "settings" },
         ];
       case "VET":

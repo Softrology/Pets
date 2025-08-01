@@ -17,3 +17,8 @@ export const GET_ALL_PETS = "/pet/get-all-pets";
 export const DELETE_PET = (id) => `/pet/delete-pet/${id}`;
 export const UPDATE_PET = (id) => `/pet/update-pet/${id}`;
 export const GET_PET_BY_ID = (id) => `/pet/${id}`
+
+//Pet owner profile
+
+export const GET_PET_OWNER_PROFILE = "/pet-owner/my-profile";
+export const UPDATE_PET_PROFILE = "/pet-owner/update-my-profile";

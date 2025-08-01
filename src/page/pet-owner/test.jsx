@@ -16,16 +16,70 @@ import {
   Upload,
   Image as ImageIcon,
 } from "lucide-react";
-import { get, post, patch, del } from "../../services/apiService";
-import {
-  POST_PET,
-  GET_ALL_PETS,
-  DELETE_PET,
-  UPDATE_PET,
-  GET_PET_BY_ID,
-} from "../../services/apiRoutes";
-import { getUserToken } from "../../utitlities/Globals";
-import AlertDialog from "../../utitlities/Alert";
+
+// Mock API functions for demonstration
+const mockApiService = {
+  get: async (url, token) => {
+    console.log("GET request to:", url, "with token:", token);
+    // Return mock data for demonstration
+    return {
+      data: [
+        {
+          _id: "1",
+          name: "Buddy",
+          category: "DOG",
+          age: 3,
+          weight: "25kg",
+          gender: "MALE",
+          feed: ["Dry food", "Treats"],
+          images: ["https://images.unsplash.com/photo-1552053831-71594a27632d?w=400"]
+        },
+        {
+          _id: "2",
+          name: "Whiskers",
+          category: "CAT",
+          age: 2,
+          weight: "4kg",
+          gender: "FEMALE",
+          feed: ["Wet food", "Fish"],
+          images: ["https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400"]
+        }
+      ]
+    };
+  },
+  post: async (url, data, token) => {
+    console.log("POST request to:", url, "with data:", data, "and token:", token);
+    return { message: "Pet added successfully", data: { _id: Date.now().toString(), ...data } };
+  },
+  patch: async (url, data, token) => {
+    console.log("PATCH request to:", url, "with data:", data, "and token:", token);
+    return { message: "Pet updated successfully" };
+  },
+  del: async (url, token) => {
+    console.log("DELETE request to:", url, "with token:", token);
+    return { message: "Pet deleted successfully" };
+  }
+};
+
+// Mock API routes
+const API_ROUTES = {
+  POST_PET: "/api/pets",
+  GET_ALL_PETS: "/api/pets",
+  DELETE_PET: (id) => `/api/pets/${id}`,
+  UPDATE_PET: (id) => `/api/pets/${id}`,
+  GET_PET_BY_ID: (id) => `/api/pets/${id}`,
+};
+
+// Mock getUserToken function
+const getUserToken = () => "mock-auth-token-12345";
+
+// Mock AlertDialog function
+const AlertDialog = (title, message, type, duration = 3000) => {
+  const alertType = type === "error" ? "Error" : type === "success" ? "Success" : "Info";
+  console.log(`${alertType}: ${title} ${message}`);
+  // In a real app, this would show a proper alert/toast
+  alert(`${alertType}: ${message}`);
+};
 
 const MyPet = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,7 +91,6 @@ const MyPet = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingPet, setEditingPet] = useState(null);
   const [uploadingImages, setUploadingImages] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const queryClient = useQueryClient();
 
@@ -59,11 +112,9 @@ const MyPet = () => {
       queryFn: async () => {
         try {
           console.log("Making request with token:", token);
-          const response = await get(GET_ALL_PETS, token);
-
+          const response = await mockApiService.get(API_ROUTES.GET_ALL_PETS, token);
           console.log("Full response:", response);
           console.log("Response data:", response?.data);
-
           return response.data || [];
         } catch (error) {
           console.error("Fetch error:", error);
@@ -76,44 +127,40 @@ const MyPet = () => {
     });
   };
 
-  console.log("This is the user token", getUserToken())
+  console.log("This is the user token", getUserToken());
 
   // Custom hook to add pet
   const useAddPet = () => {
     return useMutation({
       mutationFn: async (petData) => {
-        console.log("Add Pet - Original data:", petData);
+        console.log("Submitting pet data:", petData);
+        
+        // Create proper payload structure
+        const payload = {
+          name: petData.name.trim(),
+          category: petData.category,
+          age: parseInt(petData.age) || 0,
+          weight: petData.weight,
+          gender: petData.gender,
+          feed: Array.isArray(petData.feed) ? petData.feed : [],
+          images: Array.isArray(petData.images) ? petData.images : []
+        };
 
-        // Create FormData for file upload
-        const formData = new FormData();
+        console.log("Final payload being sent:", payload);
+        
+        // If you need to send as FormData (for file uploads), uncomment below:
+        // const formData = new FormData();
+        // Object.keys(payload).forEach(key => {
+        //   if (key === 'feed' || key === 'images') {
+        //     formData.append(key, JSON.stringify(payload[key]));
+        //   } else {
+        //     formData.append(key, payload[key]);
+        //   }
+        // });
+        // const response = await mockApiService.post(API_ROUTES.POST_PET, formData, getUserToken());
 
-        // Append basic pet information
-        formData.append('name', petData.name);
-        formData.append('category', petData.category);
-        formData.append('age', petData.age.toString());
-        formData.append('weight', petData.weight);
-        formData.append('gender', petData.gender);
-
-        // Ensure feed is always sent as an array
-        const feedArray = petData.feed || [];
-        console.log("Add Pet - Feed array:", feedArray);
-        formData.append('feed', JSON.stringify(feedArray));
-
-        // Append image files
-        if (petData.imageFiles && petData.imageFiles.length > 0) {
-          petData.imageFiles.forEach((file, index) => {
-            formData.append('images', file);
-          });
-        }
-
-        console.log("Add Pet - FormData contents:");
-        for (let pair of formData.entries()) {
-          console.log(pair[0], pair[1]);
-        }
-
-        const response = await post(POST_PET, formData, getUserToken(), {
-          'Content-Type': 'multipart/form-data'
-        });
+        // For JSON payload (current implementation):
+        const response = await mockApiService.post(API_ROUTES.POST_PET, payload, getUserToken());
         return response;
       },
       onSuccess: (data) => {
@@ -138,43 +185,20 @@ const MyPet = () => {
   const useUpdatePet = () => {
     return useMutation({
       mutationFn: async ({ id, petData }) => {
-        console.log("Update Pet - Original data:", petData);
+        console.log("Updating pet with data:", petData);
+        
+        const payload = {
+          name: petData.name.trim(),
+          category: petData.category,
+          age: parseInt(petData.age) || 0,
+          weight: petData.weight,
+          gender: petData.gender,
+          feed: Array.isArray(petData.feed) ? petData.feed : [],
+          images: Array.isArray(petData.images) ? petData.images : []
+        };
 
-        // Create FormData for file upload
-        const formData = new FormData();
-
-        // Append basic pet information
-        formData.append('name', petData.name);
-        formData.append('category', petData.category);
-        formData.append('age', petData.age.toString());
-        formData.append('weight', petData.weight);
-        formData.append('gender', petData.gender);
-
-        // Ensure feed is always sent as an array
-        const feedArray = petData.feed || [];
-        console.log("Update Pet - Feed array:", feedArray);
-        formData.append('feed', JSON.stringify(feedArray));
-
-        // Append existing image URLs
-        if (petData.existingImages && petData.existingImages.length > 0) {
-          formData.append('existingImages', JSON.stringify(petData.existingImages));
-        }
-
-        // Append new image files
-        if (petData.imageFiles && petData.imageFiles.length > 0) {
-          petData.imageFiles.forEach((file, index) => {
-            formData.append('images', file);
-          });
-        }
-
-        console.log("Update Pet - FormData contents:");
-        for (let pair of formData.entries()) {
-          console.log(pair[0], pair[1]);
-        }
-
-        const response = await patch(UPDATE_PET(id), formData, getUserToken(), {
-          'Content-Type': 'multipart/form-data'
-        });
+        console.log("Update payload being sent:", payload);
+        const response = await mockApiService.patch(API_ROUTES.UPDATE_PET(id), payload, getUserToken());
         return response;
       },
       onSuccess: (data) => {
@@ -200,7 +224,7 @@ const MyPet = () => {
   const useDeletePet = () => {
     return useMutation({
       mutationFn: async (id) => {
-        const response = await del(DELETE_PET(id), getUserToken());
+        const response = await mockApiService.del(API_ROUTES.DELETE_PET(id), getUserToken());
         return response;
       },
       onSuccess: (data) => {
@@ -282,21 +306,31 @@ const MyPet = () => {
       feed: [],
       images: [],
     });
-    setSelectedFiles([]);
   };
 
   const handleAddPet = (e) => {
     e.preventDefault();
+    
+    // Validation
     if (!petForm.name.trim()) {
       AlertDialog("", "Pet name is required", "error", 1500);
       return;
     }
+    
+    if (!petForm.category) {
+      AlertDialog("", "Pet category is required", "error", 1500);
+      return;
+    }
 
+    // Prepare the data
     const petData = {
-      ...petForm,
-      age: parseInt(petForm.age) || 0,
-      feed: petForm.feed && petForm.feed.length > 0 ? petForm.feed : [], // Ensure feed is always an array
-      imageFiles: selectedFiles,
+      name: petForm.name.trim(),
+      category: petForm.category,
+      age: petForm.age ? parseInt(petForm.age) : 0,
+      weight: petForm.weight.trim(),
+      gender: petForm.gender,
+      feed: petForm.feed || [],
+      images: petForm.images || []
     };
 
     console.log("Submitting pet data:", petData);
@@ -305,20 +339,22 @@ const MyPet = () => {
 
   const handleUpdatePet = (e) => {
     e.preventDefault();
+    
     if (!petForm.name.trim()) {
       AlertDialog("", "Pet name is required", "error", 1500);
       return;
     }
 
     const petData = {
-      ...petForm,
-      age: parseInt(petForm.age) || 0,
-      feed: petForm.feed && petForm.feed.length > 0 ? petForm.feed : [], // Ensure feed is always an array
-      existingImages: petForm.images, // URLs of existing images
-      imageFiles: selectedFiles, // New files to upload
+      name: petForm.name.trim(),
+      category: petForm.category,
+      age: petForm.age ? parseInt(petForm.age) : 0,
+      weight: petForm.weight.trim(),
+      gender: petForm.gender,
+      feed: petForm.feed || [],
+      images: petForm.images || []
     };
 
-    console.log("Update pet data:", petData);
     updatePetMutation.mutate({
       id: editingPet._id,
       petData: petData,
@@ -334,81 +370,82 @@ const MyPet = () => {
   const handleEditPet = (pet) => {
     setEditingPet(pet);
     setPetForm({
-      name: pet.name,
-      category: pet.category,
-      age: pet.age.toString(),
-      weight: pet.weight,
-      gender: pet.gender,
-      feed: pet.feed || [],
-      images: pet.images || [],
+      name: pet.name || "",
+      category: pet.category || "DOG",
+      age: pet.age ? pet.age.toString() : "",
+      weight: pet.weight || "",
+      gender: pet.gender || "MALE",
+      feed: Array.isArray(pet.feed) ? pet.feed : [],
+      images: Array.isArray(pet.images) ? pet.images : [],
     });
-    setSelectedFiles([]);
     setShowEditModal(true);
   };
 
   const handleFeedChange = (e) => {
     const value = e.target.value;
-    if (!value.trim()) {
-      // If input is empty, set feed to empty array
-      setPetForm({ ...petForm, feed: [] });
-    } else {
-      // Split by comma and filter out empty strings
-      const feedArray = value.split(",").map((item) => item.trim()).filter(Boolean);
-      setPetForm({ ...petForm, feed: feedArray });
-    }
+    const feedArray = value.split(",").map((item) => item.trim()).filter(Boolean);
+    setPetForm({ ...petForm, feed: feedArray });
   };
 
   const handleImageUpload = async (e) => {
-    const files = Array.from(e.target.files);
-    if (!files || files.length === 0) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
     setUploadingImages(true);
 
     try {
-      // Store the actual files for upload
-      setSelectedFiles(prev => [...prev, ...files]);
+      // Convert files to base64 URLs for preview (in real app, upload to server)
+      const imagePromises = files.map(file => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            // For demo, create mock URLs
+            const mockUrl = `https://res.cloudinary.com/demo/image/upload/v${Date.now()}/pet_images/${file.name.replace(/\s+/g, '_')}`;
+            resolve(mockUrl);
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      });
 
-      // Create preview URLs for display
-      const previewUrls = files.map(file => URL.createObjectURL(file));
+      // Simulate upload delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      const imageUrls = await Promise.all(imagePromises);
+
       setPetForm(prev => ({
         ...prev,
-        images: [...prev.images, ...previewUrls]
+        images: [...prev.images, ...imageUrls]
       }));
 
-      console.log("Files selected:", files);
     } catch (error) {
-      AlertDialog("", "Failed to process images", "error", 1500);
+      console.error("Image upload error:", error);
+      AlertDialog("", "Failed to upload images", "error", 1500);
     } finally {
       setUploadingImages(false);
+      // Reset file input
+      e.target.value = "";
     }
   };
 
   const removeImage = (index) => {
-    setPetForm(prev => {
-      const newImages = prev.images.filter((_, i) => i !== index);
-      return { ...prev, images: newImages };
-    });
-
-    // Also remove from selected files if it's a new file
-    setSelectedFiles(prev => {
-      const existingImagesCount = editingPet ? (editingPet.images || []).length : 0;
-      const fileIndex = index - existingImagesCount;
-      if (fileIndex >= 0) {
-        return prev.filter((_, i) => i !== fileIndex);
-      }
-      return prev;
-    });
+    setPetForm(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }));
   };
 
   const formatWeight = (weight) => {
-    return weight?.toString().includes("kg") ? weight : `${weight}kg`;
+    if (!weight) return "N/A";
+    return weight.toString().includes("kg") ? weight : `${weight}kg`;
   };
 
   const formatCategory = (category) => {
-    return category?.toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
+    if (!category) return "Unknown";
+    return category.toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
-  console.log("filtered pets =============>>>>", filteredPets)
+  console.log("filtered pets =============>>>>", filteredPets);
 
   if (isLoading) {
     return (
@@ -586,12 +623,15 @@ const MyPet = () => {
                         className="h-16 w-16 rounded-lg object-cover"
                         src={pet.images[0]}
                         alt={pet.name}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
                       />
-                    ) : (
-                      <div className="h-16 w-16 rounded-lg bg-emerald-100 flex items-center justify-center">
-                        <Heart className="h-8 w-8 text-emerald-600" />
-                      </div>
-                    )}
+                    ) : null}
+                    <div className={`h-16 w-16 rounded-lg bg-emerald-100 flex items-center justify-center ${pet.images && pet.images.length > 0 ? 'hidden' : ''}`}>
+                      <Heart className="h-8 w-8 text-emerald-600" />
+                    </div>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
@@ -669,12 +709,15 @@ const MyPet = () => {
                               className="h-12 w-12 rounded-lg object-cover"
                               src={pet.images[0]}
                               alt={pet.name}
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.nextSibling.style.display = 'flex';
+                              }}
                             />
-                          ) : (
-                            <div className="h-12 w-12 rounded-lg bg-emerald-100 flex items-center justify-center">
-                              <Heart className="h-6 w-6 text-emerald-600" />
-                            </div>
-                          )}
+                          ) : null}
+                          <div className={`h-12 w-12 rounded-lg bg-emerald-100 flex items-center justify-center ${pet.images && pet.images.length > 0 ? 'hidden' : ''}`}>
+                            <Heart className="h-6 w-6 text-emerald-600" />
+                          </div>
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
@@ -819,16 +862,19 @@ const MyPet = () => {
                       </label>
                       <select
                         value={petForm.category}
-                        onChange={(e) =>
-                          setPetForm({ ...petForm, category: e.target.value })
-                        }
+                        onChange={(e) => setPetForm({ ...petForm, category: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                       >
-                        {petCategories.filter(cat => cat.value !== 'all').map((category) => (
-                          <option key={category.value} value={category.value}>
-                            {category.label}
-                          </option>
-                        ))}
+                        <option value="DOG">Dog</option>
+                        <option value="CAT">Cat</option>
+                        <option value="BIRD">Bird</option>
+                        <option value="FISH">Fish</option>
+                        <option value="REPTILE">Reptile</option>
+                        <option value="SMALL_MAMMAL">Small Mammal</option>
+                        <option value="AMPHIBIAN">Amphibian</option>
+                        <option value="FARM_ANIMAL">Farm Animal</option>
+                        <option value="EXOTIC">Exotic</option>
+                        <option value="OTHER">Others</option>
                       </select>
                     </div>
 
@@ -845,6 +891,7 @@ const MyPet = () => {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         placeholder="Enter age"
                         min="0"
+                        max="50"
                       />
                     </div>
 
@@ -888,7 +935,7 @@ const MyPet = () => {
                         value={petForm.feed.join(", ")}
                         onChange={handleFeedChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                        placeholder="e.g., Oatmeal, Green Peas"
+                        placeholder="e.g., Dry food, Treats, Fish"
                       />
                     </div>
                   </div>
@@ -909,7 +956,6 @@ const MyPet = () => {
                           </p>
                         </div>
                         <input
-                          id="dropzone-file"
                           type="file"
                           className="hidden"
                           multiple
@@ -921,7 +967,7 @@ const MyPet = () => {
                     {uploadingImages && (
                       <div className="mt-2 text-sm text-gray-500 flex items-center">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600 mr-2"></div>
-                        Processing images...
+                        Uploading images...
                       </div>
                     )}
                   </div>
@@ -930,7 +976,7 @@ const MyPet = () => {
                   {petForm.images.length > 0 && (
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Image Previews
+                        Image Previews ({petForm.images.length} image{petForm.images.length !== 1 ? 's' : ''})
                       </label>
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                         {petForm.images.map((image, index) => (
@@ -938,15 +984,15 @@ const MyPet = () => {
                             <img
                               src={image}
                               alt={`Preview ${index + 1}`}
-                              className="h-24 w-full object-cover rounded-lg"
+                              className="h-24 w-full object-cover rounded-lg border border-gray-200"
                               onError={(e) => {
-                                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K';
+                                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDE3SDE2TTE2IDlIMTJNMTIgOUw4IDlNOCA5VjEzTTggMTNWMTdIMTIiIHN0cm9rZT0iIzlDQTNBRiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+';
                               }}
                             />
                             <button
                               type="button"
                               onClick={() => removeImage(index)}
-                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
                             >
                               <X className="h-3 w-3" />
                             </button>
@@ -992,7 +1038,7 @@ const MyPet = () => {
             <div className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Edit Pet</h2>
+                  <h2 className="text-xl font-bold text-gray-900">Edit Pet: {editingPet.name}</h2>
                   <button
                     onClick={() => {
                       setShowEditModal(false);
@@ -1034,11 +1080,16 @@ const MyPet = () => {
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                       >
-                        {petCategories.filter(cat => cat.value !== 'all').map((category) => (
-                          <option key={category.value} value={category.value}>
-                            {category.label}
-                          </option>
-                        ))}
+                        <option value="DOG">Dog</option>
+                        <option value="CAT">Cat</option>
+                        <option value="BIRD">Bird</option>
+                        <option value="FISH">Fish</option>
+                        <option value="REPTILE">Reptile</option>
+                        <option value="SMALL_MAMMAL">Small Mammal</option>
+                        <option value="AMPHIBIAN">Amphibian</option>
+                        <option value="FARM_ANIMAL">Farm Animal</option>
+                        <option value="EXOTIC">Exotic</option>
+                        <option value="OTHER">Others</option>
                       </select>
                     </div>
 
@@ -1055,6 +1106,7 @@ const MyPet = () => {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         placeholder="Enter age"
                         min="0"
+                        max="50"
                       />
                     </div>
 
@@ -1098,7 +1150,7 @@ const MyPet = () => {
                         value={petForm.feed.join(", ")}
                         onChange={handleFeedChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                        placeholder="e.g., Oatmeal, Green Peas"
+                        placeholder="e.g., Dry food, Treats, Fish"
                       />
                     </div>
                   </div>
@@ -1119,7 +1171,6 @@ const MyPet = () => {
                           </p>
                         </div>
                         <input
-                          id="dropzone-file-edit"
                           type="file"
                           className="hidden"
                           multiple
@@ -1131,7 +1182,7 @@ const MyPet = () => {
                     {uploadingImages && (
                       <div className="mt-2 text-sm text-gray-500 flex items-center">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600 mr-2"></div>
-                        Processing images...
+                        Uploading images...
                       </div>
                     )}
                   </div>
@@ -1140,7 +1191,7 @@ const MyPet = () => {
                   {petForm.images.length > 0 && (
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Image Previews
+                        Image Previews ({petForm.images.length} image{petForm.images.length !== 1 ? 's' : ''})
                       </label>
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                         {petForm.images.map((image, index) => (
@@ -1148,15 +1199,15 @@ const MyPet = () => {
                             <img
                               src={image}
                               alt={`Preview ${index + 1}`}
-                              className="h-24 w-full object-cover rounded-lg"
+                              className="h-24 w-full object-cover rounded-lg border border-gray-200"
                               onError={(e) => {
-                                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K';
+                                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDE3SDE2TTE2IDlIMTJNMTIgOUw4IDlNOCA5VjEzTTggMTNWMTdIMTIiIHN0cm9rZT0iIzlDQTNBRiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+';
                               }}
                             />
                             <button
                               type="button"
                               onClick={() => removeImage(index)}
-                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
                             >
                               <X className="h-3 w-3" />
                             </button>
@@ -1204,7 +1255,7 @@ const MyPet = () => {
               <div className="p-6">
                 <div className="flex justify-between items-start mb-6">
                   <h2 className="text-xl font-bold text-gray-900">
-                    Pet Details
+                    Pet Details: {selectedPet.name}
                   </h2>
                   <button
                     onClick={() => setSelectedPet(null)}
@@ -1219,13 +1270,13 @@ const MyPet = () => {
                   {selectedPet.images && selectedPet.images.length > 0 && (
                     <div>
                       <h3 className="text-lg font-medium text-gray-900 mb-3">
-                        Photos
+                        Photos ({selectedPet.images.length})
                       </h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {selectedPet.images.map((image, index) => (
                           <div
                             key={index}
-                            className="aspect-square rounded-lg overflow-hidden bg-gray-100"
+                            className="aspect-square rounded-lg overflow-hidden bg-gray-100 border border-gray-200"
                           >
                             <img
                               src={image}
@@ -1233,7 +1284,7 @@ const MyPet = () => {
                               className="w-full h-full object-cover hover:scale-105 transition-transform cursor-pointer"
                               onClick={() => window.open(image, '_blank')}
                               onError={(e) => {
-                                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K';
+                                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDE3SDE2TTE2IDlIMTJNMTIgOUw4IDlNOCA5VjEzTTggMTNWMTdIMTIiIHN0cm9rZT0iIzlDQTNBRiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+';
                               }}
                             />
                           </div>
@@ -1321,39 +1372,4 @@ const MyPet = () => {
                     ) : (
                       <p className="text-gray-500 italic">No feed information provided</p>
                     )}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-                    <button
-                      onClick={() => {
-                        setSelectedPet(null);
-                        handleEditPet(selectedPet);
-                      }}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-                    >
-                      <Edit className="h-4 w-4 mr-2" />
-                      Edit Pet
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSelectedPet(null);
-                        handleDeletePet(selectedPet._id);
-                      }}
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete Pet
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-export default MyPet;
+                  </div
