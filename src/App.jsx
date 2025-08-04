@@ -46,6 +46,7 @@ import MyPets from "./page/pet-owner/MyPet"
 // Vet Pages
 import VetDashboard from "./page/vet/VetDashboard";
 import PetOwnerProfile from "./page/pet-owner/PetOwnerProfile";
+import MedicalRecord from "./page/pet-owner/MedicalRecord";
 // import VetAppointments from "./page/vet/Appointments";
 // import PatientRecords from "./page/vet/PatientRecords";
 // import VetSchedule from "./page/vet/Schedule";
@@ -224,6 +225,7 @@ function App() {
                 <Route path="dashboard" element={<PetOwnerDashboard />} />
                 <Route path="my-pets" element={<MyPets />} />
                 <Route path="petowner-profile" element={<PetOwnerProfile />} />
+                <Route path="medical-record" element={<MedicalRecord />} />
                 
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>

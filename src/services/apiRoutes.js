@@ -22,3 +22,10 @@ export const GET_PET_BY_ID = (id) => `/pet/${id}`
 
 export const GET_PET_OWNER_PROFILE = "/pet-owner/my-profile";
 export const UPDATE_PET_PROFILE = "/pet-owner/update-my-profile";
+
+//Medical record
+export const POST_MEDICAL_RECORD = "/medical-record/add-medical-record";
+export const GET_ALL_MEDICAL_RECORD = "/medical-record/get-all-medical-records";
+export const GET_MEDICAL_RECORD_BY_ID = (id) => `/medical-record/${id}`;
+export const DELETE_MEDICAL_RECORD = (id) => `/medical-record/delete-medical-record/${id}`;
+export const UPDATE_MEDICAL_RECORD = (id) => `/medical-record/update-medical-record/${id}`
