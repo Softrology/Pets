@@ -27,6 +27,7 @@ import {
   UPDATE_MEDICAL_RECORD,
   GET_MEDICAL_RECORD_BY_ID,
   GET_ALL_PETS,
+  GET_ALL_VETS, // Add this to your apiRoutes
 } from "../../services/apiRoutes";
 import { getUserToken } from "../../utitlities/Globals";
 import AlertDialog from "../../utitlities/Alert";
@@ -77,7 +78,27 @@ const MedicalRecord = () => {
       },
       onError: (error) => {
         AlertDialog("Error", error.message, "error");
-      }
+      },
+    });
+  };
+
+  // Custom hook to fetch all vets
+  const useGetVets = () => {
+    return useQuery({
+      queryKey: ["vets"],
+      queryFn: async () => {
+        try {
+          const response = await get(GET_ALL_VETS, token);
+          console.log("Vets response:", response.data);
+          return response.data || [];
+        } catch (error) {
+          console.error("Fetch vets error:", error);
+          throw error;
+        }
+      },
+      onError: (error) => {
+        AlertDialog("Error", error.message, "error");
+      },
     });
   };
 
@@ -96,7 +117,7 @@ const MedicalRecord = () => {
       },
       onError: (error) => {
         AlertDialog("Error", error.message, "error");
-      }
+      },
     });
   };
 
@@ -105,39 +126,47 @@ const MedicalRecord = () => {
     return useMutation({
       mutationFn: async (recordData) => {
         console.log("Adding medical record with data:", recordData);
-        
+
         const formData = new FormData();
-        
+
         // Ensure pet ID is properly set
         if (!recordData.pet) {
           throw new Error("Pet selection is required");
         }
-        
-        formData.append('pet', recordData.pet);
-        formData.append('type', recordData.type);
-        formData.append('date', recordData.date);
-        formData.append('prescription', recordData.prescription || '');
-        formData.append('healthCenter', recordData.healthCenter || '');
-        formData.append('isExistingVet', recordData.isExistingVet.toString());
-        formData.append('existingVet', recordData.existingVet || '');
-        formData.append('vet', recordData.vet || '');
+
+        formData.append("pet", recordData.pet);
+        formData.append("type", recordData.type);
+        formData.append("date", recordData.date);
+        formData.append("prescription", recordData.prescription || "");
+        formData.append("healthCenter", recordData.healthCenter || "");
+        formData.append("isExistingVet", recordData.isExistingVet.toString());
+
+        // Only send existingVet if isExistingVet is true
+        if (recordData.isExistingVet && recordData.existingVet) {
+          formData.append("existingVet", recordData.existingVet);
+        }
+
+        // Only send vet if isExistingVet is false
+        if (!recordData.isExistingVet && recordData.vet) {
+          formData.append("vet", recordData.vet);
+        }
 
         // Add images if any
         if (recordData.imageFiles && recordData.imageFiles.length > 0) {
           recordData.imageFiles.forEach((file) => {
-            formData.append('images', file);
+            formData.append("images", file);
           });
         }
 
         // Log formData contents for debugging
         for (let pair of formData.entries()) {
-          console.log(pair[0] + ': ' + pair[1]);
+          console.log(pair[0] + ": " + pair[1]);
         }
 
         const response = await post(POST_MEDICAL_RECORD, formData, token, {
-          'Content-Type': 'multipart/form-data'
+          "Content-Type": "multipart/form-data",
         });
-        
+
         console.log("Add medical record response:", response);
         return response;
       },
@@ -155,7 +184,10 @@ const MedicalRecord = () => {
       },
       onError: (error) => {
         console.error("Add medical record error:", error);
-        const errorMessage = error.response?.data?.message || error.message || "Something went wrong";
+        const errorMessage =
+          error.response?.data?.message ||
+          error.message ||
+          "Something went wrong";
         AlertDialog("Error", errorMessage, "error", 3000);
       },
     });
@@ -166,35 +198,51 @@ const MedicalRecord = () => {
     return useMutation({
       mutationFn: async ({ id, recordData }) => {
         console.log("Updating medical record with data:", recordData);
-        
+
         const formData = new FormData();
-        
+
         if (!recordData.pet) {
           throw new Error("Pet selection is required");
         }
-        
-        formData.append('pet', recordData.pet);
-        formData.append('type', recordData.type);
-        formData.append('date', recordData.date);
-        formData.append('prescription', recordData.prescription || '');
-        formData.append('healthCenter', recordData.healthCenter || '');
-        formData.append('isExistingVet', recordData.isExistingVet.toString());
-        formData.append('existingVet', recordData.existingVet || '');
-        formData.append('vet', recordData.vet || '');
+
+        formData.append("pet", recordData.pet);
+        formData.append("type", recordData.type);
+        formData.append("date", recordData.date);
+        formData.append("prescription", recordData.prescription || "");
+        formData.append("healthCenter", recordData.healthCenter || "");
+        formData.append("isExistingVet", recordData.isExistingVet.toString());
+
+        // Only send existingVet if isExistingVet is true
+        if (recordData.isExistingVet && recordData.existingVet) {
+          formData.append("existingVet", recordData.existingVet);
+        }
+
+        // Only send vet if isExistingVet is false
+        if (!recordData.isExistingVet && recordData.vet) {
+          formData.append("vet", recordData.vet);
+        }
 
         if (recordData.existingImages && recordData.existingImages.length > 0) {
-          formData.append('existingImages', JSON.stringify(recordData.existingImages));
+          formData.append(
+            "existingImages",
+            JSON.stringify(recordData.existingImages)
+          );
         }
 
         if (recordData.imageFiles && recordData.imageFiles.length > 0) {
           recordData.imageFiles.forEach((file) => {
-            formData.append('images', file);
+            formData.append("images", file);
           });
         }
 
-        const response = await patch(UPDATE_MEDICAL_RECORD(id), formData, token, {
-          'Content-Type': 'multipart/form-data'
-        });
+        const response = await patch(
+          UPDATE_MEDICAL_RECORD(id),
+          formData,
+          token,
+          {
+            "Content-Type": "multipart/form-data",
+          }
+        );
         return response;
       },
       onSuccess: (data) => {
@@ -211,7 +259,10 @@ const MedicalRecord = () => {
       },
       onError: (error) => {
         console.error("Update medical record error:", error);
-        const errorMessage = error.response?.data?.message || error.message || "Something went wrong";
+        const errorMessage =
+          error.response?.data?.message ||
+          error.message ||
+          "Something went wrong";
         AlertDialog("Error", errorMessage, "error", 3000);
       },
     });
@@ -234,7 +285,10 @@ const MedicalRecord = () => {
         queryClient.invalidateQueries(["medicalRecords"]);
       },
       onError: (error) => {
-        const errorMessage = error.response?.data?.message || error.message || "Something went wrong";
+        const errorMessage =
+          error.response?.data?.message ||
+          error.message ||
+          "Something went wrong";
         AlertDialog("Error", errorMessage, "error", 1500);
       },
     });
@@ -248,10 +302,9 @@ const MedicalRecord = () => {
     isRefetching,
   } = useGetMedicalRecords(token);
 
-  const {
-    data: pets = [],
-    isLoading: isLoadingPets,
-  } = useGetPets();
+  const { data: pets = [], isLoading: isLoadingPets } = useGetPets();
+
+  const { data: vets = [], isLoading: isLoadingVets } = useGetVets();
 
   const addRecordMutation = useAddMedicalRecord();
   const updateRecordMutation = useUpdateMedicalRecord();
@@ -261,8 +314,12 @@ const MedicalRecord = () => {
   const analytics = useMemo(() => {
     const recordsArray = medicalRecords || [];
     const total = recordsArray.length;
-    const consultations = recordsArray.filter((record) => record.type === "CONSULTATION").length;
-    const vaccinations = recordsArray.filter((record) => record.type === "VACCINATION").length;
+    const consultations = recordsArray.filter(
+      (record) => record.type === "CONSULTATION"
+    ).length;
+    const vaccinations = recordsArray.filter(
+      (record) => record.type === "VACCINATION"
+    ).length;
     const others = total - consultations - vaccinations;
 
     return { total, consultations, vaccinations, others };
@@ -279,7 +336,8 @@ const MedicalRecord = () => {
   const filteredRecords = useMemo(() => {
     const recordsArray = medicalRecords || [];
     return recordsArray.filter((record) => {
-      const matchesSearch = record.pet?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      const matchesSearch =
+        record.pet?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         record.vet?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         record.healthCenter?.toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -306,11 +364,16 @@ const MedicalRecord = () => {
 
   const handleAddRecord = (e) => {
     e.preventDefault();
-    
+
     console.log("Form data before validation:", recordForm);
-    
+
     if (!recordForm.pet) {
-      AlertDialog("Validation Error", "Pet selection is required", "error", 2000);
+      AlertDialog(
+        "Validation Error",
+        "Pet selection is required",
+        "error",
+        2000
+      );
       return;
     }
 
@@ -322,6 +385,27 @@ const MedicalRecord = () => {
 
     if (!recordForm.date) {
       AlertDialog("Validation Error", "Date is required", "error", 2000);
+      return;
+    }
+
+    // Validate vet selection based on isExistingVet
+    if (recordForm.isExistingVet && !recordForm.existingVet) {
+      AlertDialog(
+        "Validation Error",
+        "Please select an existing veterinarian",
+        "error",
+        2000
+      );
+      return;
+    }
+
+    if (!recordForm.isExistingVet && !recordForm.vet) {
+      AlertDialog(
+        "Validation Error",
+        "Please enter veterinarian name",
+        "error",
+        2000
+      );
       return;
     }
 
@@ -343,9 +427,35 @@ const MedicalRecord = () => {
 
   const handleUpdateRecord = (e) => {
     e.preventDefault();
-    
+
     if (!recordForm.pet) {
-      AlertDialog("Validation Error", "Pet selection is required", "error", 2000);
+      AlertDialog(
+        "Validation Error",
+        "Pet selection is required",
+        "error",
+        2000
+      );
+      return;
+    }
+
+    // Validate vet selection based on isExistingVet
+    if (recordForm.isExistingVet && !recordForm.existingVet) {
+      AlertDialog(
+        "Validation Error",
+        "Please select an existing veterinarian",
+        "error",
+        2000
+      );
+      return;
+    }
+
+    if (!recordForm.isExistingVet && !recordForm.vet) {
+      AlertDialog(
+        "Validation Error",
+        "Please enter veterinarian name",
+        "error",
+        2000
+      );
       return;
     }
 
@@ -369,7 +479,9 @@ const MedicalRecord = () => {
   };
 
   const handleDeleteRecord = (recordId) => {
-    if (window.confirm("Are you sure you want to delete this medical record?")) {
+    if (
+      window.confirm("Are you sure you want to delete this medical record?")
+    ) {
       deleteRecordMutation.mutate(recordId);
     }
   };
@@ -400,19 +512,25 @@ const MedicalRecord = () => {
     try {
       // Validate file sizes
       for (let file of files) {
-        if (file.size > 10 * 1024 * 1024) { // 10MB limit
-          AlertDialog("File Error", `File ${file.name} is too large. Maximum size is 10MB.`, "error", 3000);
+        if (file.size > 10 * 1024 * 1024) {
+          // 10MB limit
+          AlertDialog(
+            "File Error",
+            `File ${file.name} is too large. Maximum size is 10MB.`,
+            "error",
+            3000
+          );
           setUploadingImages(false);
           return;
         }
       }
 
-      setSelectedFiles(prev => [...prev, ...files]);
+      setSelectedFiles((prev) => [...prev, ...files]);
 
-      const previewUrls = files.map(file => URL.createObjectURL(file));
-      setRecordForm(prev => ({
+      const previewUrls = files.map((file) => URL.createObjectURL(file));
+      setRecordForm((prev) => ({
         ...prev,
-        images: [...prev.images, ...previewUrls]
+        images: [...prev.images, ...previewUrls],
       }));
     } catch (error) {
       console.error("Image upload error:", error);
@@ -423,13 +541,15 @@ const MedicalRecord = () => {
   };
 
   const removeImage = (index) => {
-    setRecordForm(prev => {
+    setRecordForm((prev) => {
       const newImages = prev.images.filter((_, i) => i !== index);
       return { ...prev, images: newImages };
     });
 
-    setSelectedFiles(prev => {
-      const existingImagesCount = editingRecord ? (editingRecord.images || []).length : 0;
+    setSelectedFiles((prev) => {
+      const existingImagesCount = editingRecord
+        ? (editingRecord.images || []).length
+        : 0;
       const fileIndex = index - existingImagesCount;
       if (fileIndex >= 0) {
         return prev.filter((_, i) => i !== fileIndex);
@@ -439,10 +559,10 @@ const MedicalRecord = () => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -452,9 +572,9 @@ const MedicalRecord = () => {
 
   const getTypeIcon = (type) => {
     switch (type) {
-      case 'CONSULTATION':
+      case "CONSULTATION":
         return <Stethoscope className="h-4 w-4" />;
-      case 'VACCINATION':
+      case "VACCINATION":
         return <Activity className="h-4 w-4" />;
       default:
         return <FileText className="h-4 w-4" />;
@@ -463,16 +583,16 @@ const MedicalRecord = () => {
 
   const getTypeColor = (type) => {
     switch (type) {
-      case 'CONSULTATION':
-        return 'bg-blue-100 text-blue-800';
-      case 'VACCINATION':
-        return 'bg-green-100 text-green-800';
+      case "CONSULTATION":
+        return "bg-blue-100 text-blue-800";
+      case "VACCINATION":
+        return "bg-green-100 text-green-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
-  if (isLoading || isLoadingPets) {
+  if (isLoading || isLoadingPets || isLoadingVets) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
@@ -481,6 +601,7 @@ const MedicalRecord = () => {
   }
 
   console.log("Available pets:", pets);
+  console.log("Available vets:", vets);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
@@ -493,7 +614,8 @@ const MedicalRecord = () => {
                 Medical Records
               </h1>
               <p className="text-emerald-100">
-                Manage pet medical records, track health history, and maintain veterinary information
+                Manage pet medical records, track health history, and maintain
+                veterinary information
               </p>
             </div>
             <button
@@ -514,7 +636,9 @@ const MedicalRecord = () => {
                 <FileText className="h-6 w-6 text-emerald-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Records</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Records
+                </p>
                 <p className="text-2xl font-bold text-gray-900">
                   {analytics.total}
                 </p>
@@ -528,7 +652,9 @@ const MedicalRecord = () => {
                 <Stethoscope className="h-6 w-6 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Consultations</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Consultations
+                </p>
                 <p className="text-2xl font-bold text-gray-900">
                   {analytics.consultations}
                 </p>
@@ -542,7 +668,9 @@ const MedicalRecord = () => {
                 <Activity className="h-6 w-6 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Vaccinations</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Vaccinations
+                </p>
                 <p className="text-2xl font-bold text-gray-900">
                   {analytics.vaccinations}
                 </p>
@@ -588,8 +716,9 @@ const MedicalRecord = () => {
               <Filter className="h-5 w-5 mr-2" />
               Filters
               <ChevronDown
-                className={`h-4 w-4 ml-2 transform transition-transform ${showFilters ? "rotate-180" : ""
-                  }`}
+                className={`h-4 w-4 ml-2 transform transition-transform ${
+                  showFilters ? "rotate-180" : ""
+                }`}
               />
             </button>
           </div>
@@ -637,7 +766,7 @@ const MedicalRecord = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <h3 className="text-lg font-medium text-gray-900 truncate">
-                        {record.pet?.name || 'Unknown Pet'}
+                        {record.pet?.name || "Unknown Pet"}
                       </h3>
                       <div className="flex items-center space-x-2">
                         <button
@@ -661,7 +790,11 @@ const MedicalRecord = () => {
                       </div>
                     </div>
                     <div className="mt-1">
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getTypeColor(record.type)}`}>
+                      <span
+                        className={`px-2 py-1 text-xs font-semibold rounded-full ${getTypeColor(
+                          record.type
+                        )}`}
+                      >
                         {formatType(record.type)}
                       </span>
                       <p className="text-sm text-gray-600 mt-1">
@@ -716,9 +849,13 @@ const MedicalRecord = () => {
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            {record.pet?.name || 'Unknown Pet'}
+                            {record.pet?.name || "Unknown Pet"}
                           </div>
-                          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getTypeColor(record.type)}`}>
+                          <span
+                            className={`px-2 py-1 text-xs font-semibold rounded-full ${getTypeColor(
+                              record.type
+                            )}`}
+                          >
                             {formatType(record.type)}
                           </span>
                         </div>
@@ -729,16 +866,7 @@ const MedicalRecord = () => {
                       <div className="flex items-center">
                         <Calendar className="h-4 w-4 mr-1 text-gray-400" />
                         <span className="text-sm text-gray-900">
-                          {formatDate(record.date)}
-                        </span>
-                      </div>
-                    </td>
-
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <User className="h-4 w-4 mr-1 text-gray-400" />
-                        <span className="text-sm text-gray-900">
-                          {record.vet || 'Not specified'}
+                          {record.vet || "Not specified"}
                         </span>
                       </div>
                     </td>
@@ -747,7 +875,7 @@ const MedicalRecord = () => {
                       <div className="flex items-center">
                         <MapPin className="h-4 w-4 mr-1 text-gray-400" />
                         <span className="text-sm text-gray-900">
-                          {record.healthCenter || 'Not specified'}
+                          {record.healthCenter || "Not specified"}
                         </span>
                       </div>
                     </td>
@@ -805,7 +933,9 @@ const MedicalRecord = () => {
             <div className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Add New Medical Record</h2>
+                  <h2 className="text-xl font-bold text-gray-900">
+                    Add New Medical Record
+                  </h2>
                   <button
                     onClick={() => {
                       setShowAddModal(false);
@@ -835,12 +965,14 @@ const MedicalRecord = () => {
                         <option value="">Select a pet</option>
                         {pets.map((pet) => (
                           <option key={pet._id} value={pet._id}>
-                            {pet.name} {pet.breed ? `(${pet.breed})` : ''}
+                            {pet.name} {pet.breed ? `(${pet.breed})` : ""}
                           </option>
                         ))}
                       </select>
                       {!recordForm.pet && (
-                        <p className="mt-1 text-sm text-red-600">Pet selection is required</p>
+                        <p className="mt-1 text-sm text-red-600">
+                          Pet selection is required
+                        </p>
                       )}
                     </div>
 
@@ -855,11 +987,13 @@ const MedicalRecord = () => {
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                       >
-                        {recordTypes.filter(type => type.value !== 'all').map((type) => (
-                          <option key={type.value} value={type.value}>
-                            {type.label}
-                          </option>
-                        ))}
+                        {recordTypes
+                          .filter((type) => type.value !== "all")
+                          .map((type) => (
+                            <option key={type.value} value={type.value}>
+                              {type.label}
+                            </option>
+                          ))}
                       </select>
                     </div>
 
@@ -885,58 +1019,103 @@ const MedicalRecord = () => {
                         type="text"
                         value={recordForm.healthCenter}
                         onChange={(e) =>
-                          setRecordForm({ ...recordForm, healthCenter: e.target.value })
+                          setRecordForm({
+                            ...recordForm,
+                            healthCenter: e.target.value,
+                          })
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         placeholder="Enter health center name"
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Veterinarian
-                      </label>
-                      <input
-                        type="text"
-                        value={recordForm.vet}
-                        onChange={(e) =>
-                          setRecordForm({ ...recordForm, vet: e.target.value })
-                        }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                        placeholder="Enter veterinarian name"
-                      />
-                    </div>
-
-                    {recordForm.isExistingVet && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Existing Veterinarian ID
-                        </label>
+                    <div className="md:col-span-2">
+                      <div className="flex items-center mb-3">
                         <input
-                          type="text"
-                          value={recordForm.existingVet}
-                          onChange={(e) =>
-                            setRecordForm({ ...recordForm, existingVet: e.target.value })
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                          placeholder="Enter existing veterinarian ID"
+                          type="checkbox"
+                          id="isExistingVet"
+                          checked={recordForm.isExistingVet}
+                          onChange={(e) => {
+                            setRecordForm({
+                              ...recordForm,
+                              isExistingVet: e.target.checked,
+                              // Clear the other field when switching
+                              existingVet: e.target.checked
+                                ? recordForm.existingVet
+                                : "",
+                              vet: e.target.checked ? "" : recordForm.vet,
+                            });
+                          }}
+                          className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
                         />
+                        <label
+                          htmlFor="isExistingVet"
+                          className="ml-2 block text-sm text-gray-900"
+                        >
+                          Use Existing Veterinarian
+                        </label>
                       </div>
-                    )}
 
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="isExistingVet"
-                        checked={recordForm.isExistingVet}
-                        onChange={(e) =>
-                          setRecordForm({ ...recordForm, isExistingVet: e.target.checked })
-                        }
-                        className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
-                      />
-                      <label htmlFor="isExistingVet" className="ml-2 block text-sm text-gray-900">
-                        Existing Veterinarian
-                      </label>
+                      {recordForm.isExistingVet ? (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Select Veterinarian{" "}
+                            <span className="text-red-500">*</span>
+                          </label>
+                          <select
+                            value={recordForm.existingVet}
+                            onChange={(e) =>
+                              setRecordForm({
+                                ...recordForm,
+                                existingVet: e.target.value,
+                              })
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                            required={recordForm.isExistingVet}
+                          >
+                            <option value="">Select a veterinarian</option>
+                            {vets.map((vet) => (
+                              <option key={vet._id} value={vet._id}>
+                                Dr. {vet.name}{" "}
+                                {vet.specialization
+                                  ? `- ${vet.specialization}`
+                                  : ""}
+                              </option>
+                            ))}
+                          </select>
+                          {recordForm.isExistingVet &&
+                            !recordForm.existingVet && (
+                              <p className="mt-1 text-sm text-red-600">
+                                Please select a veterinarian
+                              </p>
+                            )}
+                        </div>
+                      ) : (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Veterinarian Name{" "}
+                            <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={recordForm.vet}
+                            onChange={(e) =>
+                              setRecordForm({
+                                ...recordForm,
+                                vet: e.target.value,
+                              })
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                            placeholder="Enter veterinarian name"
+                            required={!recordForm.isExistingVet}
+                          />
+                          {!recordForm.isExistingVet && !recordForm.vet && (
+                            <p className="mt-1 text-sm text-red-600">
+                              Please enter veterinarian name
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -947,7 +1126,10 @@ const MedicalRecord = () => {
                     <textarea
                       value={recordForm.prescription}
                       onChange={(e) =>
-                        setRecordForm({ ...recordForm, prescription: e.target.value })
+                        setRecordForm({
+                          ...recordForm,
+                          prescription: e.target.value,
+                        })
                       }
                       rows={4}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
@@ -964,7 +1146,10 @@ const MedicalRecord = () => {
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
                           <Upload className="h-8 w-8 text-gray-400 mb-2" />
                           <p className="mb-2 text-sm text-gray-500">
-                            <span className="font-semibold">Click to upload</span> or drag and drop
+                            <span className="font-semibold">
+                              Click to upload
+                            </span>{" "}
+                            or drag and drop
                           </p>
                           <p className="text-xs text-gray-500">
                             PNG, JPG, JPEG (MAX. 10MB each)
@@ -1002,7 +1187,8 @@ const MedicalRecord = () => {
                               alt={`Preview ${index + 1}`}
                               className="h-24 w-full object-cover rounded-lg"
                               onError={(e) => {
-                                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K';
+                                e.target.src =
+                                  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K";
                               }}
                             />
                             <button
@@ -1031,7 +1217,11 @@ const MedicalRecord = () => {
                     </button>
                     <button
                       type="submit"
-                      disabled={addRecordMutation.isLoading || uploadingImages || !recordForm.pet}
+                      disabled={
+                        addRecordMutation.isLoading ||
+                        uploadingImages ||
+                        !recordForm.pet
+                      }
                       className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center"
                     >
                       {addRecordMutation.isLoading ? (
@@ -1054,7 +1244,9 @@ const MedicalRecord = () => {
             <div className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Edit Medical Record</h2>
+                  <h2 className="text-xl font-bold text-gray-900">
+                    Edit Medical Record
+                  </h2>
                   <button
                     onClick={() => {
                       setShowEditModal(false);
@@ -1084,7 +1276,7 @@ const MedicalRecord = () => {
                         <option value="">Select a pet</option>
                         {pets.map((pet) => (
                           <option key={pet._id} value={pet._id}>
-                            {pet.name} {pet.breed ? `(${pet.breed})` : ''}
+                            {pet.name} {pet.breed ? `(${pet.breed})` : ""}
                           </option>
                         ))}
                       </select>
@@ -1101,11 +1293,13 @@ const MedicalRecord = () => {
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                       >
-                        {recordTypes.filter(type => type.value !== 'all').map((type) => (
-                          <option key={type.value} value={type.value}>
-                            {type.label}
-                          </option>
-                        ))}
+                        {recordTypes
+                          .filter((type) => type.value !== "all")
+                          .map((type) => (
+                            <option key={type.value} value={type.value}>
+                              {type.label}
+                            </option>
+                          ))}
                       </select>
                     </div>
 
@@ -1131,58 +1325,92 @@ const MedicalRecord = () => {
                         type="text"
                         value={recordForm.healthCenter}
                         onChange={(e) =>
-                          setRecordForm({ ...recordForm, healthCenter: e.target.value })
+                          setRecordForm({
+                            ...recordForm,
+                            healthCenter: e.target.value,
+                          })
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         placeholder="Enter health center name"
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Veterinarian
-                      </label>
-                      <input
-                        type="text"
-                        value={recordForm.vet}
-                        onChange={(e) =>
-                          setRecordForm({ ...recordForm, vet: e.target.value })
-                        }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                        placeholder="Enter veterinarian name"
-                      />
-                    </div>
-
-                    {recordForm.isExistingVet && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Existing Veterinarian ID
-                        </label>
+                    <div className="md:col-span-2">
+                      <div className="flex items-center mb-3">
                         <input
-                          type="text"
-                          value={recordForm.existingVet}
-                          onChange={(e) =>
-                            setRecordForm({ ...recordForm, existingVet: e.target.value })
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                          placeholder="Enter existing veterinarian ID"
+                          type="checkbox"
+                          id="isExistingVetEdit"
+                          checked={recordForm.isExistingVet}
+                          onChange={(e) => {
+                            setRecordForm({
+                              ...recordForm,
+                              isExistingVet: e.target.checked,
+                              // Clear the other field when switching
+                              existingVet: e.target.checked
+                                ? recordForm.existingVet
+                                : "",
+                              vet: e.target.checked ? "" : recordForm.vet,
+                            });
+                          }}
+                          className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
                         />
+                        <label
+                          htmlFor="isExistingVetEdit"
+                          className="ml-2 block text-sm text-gray-900"
+                        >
+                          Use Existing Veterinarian
+                        </label>
                       </div>
-                    )}
 
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="isExistingVetEdit"
-                        checked={recordForm.isExistingVet}
-                        onChange={(e) =>
-                          setRecordForm({ ...recordForm, isExistingVet: e.target.checked })
-                        }
-                        className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
-                      />
-                      <label htmlFor="isExistingVetEdit" className="ml-2 block text-sm text-gray-900">
-                        Existing Veterinarian
-                      </label>
+                      {recordForm.isExistingVet ? (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Select Veterinarian{" "}
+                            <span className="text-red-500">*</span>
+                          </label>
+                          <select
+                            value={recordForm.existingVet}
+                            onChange={(e) =>
+                              setRecordForm({
+                                ...recordForm,
+                                existingVet: e.target.value,
+                              })
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                            required={recordForm.isExistingVet}
+                          >
+                            <option value="">Select a veterinarian</option>
+                            {vets.map((vet) => (
+                              <option key={vet._id} value={vet._id}>
+                                Dr. {vet.name}{" "}
+                                {vet.specialization
+                                  ? `- ${vet.specialization}`
+                                  : ""}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      ) : (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Veterinarian Name{" "}
+                            <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={recordForm.vet}
+                            onChange={(e) =>
+                              setRecordForm({
+                                ...recordForm,
+                                vet: e.target.value,
+                              })
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                            placeholder="Enter veterinarian name"
+                            required={!recordForm.isExistingVet}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -1193,7 +1421,10 @@ const MedicalRecord = () => {
                     <textarea
                       value={recordForm.prescription}
                       onChange={(e) =>
-                        setRecordForm({ ...recordForm, prescription: e.target.value })
+                        setRecordForm({
+                          ...recordForm,
+                          prescription: e.target.value,
+                        })
                       }
                       rows={4}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
@@ -1210,7 +1441,10 @@ const MedicalRecord = () => {
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
                           <Upload className="h-8 w-8 text-gray-400 mb-2" />
                           <p className="mb-2 text-sm text-gray-500">
-                            <span className="font-semibold">Click to upload</span> or drag and drop
+                            <span className="font-semibold">
+                              Click to upload
+                            </span>{" "}
+                            or drag and drop
                           </p>
                           <p className="text-xs text-gray-500">
                             PNG, JPG, JPEG (MAX. 10MB each)
@@ -1248,7 +1482,8 @@ const MedicalRecord = () => {
                               alt={`Preview ${index + 1}`}
                               className="h-24 w-full object-cover rounded-lg"
                               onError={(e) => {
-                                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K';
+                                e.target.src =
+                                  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K";
                               }}
                             />
                             <button
@@ -1278,7 +1513,11 @@ const MedicalRecord = () => {
                     </button>
                     <button
                       type="submit"
-                      disabled={updateRecordMutation.isLoading || uploadingImages || !recordForm.pet}
+                      disabled={
+                        updateRecordMutation.isLoading ||
+                        uploadingImages ||
+                        !recordForm.pet
+                      }
                       className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center"
                     >
                       {updateRecordMutation.isLoading ? (
@@ -1286,7 +1525,9 @@ const MedicalRecord = () => {
                       ) : (
                         <Save className="h-4 w-4 mr-2" />
                       )}
-                      {updateRecordMutation.isLoading ? "Updating..." : "Update Record"}
+                      {updateRecordMutation.isLoading
+                        ? "Updating..."
+                        : "Update Record"}
                     </button>
                   </div>
                 </form>
@@ -1314,31 +1555,33 @@ const MedicalRecord = () => {
 
                 <div className="space-y-6">
                   {/* Record Images */}
-                  {selectedRecord.images && selectedRecord.images.length > 0 && (
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-3">
-                        Medical Images
-                      </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {selectedRecord.images.map((image, index) => (
-                          <div
-                            key={index}
-                            className="aspect-square rounded-lg overflow-hidden bg-gray-100"
-                          >
-                            <img
-                              src={image}
-                              alt={`Medical record ${index + 1}`}
-                              className="w-full h-full object-cover hover:scale-105 transition-transform cursor-pointer"
-                              onClick={() => window.open(image, '_blank')}
-                              onError={(e) => {
-                                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K';
-                              }}
-                            />
-                          </div>
-                        ))}
+                  {selectedRecord.images &&
+                    selectedRecord.images.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-medium text-gray-900 mb-3">
+                          Medical Images
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {selectedRecord.images.map((image, index) => (
+                            <div
+                              key={index}
+                              className="aspect-square rounded-lg overflow-hidden bg-gray-100"
+                            >
+                              <img
+                                src={image}
+                                alt={`Medical record ${index + 1}`}
+                                className="w-full h-full object-cover hover:scale-105 transition-transform cursor-pointer"
+                                onClick={() => window.open(image, "_blank")}
+                                onError={(e) => {
+                                  e.target.src =
+                                    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K";
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   {/* Record Information */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1351,7 +1594,9 @@ const MedicalRecord = () => {
                           <Heart className="h-5 w-5 text-emerald-600 mr-3" />
                           <div>
                             <span className="text-sm text-gray-500">Pet:</span>
-                            <p className="font-medium">{selectedRecord.pet?.name || 'Unknown Pet'}</p>
+                            <p className="font-medium">
+                              {selectedRecord.pet?.name || "Unknown Pet"}
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center">
@@ -1367,7 +1612,9 @@ const MedicalRecord = () => {
                           <Calendar className="h-5 w-5 text-emerald-600 mr-3" />
                           <div>
                             <span className="text-sm text-gray-500">Date:</span>
-                            <p className="font-medium">{formatDate(selectedRecord.date)}</p>
+                            <p className="font-medium">
+                              {formatDate(selectedRecord.date)}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -1381,25 +1628,33 @@ const MedicalRecord = () => {
                         <div className="flex items-center">
                           <User className="h-5 w-5 text-emerald-600 mr-3" />
                           <div>
-                            <span className="text-sm text-gray-500">Veterinarian:</span>
-                            <p className="font-medium">{selectedRecord.vet || 'Not specified'}</p>
+                            <span className="text-sm text-gray-500">
+                              Veterinarian:
+                            </span>
+                            <p className="font-medium">
+                              {selectedRecord.vet || "Not specified"}
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center">
                           <MapPin className="h-5 w-5 text-emerald-600 mr-3" />
                           <div>
-                            <span className="text-sm text-gray-500">Health Center:</span>
+                            <span className="text-sm text-gray-500">
+                              Health Center:
+                            </span>
                             <p className="font-medium">
-                              {selectedRecord.healthCenter || 'Not specified'}
+                              {selectedRecord.healthCenter || "Not specified"}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center">
                           <Stethoscope className="h-5 w-5 text-emerald-600 mr-3" />
                           <div>
-                            <span className="text-sm text-gray-500">Existing Vet:</span>
+                            <span className="text-sm text-gray-500">
+                              Existing Vet:
+                            </span>
                             <p className="font-medium">
-                              {selectedRecord.isExistingVet ? 'Yes' : 'No'}
+                              {selectedRecord.isExistingVet ? "Yes" : "No"}
                             </p>
                           </div>
                         </div>
