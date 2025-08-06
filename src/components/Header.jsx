@@ -1,8 +1,16 @@
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+
+  // Get authentication state from Redux store
+  // Adjust these selectors based on your actual Redux state structure
+  const isAuthenticated = useSelector(
+    (state) => state.auth?.isAuthenticated || false
+  );
+  const userRole = useSelector((state) => state.auth?.user?.role || null);
 
   const navItems = [
     { name: "HOME", href: "/" },
@@ -10,8 +18,22 @@ const Header = () => {
     { name: "FIND DOCTOR", href: "/find-doctor" },
     { name: "BLOG", href: "/blog" },
     { name: "CONTACT", href: "/contact-us" },
-    { name: "JOIN AS VET", href: "/join-as-vet" },
+    { name: "Login/Register AS VET", href: "/join-as-vet" },
   ];
+
+  // Function to get dashboard URL based on user role
+  const getDashboardUrl = () => {
+    switch (userRole) {
+      case "PET_OWNER":
+        return "/pet-owner/dashboard";
+      case "VET":
+        return "/vet/dashboard";
+      case "SUPER_ADMIN":
+        return "/super-admin/dashboard";
+      default:
+        return "/";
+    }
+  };
 
   return (
     <nav className="bg-white shadow-sm position-sticky border-b py-3  border-gray-100">
@@ -19,9 +41,12 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <span className="text-2xl font-bold text-[#39a2a1] tracking-wider">
+            <a
+              href="/"
+              className="text-2xl font-bold text-[#39a2a1] tracking-wider"
+            >
               LOGO
-            </span>
+            </a>
           </div>
 
           {/* Desktop Navigation */}
@@ -41,22 +66,33 @@ const Header = () => {
 
           {/* Auth Buttons - Desktop */}
           <div className="hidden lg:flex items-center space-x-4">
-            <div className="grid grid-cols-2 gap-3 w-full">
+            {isAuthenticated ? (
+              // Show Dashboard button for authenticated users
               <a
-                href="/signin"
-                onClick={() => setIsOpen(false)}
-                className="bg-white text-[#39a2a1] border border-[#39a2a1] hover:bg-[#39a2a1] hover:text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-xs sm:text-sm font-medium uppercase tracking-wide transition-colors duration-200 flex items-center justify-center whitespace-nowrap"
+                href={getDashboardUrl()}
+                className="bg-gradient-to-r from-[#39a2a1] to-[#21527b] hover:from-[#2d8a89] hover:to-[#1a4062] text-white px-6 py-3 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 flex items-center justify-center whitespace-nowrap"
               >
-                LOGIN
+                DASHBOARD
               </a>
-              <a
-                href="/signup"
-                onClick={() => setIsOpen(false)}
-                className="bg-gradient-to-r from-[#39a2a1] to-[#21527b] hover:from-[#2d8a89] hover:to-[#1a4062] text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-xs sm:text-sm font-medium uppercase tracking-wide transition-colors duration-200 flex items-center justify-center whitespace-nowrap"
-              >
-                SIGN UP
-              </a>
-            </div>
+            ) : (
+              // Show Login/Signup buttons for non-authenticated users
+              <div className="grid grid-cols-2 gap-3 w-full">
+                <a
+                  href="/signin"
+                  onClick={() => setIsOpen(false)}
+                  className="bg-white text-[#39a2a1] border border-[#39a2a1] hover:bg-[#39a2a1] hover:text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-xs sm:text-sm font-medium uppercase tracking-wide transition-colors duration-200 flex items-center justify-center whitespace-nowrap"
+                >
+                  LOGIN
+                </a>
+                <a
+                  href="/signup"
+                  onClick={() => setIsOpen(false)}
+                  className="bg-gradient-to-r from-[#39a2a1] to-[#21527b] hover:from-[#2d8a89] hover:to-[#1a4062] text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-xs sm:text-sm font-medium uppercase tracking-wide transition-colors duration-200 flex items-center justify-center whitespace-nowrap"
+                >
+                  SIGN UP
+                </a>
+              </div>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -89,24 +125,37 @@ const Header = () => {
                 {item.name}
               </a>
             ))}
+
             {/* Mobile Auth Buttons */}
             <div className="pt-4 pb-2 space-y-3">
-              <div className="grid grid-cols-2 gap-3 w-full">
+              {isAuthenticated ? (
+                // Show Dashboard button for authenticated users (Mobile)
                 <a
-                  href="/signin"
+                  href={getDashboardUrl()}
                   onClick={() => setIsOpen(false)}
-                  className="bg-white text-[#39a2a1] border border-[#39a2a1] hover:bg-[#39a2a1] hover:text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-xs sm:text-sm font-medium uppercase tracking-wide transition-colors duration-200 flex items-center justify-center whitespace-nowrap"
+                  className="bg-gradient-to-r from-[#39a2a1] to-[#21527b] hover:from-[#2d8a89] hover:to-[#1a4062] text-white px-6 py-3 rounded-full text-sm font-medium uppercase tracking-wide transition-colors duration-200 flex items-center justify-center whitespace-nowrap w-full"
                 >
-                  LOGIN
+                  DASHBOARD
                 </a>
-                <a
-                  href="/signup"
-                  onClick={() => setIsOpen(false)}
-                  className="bg-gradient-to-r from-[#39a2a1] to-[#21527b] hover:from-[#2d8a89] hover:to-[#1a4062] text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-xs sm:text-sm font-medium uppercase tracking-wide transition-colors duration-200 flex items-center justify-center whitespace-nowrap"
-                >
-                  SIGN UP
-                </a>
-              </div>
+              ) : (
+                // Show Login/Signup buttons for non-authenticated users (Mobile)
+                <div className="grid grid-cols-2 gap-3 w-full">
+                  <a
+                    href="/signin"
+                    onClick={() => setIsOpen(false)}
+                    className="bg-white text-[#39a2a1] border border-[#39a2a1] hover:bg-[#39a2a1] hover:text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-xs sm:text-sm font-medium uppercase tracking-wide transition-colors duration-200 flex items-center justify-center whitespace-nowrap"
+                  >
+                    LOGIN
+                  </a>
+                  <a
+                    href="/signup"
+                    onClick={() => setIsOpen(false)}
+                    className="bg-gradient-to-r from-[#39a2a1] to-[#21527b] hover:from-[#2d8a89] hover:to-[#1a4062] text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-xs sm:text-sm font-medium uppercase tracking-wide transition-colors duration-200 flex items-center justify-center whitespace-nowrap"
+                  >
+                    SIGN UP
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </div>

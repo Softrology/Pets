@@ -36,22 +36,12 @@ import SignUp from "./auth/SignUp";
 
 // Pet Owner Pages
 import PetOwnerDashboard from "./page/pet-owner/PetOwnerDashboard";
-import MyPets from "./page/pet-owner/MyPet"
-
-// import Appointments from "./page/pet-owner/Appointments";
-// import VetSearch from "./page/pet-owner/VetSearch";
-// import PetOwnerProfile from "./page/pet-owner/Profile";
-// import PetOwnerSettings from "./page/pet-owner/Settings";
+import MyPets from "./page/pet-owner/MyPet";
+import PetOwnerProfile from "./page/pet-owner/PetOwnerProfile";
+import MedicalRecord from "./page/pet-owner/MedicalRecord";
 
 // Vet Pages
 import VetDashboard from "./page/vet/VetDashboard";
-import PetOwnerProfile from "./page/pet-owner/PetOwnerProfile";
-import MedicalRecord from "./page/pet-owner/MedicalRecord";
-// import VetAppointments from "./page/vet/Appointments";
-// import PatientRecords from "./page/vet/PatientRecords";
-// import VetSchedule from "./page/vet/Schedule";
-// import VetProfile from "./page/vet/Profile";
-// import VetSettings from "./page/vet/Settings";
 
 // Create QueryClient instance
 const queryClient = new QueryClient({
@@ -75,6 +65,11 @@ function PublicLayout({ children }) {
   );
 }
 
+// New component for public/accessible pages that can be viewed by both authenticated and non-authenticated users
+function AccessibleRoute({ children }) {
+  return <>{children}</>;
+}
+
 function App() {
   return (
     <Provider store={Store}>
@@ -82,109 +77,109 @@ function App() {
         <Router>
           <div className="App">
             <Routes>
-              {/* Public Routes with Header & Footer */}
+              {/* Public Routes accessible by both authenticated and non-authenticated users */}
               <Route
                 path="/"
                 element={
-                  <PublicRoute>
+                  <AccessibleRoute>
                     <PublicLayout>
                       <HomePage />
                     </PublicLayout>
-                  </PublicRoute>
+                  </AccessibleRoute>
                 }
               />
               <Route
                 path="/about-us"
                 element={
-                  <PublicRoute>
+                  <AccessibleRoute>
                     <PublicLayout>
                       <AboutUs />
                     </PublicLayout>
-                  </PublicRoute>
+                  </AccessibleRoute>
                 }
               />
               <Route
                 path="/contact-us"
                 element={
-                  <PublicRoute>
+                  <AccessibleRoute>
                     <PublicLayout>
                       <ContactUs />
                     </PublicLayout>
-                  </PublicRoute>
+                  </AccessibleRoute>
                 }
               />
               <Route
                 path="/find-doctor"
                 element={
-                  <PublicRoute>
+                  <AccessibleRoute>
                     <PublicLayout>
                       <FindDoctor />
                     </PublicLayout>
-                  </PublicRoute>
+                  </AccessibleRoute>
                 }
               />
               <Route
                 path="/blog"
                 element={
-                  <PublicRoute>
+                  <AccessibleRoute>
                     <PublicLayout>
                       <Blog />
                     </PublicLayout>
-                  </PublicRoute>
+                  </AccessibleRoute>
                 }
               />
               <Route
                 path="/join-as-vet"
                 element={
-                  <PublicRoute>
+                  <AccessibleRoute>
                     <PublicLayout>
                       <JoinasVet />
                     </PublicLayout>
-                  </PublicRoute>
+                  </AccessibleRoute>
                 }
               />
               <Route
                 path="/privacy-policy"
                 element={
-                  <PublicRoute>
+                  <AccessibleRoute>
                     <PublicLayout>
                       <PrivacyPolicy />
                     </PublicLayout>
-                  </PublicRoute>
+                  </AccessibleRoute>
                 }
               />
               <Route
                 path="/cookie-policy"
                 element={
-                  <PublicRoute>
+                  <AccessibleRoute>
                     <PublicLayout>
                       <CookiePolicy />
                     </PublicLayout>
-                  </PublicRoute>
+                  </AccessibleRoute>
                 }
               />
               <Route
                 path="/site-map"
                 element={
-                  <PublicRoute>
+                  <AccessibleRoute>
                     <PublicLayout>
                       <Sitemap />
                     </PublicLayout>
-                  </PublicRoute>
+                  </AccessibleRoute>
                 }
               />
               <Route
                 path="/terms-of-service"
                 element={
-                  <PublicRoute>
+                  <AccessibleRoute>
                     <PublicLayout>
                       <TermsOfService />
                     </PublicLayout>
-                  </PublicRoute>
+                  </AccessibleRoute>
                 }
               />
 
-              {/* Authentication Routes - Special handling without header/footer */}
+              {/* Authentication Routes - Only for non-authenticated users */}
               <Route
                 path="/signin"
                 element={
@@ -226,7 +221,6 @@ function App() {
                 <Route path="my-pets" element={<MyPets />} />
                 <Route path="petowner-profile" element={<PetOwnerProfile />} />
                 <Route path="medical-record" element={<MedicalRecord />} />
-                
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 
@@ -240,11 +234,6 @@ function App() {
                 }
               >
                 <Route path="dashboard" element={<VetDashboard />} />
-                {/* <Route path="appointments" element={<VetAppointments />} />
-                <Route path="patients" element={<PatientRecords />} />
-                <Route path="schedule" element={<VetSchedule />} />
-                <Route path="profile" element={<VetProfile />} />
-                <Route path="settings" element={<VetSettings />} /> */}
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 
