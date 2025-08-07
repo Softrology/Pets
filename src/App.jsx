@@ -42,6 +42,8 @@ import MedicalRecord from "./page/pet-owner/MedicalRecord";
 
 // Vet Pages
 import VetDashboard from "./page/vet/VetDashboard";
+import VetDetails from "./page/vet-details/VetDetails";
+import SearchResults from "./page/search-results/SearchResults";
 
 // Create QueryClient instance
 const queryClient = new QueryClient({
@@ -124,6 +126,26 @@ function App() {
                   <AccessibleRoute>
                     <PublicLayout>
                       <Blog />
+                    </PublicLayout>
+                  </AccessibleRoute>
+                }
+              />
+              <Route
+                path="/search-results"
+                element={
+                  <AccessibleRoute>
+                    <PublicLayout>
+                      <SearchResults />
+                    </PublicLayout>
+                  </AccessibleRoute>
+                }
+              />
+              <Route
+                path="/vet-details"
+                element={
+                  <AccessibleRoute>
+                    <PublicLayout>
+                      <VetDetails />
                     </PublicLayout>
                   </AccessibleRoute>
                 }
