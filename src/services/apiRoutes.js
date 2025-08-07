@@ -37,3 +37,7 @@ export const HOMEPAGE_ROUTES = {
   SEARCH_VETS: "/vet/get-all-search-results-for-user",
   GET_FILTERED_VETS: "/vet/get-all-vets-for-user",
 };
+
+
+export const GET_VET_PROFILE = "/vet/my-profile";
+export const UPDATE_VET_PROFILE = "/vet/update-my-profile"

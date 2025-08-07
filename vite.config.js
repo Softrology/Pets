@@ -8,5 +8,6 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: true, // Fail if port 5173 is taken
+    hmr: false
   },
 });

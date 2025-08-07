@@ -25,7 +25,6 @@ import {
   MapPin,
   Image as ImageIcon,
   Upload,
-  
   Loader2,
   VenusAndMars
 } from "lucide-react";
@@ -36,6 +35,7 @@ const PetOwnerProfile = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageChanged, setImageChanged] = useState(false);
   const queryClient = useQueryClient();
 
   // Form state
@@ -81,10 +81,6 @@ const PetOwnerProfile = () => {
   const updateProfileMutation = useMutation({
     mutationFn: async (formData) => {
       try {
-        // Add required fields that aren't editable
-        formData.append("emailAddress", profileData.emailAddress);
-        formData.append("role", profileData.role);
-
         const response = await patch(
           UPDATE_PET_PROFILE,
           formData,
@@ -94,40 +90,154 @@ const PetOwnerProfile = () => {
           }
         );
 
-        // Update local storage with new data
-        const updatedProfile = {
-          ...profileData,
-          ...response.data,
-          firstName: formData.get('firstName'),
-          lastName: formData.get('lastName'),
-          phoneNumber: formData.get('phoneNumber'),
-          dateOfBirth: formData.get('dateOfBirth'),
-          gender: formData.get('gender'),
-          country: formData.get('country'),
-          city: formData.get('city'),
-          profilePicture: response.data.profilePicture || profileData.profilePicture
-        };
-
-        setLocalStorage(PROFILE_STORAGE_KEY, updatedProfile, 24);
-        setCurrentUser(updatedProfile);
-
         return response;
       } catch (error) {
         throw new Error(error.response?.data?.message || "Failed to update profile");
       }
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
+      // Create updated profile object
+      const updatedProfile = {
+        ...profileData,
+        ...response.data,
+        // Ensure we get the new profile picture URL from response if image was updated
+        profilePicture: response.data.profilePicture || profileData.profilePicture
+      };
+
+      // Update local storage and current user
+      setLocalStorage(PROFILE_STORAGE_KEY, updatedProfile, 24);
+      setCurrentUser(updatedProfile);
+
+      // Update form state with new data
+      setProfileForm(prev => ({
+        ...prev,
+        profilePicture: updatedProfile.profilePicture
+      }));
+
+      // Update image preview if new image was uploaded
+      if (imageChanged && updatedProfile.profilePicture) {
+        setImagePreview(updatedProfile.profilePicture);
+      }
+
+      // Reset file selection states
+      setSelectedFile(null);
+      setImageChanged(false);
+
+      // Invalidate and refetch queries
       queryClient.invalidateQueries(['petOwnerProfile']);
+      
       AlertDialog("Success", "Profile updated successfully", "success", 1500);
       setIsEditing(false);
     },
     onError: (error) => {
       AlertDialog("Error", error.message, "error");
+      // Reset image states on error
+      setSelectedFile(null);
+      setImageChanged(false);
+      if (profileData?.profilePicture) {
+        setImagePreview(profileData.profilePicture);
+      }
     }
   });
 
   // Initialize form with profile data
   useEffect(() => {
+    if (profileData) {
+      const formData = {
+        firstName: profileData.firstName || "",
+        lastName: profileData.lastName || "",
+        emailAddress: profileData.emailAddress || "",
+        phoneNumber: profileData.phoneNumber || "",
+        dateOfBirth: profileData.dateOfBirth
+          ? new Date(profileData.dateOfBirth).toISOString().split("T")[0]
+          : "",
+        gender: profileData.gender || "MALE",
+        country: profileData.country || "",
+        city: profileData.city || "",
+        profilePicture: profileData.profilePicture || "",
+      };
+      
+      setProfileForm(formData);
+      setImagePreview(profileData.profilePicture || "");
+    }
+  }, [profileData]);
+
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProfileForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Handle image upload
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      AlertDialog("Error", "Please select a valid image file", "error");
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      AlertDialog("Error", "Image size should be less than 5MB", "error");
+      return;
+    }
+
+    setUploadingImage(true);
+    setSelectedFile(file);
+    setImageChanged(true);
+
+    // Create preview URL
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+      setUploadingImage(false);
+    };
+    reader.onerror = () => {
+      AlertDialog("Error", "Failed to load image preview", "error");
+      setUploadingImage(false);
+      setSelectedFile(null);
+      setImageChanged(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    
+    // Add form fields
+    formData.append("firstName", profileForm.firstName.trim());
+    formData.append("lastName", profileForm.lastName.trim());
+    formData.append("phoneNumber", profileForm.phoneNumber.trim());
+    formData.append("dateOfBirth", profileForm.dateOfBirth);
+    formData.append("gender", profileForm.gender);
+    formData.append("country", profileForm.country.trim());
+    formData.append("city", profileForm.city.trim());
+    
+    // Add required fields that aren't editable
+    formData.append("emailAddress", profileForm.emailAddress);
+    formData.append("role", profileData?.role || "");
+
+    // Add profile picture if a new one was selected
+    if (selectedFile && imageChanged) {
+      formData.append("profilePicture", selectedFile);
+    }
+
+    updateProfileMutation.mutate(formData);
+  };
+
+  // Handle cancel edit
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setSelectedFile(null);
+    setImageChanged(false);
+    
+    // Reset form to original data
     if (profileData) {
       setProfileForm({
         firstName: profileData.firstName || "",
@@ -144,49 +254,6 @@ const PetOwnerProfile = () => {
       });
       setImagePreview(profileData.profilePicture || "");
     }
-  }, [profileData]);
-
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setProfileForm(prev => ({ ...prev, [name]: value }));
-  };
-
-  // Handle image upload
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploadingImage(true);
-    setSelectedFile(file);
-
-    // Create preview URL
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result);
-      setUploadingImage(false);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const formData = new FormData();
-    formData.append("firstName", profileForm.firstName);
-    formData.append("lastName", profileForm.lastName);
-    formData.append("phoneNumber", profileForm.phoneNumber);
-    formData.append("dateOfBirth", profileForm.dateOfBirth);
-    formData.append("gender", profileForm.gender);
-    formData.append("country", profileForm.country);
-    formData.append("city", profileForm.city);
-
-    if (selectedFile) {
-      formData.append("profilePicture", selectedFile);
-    }
-
-    updateProfileMutation.mutate(formData);
   };
 
   if (isLoading) {
@@ -229,7 +296,7 @@ const PetOwnerProfile = () => {
               </p>
             </div>
             <button
-              onClick={() => setIsEditing(!isEditing)}
+              onClick={() => isEditing ? handleCancelEdit() : setIsEditing(true)}
               disabled={updateProfileMutation.isLoading}
               className="mt-4 md:mt-0 bg-white text-emerald-600 px-4 py-2 rounded-lg font-medium hover:bg-emerald-50 transition-colors flex items-center disabled:opacity-50"
             >
@@ -274,16 +341,21 @@ const PetOwnerProfile = () => {
                             className="hidden"
                             accept="image/*"
                             onChange={handleImageUpload}
-                            disabled={uploadingImage}
+                            disabled={uploadingImage || updateProfileMutation.isLoading}
                           />
                         </label>
                       </div>
                     )}
                   </div>
                   {uploadingImage && (
-                    <div className="text-sm text-gray-500 flex items-center">
+                    <div className="text-sm text-gray-500 flex items-center mb-2">
                       <Loader2 className="animate-spin h-4 w-4 mr-2 text-emerald-600" />
-                      Uploading image...
+                      Processing image...
+                    </div>
+                  )}
+                  {imageChanged && !uploadingImage && (
+                    <div className="text-sm text-emerald-600 mb-2">
+                      New image ready to save
                     </div>
                   )}
                   <h2 className="text-xl font-bold text-gray-900 mt-2">
@@ -310,6 +382,7 @@ const PetOwnerProfile = () => {
                           onChange={handleInputChange}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                           required
+                          maxLength={50}
                         />
                       ) : (
                         <p className="px-3 py-2 bg-gray-50 rounded-lg">
@@ -331,6 +404,7 @@ const PetOwnerProfile = () => {
                           onChange={handleInputChange}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                           required
+                          maxLength={50}
                         />
                       ) : (
                         <p className="px-3 py-2 bg-gray-50 rounded-lg">
@@ -364,6 +438,7 @@ const PetOwnerProfile = () => {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         pattern="[0-9]{10,15}"
                         title="Please enter a valid phone number"
+                        maxLength={15}
                       />
                     ) : (
                       <p className="px-3 py-2 bg-gray-50 rounded-lg">
@@ -431,6 +506,7 @@ const PetOwnerProfile = () => {
                           value={profileForm.country}
                           onChange={handleInputChange}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                          maxLength={50}
                         />
                       ) : (
                         <p className="px-3 py-2 bg-gray-50 rounded-lg">
@@ -451,6 +527,7 @@ const PetOwnerProfile = () => {
                           value={profileForm.city}
                           onChange={handleInputChange}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                          maxLength={50}
                         />
                       ) : (
                         <p className="px-3 py-2 bg-gray-50 rounded-lg">

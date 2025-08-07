@@ -42,6 +42,7 @@ import MedicalRecord from "./page/pet-owner/MedicalRecord";
 
 // Vet Pages
 import VetDashboard from "./page/vet/VetDashboard";
+import VetProfile from "./page/vet-admin/VetProfile";
 
 // Create QueryClient instance
 const queryClient = new QueryClient({
@@ -234,6 +235,7 @@ function App() {
                 }
               >
                 <Route path="dashboard" element={<VetDashboard />} />
+                <Route path="profile" element={<VetProfile />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 

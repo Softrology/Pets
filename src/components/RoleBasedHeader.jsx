@@ -14,6 +14,15 @@ import {
   FiCalendar,
   FiActivity,
   FiHome,
+  FiMail,
+  FiPhone,
+  FiMapPin,
+  FiClock,
+  FiCheckCircle,
+  FiXCircle,
+  FiDollarSign,
+  FiAward,
+  FiFileText,
 } from "react-icons/fi";
 
 export default function RoleBasedHeader({
@@ -24,6 +33,7 @@ export default function RoleBasedHeader({
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationCount, setNotificationCount] = useState(3);
+  const [imageError, setImageError] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
@@ -61,6 +71,7 @@ export default function RoleBasedHeader({
       localStorage.removeItem("user");
       localStorage.removeItem("token");
       localStorage.removeItem("userRole");
+      localStorage.removeItem("vetProfile");
       localStorage.clear();
 
       setDropdownOpen(false);
@@ -139,6 +150,77 @@ export default function RoleBasedHeader({
       }[userRole] || "User";
 
     return `${greeting}, ${roleTitle}!`;
+  };
+
+  // Format date
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      return new Date(dateString).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+    } catch {
+      return "N/A";
+    }
+  };
+
+  // Format currency
+  const formatCurrency = (amount) => {
+    if (!amount || amount === 0) return "N/A";
+    return `$${amount}`;
+  };
+
+  // Get status badges
+  const getStatusBadges = () => {
+    const badges = [];
+    if (userData?.isActivated) {
+      badges.push({
+        label: "Active",
+        color: "bg-green-100 text-green-800",
+        icon: FiCheckCircle,
+      });
+    }
+    if (userData?.isEmailVerified) {
+      badges.push({
+        label: "Verified",
+        color: "bg-blue-100 text-blue-800",
+        icon: FiMail,
+      });
+    }
+    if (userData?.isApproved) {
+      badges.push({
+        label: "Approved",
+        color: "bg-purple-100 text-purple-800",
+        icon: FiAward,
+      });
+    }
+    return badges;
+  };
+
+  // Profile Avatar Component
+  const ProfileAvatar = ({ size = "h-8 w-8", showFallback = true }) => {
+    const hasValidImage = userData?.profilePicture && !imageError;
+
+    if (hasValidImage) {
+      return (
+        <img
+          src={userData.profilePicture}
+          alt={`${getFullName()}'s profile`}
+          className={`${size} rounded-full object-cover shadow-sm border-2 border-white`}
+          onError={() => setImageError(true)}
+        />
+      );
+    }
+
+    return showFallback ? (
+      <div
+        className={`${size} rounded-full bg-gradient-to-r ${getRoleColor()} flex items-center justify-center text-white font-medium shadow-sm`}
+      >
+        {getInitials()}
+      </div>
+    ) : null;
   };
 
   // Quick actions based on role
@@ -244,6 +326,7 @@ export default function RoleBasedHeader({
   }
 
   const quickActions = getQuickActions();
+  const statusBadges = getStatusBadges();
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-100">
@@ -348,11 +431,7 @@ export default function RoleBasedHeader({
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 transition-colors duration-200"
               >
-                <div
-                  className={`h-8 w-8 rounded-full bg-gradient-to-r ${getRoleColor()} flex items-center justify-center text-white font-medium shadow-sm`}
-                >
-                  {getInitials()}
-                </div>
+                <ProfileAvatar />
                 <div className="hidden md:block text-left">
                   <p className="text-sm font-medium text-gray-800">
                     {userData.firstName || "User"}
@@ -369,91 +448,191 @@ export default function RoleBasedHeader({
                 />
               </button>
 
-              {/* Dropdown Menu */}
+              {/* Enhanced Dropdown Menu */}
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-[80vh] overflow-y-auto">
                   {/* User Info Section */}
                   <div className="px-4 py-3 border-b border-gray-100">
                     <div className="flex items-center space-x-3">
-                      <div
-                        className={`h-12 w-12 rounded-full bg-gradient-to-r ${getRoleColor()} flex items-center justify-center text-white font-medium shadow-sm`}
-                      >
-                        {getInitials()}
-                      </div>
+                      <ProfileAvatar size="h-16 w-16" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
+                        <p className="text-lg font-medium text-gray-900 truncate">
                           {getFullName()}
                         </p>
-                        <p className="text-sm text-gray-500 truncate">
+                        <p className="text-sm text-gray-500 truncate flex items-center">
+                          <FiMail className="h-3 w-3 mr-1" />
                           {getDisplayValue(userData.emailAddress)}
                         </p>
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gradient-to-r ${getRoleColor()} text-white`}
-                        >
-                          {getRoleIcon()}
-                          <span className="ml-1">{getFormattedRole()}</span>
-                        </span>
+                        <div className="flex items-center mt-1">
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gradient-to-r ${getRoleColor()} text-white`}
+                          >
+                            {getRoleIcon()}
+                            <span className="ml-1">{getFormattedRole()}</span>
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* User Details */}
+                  {/* Status Badges */}
+                  {statusBadges.length > 0 && (
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <div className="flex flex-wrap gap-1">
+                        {statusBadges.map((badge, index) => (
+                          <span
+                            key={index}
+                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${badge.color}`}
+                          >
+                            <badge.icon className="h-3 w-3 mr-1" />
+                            {badge.label}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Basic Details */}
                   <div className="px-4 py-3 border-b border-gray-100">
-                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                      Account Details
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                      Personal Information
                     </h4>
-                    <div className="space-y-1 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Status:</span>
-                        <div className="flex space-x-1">
-                          {userData.isActivated && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs bg-green-100 text-green-800">
-                              Active
-                            </span>
-                          )}
-                          {userData.isEmailVerified && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs bg-blue-100 text-blue-800">
-                              Verified
-                            </span>
-                          )}
-                          {!userData.isActivated &&
-                            !userData.isEmailVerified && (
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs bg-gray-100 text-gray-800">
-                                N/A
-                              </span>
-                            )}
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div className="flex items-center space-x-2">
+                        <FiUser className="h-4 w-4 text-gray-400" />
+                        <div>
+                          <p className="text-gray-500">Gender</p>
+                          <p className="text-gray-900 capitalize">
+                            {getDisplayValue(userData.gender?.toLowerCase())}
+                          </p>
                         </div>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Gender:</span>
+                      <div className="flex items-center space-x-2">
+                        <FiPhone className="h-4 w-4 text-gray-400" />
+                        <div>
+                          <p className="text-gray-500">Phone</p>
+                          <p className="text-gray-900">
+                            {getDisplayValue(userData.phoneNumber)}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <FiMapPin className="h-4 w-4 text-gray-400" />
+                        <div>
+                          <p className="text-gray-500">City</p>
+                          <p className="text-gray-900">
+                            {getDisplayValue(userData.city)}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <FiMapPin className="h-4 w-4 text-gray-400" />
+                        <div>
+                          <p className="text-gray-500">Country</p>
+                          <p className="text-gray-900">
+                            {getDisplayValue(userData.country)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Professional Details (for VET role) */}
+                  {userRole === "VET" && (
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                        Professional Details
+                      </h4>
+                      <div className="space-y-2 text-sm">
+                        {userData.consultationFee && (
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <FiDollarSign className="h-4 w-4 text-gray-400" />
+                              <span className="text-gray-500">Consultation Fee</span>
+                            </div>
+                            <span className="text-gray-900 font-medium">
+                              {formatCurrency(userData.consultationFee)}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {userData.specialization && userData.specialization.length > 0 && (
+                          <div>
+                            <div className="flex items-center space-x-2 mb-1">
+                              <FiActivity className="h-4 w-4 text-gray-400" />
+                              <span className="text-gray-500">Specializations</span>
+                            </div>
+                            <div className="flex flex-wrap gap-1 ml-6">
+                              {userData.specialization.map((spec, index) => (
+                                <span
+                                  key={index}
+                                  className="inline-block bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded"
+                                >
+                                  {typeof spec === 'object' ? spec.name : spec}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {userData.qualifications && userData.qualifications.length > 0 && (
+                          <div>
+                            <div className="flex items-center space-x-2 mb-1">
+                              <FiAward className="h-4 w-4 text-gray-400" />
+                              <span className="text-gray-500">Qualifications</span>
+                            </div>
+                            <div className="ml-6">
+                              {userData.qualifications.map((qual, index) => (
+                                <div key={index} className="text-xs text-gray-700">
+                                  • {typeof qual === 'object' ? qual.title : qual}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {userData.licenseImage && (
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <FiFileText className="h-4 w-4 text-gray-400" />
+                              <span className="text-gray-500">License</span>
+                            </div>
+                            <a
+                              href={userData.licenseImage}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 text-xs"
+                            >
+                              View Document
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Account Information */}
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                      Account Information
+                    </h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <FiClock className="h-4 w-4 text-gray-400" />
+                          <span className="text-gray-500">Member Since</span>
+                        </div>
                         <span className="text-gray-900">
-                          {getDisplayValue(userData.gender)}
+                          {formatDate(userData.createdAt)}
                         </span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Phone:</span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <FiClock className="h-4 w-4 text-gray-400" />
+                          <span className="text-gray-500">Last Updated</span>
+                        </div>
                         <span className="text-gray-900">
-                          {getDisplayValue(userData.phoneNumber)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">City:</span>
-                        <span className="text-gray-900">
-                          {getDisplayValue(userData.city)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Country:</span>
-                        <span className="text-gray-900">
-                          {getDisplayValue(userData.country)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Joined:</span>
-                        <span className="text-gray-900">
-                          {userData.createdAt
-                            ? new Date(userData.createdAt).toLocaleDateString()
-                            : "N/A"}
+                          {formatDate(userData.updatedAt)}
                         </span>
                       </div>
                     </div>
