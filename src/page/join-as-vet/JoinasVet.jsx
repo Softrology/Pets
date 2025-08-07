@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   User,
   Mail,
@@ -111,173 +111,31 @@ const JoinasVet = () => {
     },
   ];
 
-  // Handle login input change
-  const handleLoginInputChange = (e) => {
+  // Handle login input change - useCallback to prevent unnecessary re-renders
+  const handleLoginInputChange = useCallback((e) => {
     const { name, value } = e.target;
     setLoginData((prev) => ({
       ...prev,
       [name]: value,
     }));
-  };
+  }, []);
 
   // Handle login form submission
-  const handleLoginSubmit = (e) => {
-    e.preventDefault();
-    if (!loginData.emailAddress || !loginData.password) {
-      return;
-    }
-    login(loginData);
-  };
-
-  // Login Form Component
-  const LoginForm = () => (
-    <div className="bg-white rounded-xl shadow-md p-6 mb-12">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Welcome Back, Doctor!
-        </h2>
-        <p className="text-gray-600">
-          Sign in to access your veterinary dashboard
-        </p>
-      </div>
-
-      {/* Error Message */}
-      {error && error.response?.data?.statusCode !== 403 && (
-        <div className="mb-4 bg-red-50 border-l-4 border-red-400 p-4 rounded">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 text-red-500">
-              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-red-700">{error || error.message}</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <form onSubmit={handleLoginSubmit} className="space-y-6">
-        <div>
-          <label
-            htmlFor="loginEmail"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Email Address <span className="text-red-500">*</span>
-          </label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="email"
-              id="loginEmail"
-              name="emailAddress"
-              required
-              value={loginData.emailAddress}
-              onChange={handleLoginInputChange}
-              className="pl-10 py-3 w-full rounded-lg border border-gray-300 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-              placeholder="your@email.com"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label
-            htmlFor="loginPassword"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Password <span className="text-red-500">*</span>
-          </label>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type={showPassword ? "text" : "password"}
-              id="loginPassword"
-              name="password"
-              required
-              value={loginData.password}
-              onChange={handleLoginInputChange}
-              className="pl-10 pr-10 py-3 w-full rounded-lg border border-gray-300 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-              placeholder="••••••••"
-            />
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? (
-                <EyeOff className="w-4 h-4 text-gray-400" />
-              ) : (
-                <Eye className="w-4 h-4 text-gray-400" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
-        >
-          {isLoading ? (
-            <>
-              <svg
-                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              Signing in...
-            </>
-          ) : (
-            <>
-              <LogIn className="w-5 h-5 mr-2" />
-              Sign In to Dashboard
-            </>
-          )}
-        </button>
-      </form>
-
-      {/* Toggle to Registration */}
-      <div className="mt-6 text-center">
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">
-              Don't have an account yet?
-            </span>
-          </div>
-        </div>
-
-        <button
-          onClick={() => setAuthMode("register")}
-          className="mt-4 w-full flex justify-center items-center py-3 px-4 border border-teal-300 rounded-lg shadow-sm text-sm font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition duration-200"
-        >
-          <UserPlus className="w-5 h-5 mr-2" />
-          Apply as New Veterinarian
-        </button>
-      </div>
-    </div>
+  const handleLoginSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (!loginData.emailAddress || !loginData.password) {
+        return;
+      }
+      login(loginData);
+    },
+    [loginData, login]
   );
+
+  // Handle password visibility toggle
+  const handlePasswordToggle = useCallback(() => {
+    setShowPassword((prev) => !prev);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -329,7 +187,166 @@ const JoinasVet = () => {
       <div className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Conditional Form Rendering */}
-          {authMode === "login" ? <LoginForm /> : <ApplicationForm />}
+          {authMode === "login" ? (
+            // Login Form - Inline instead of separate component
+            <div className="bg-white rounded-xl shadow-md p-6 mb-12">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  Welcome Back, Doctor!
+                </h2>
+                <p className="text-gray-600">
+                  Sign in to access your veterinary dashboard
+                </p>
+              </div>
+
+              {/* Error Message */}
+              {error && error.response?.data?.statusCode !== 403 && (
+                <div className="mb-4 bg-red-50 border-l-4 border-red-400 p-4 rounded">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 text-red-500">
+                      <svg
+                        className="h-5 w-5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-red-700">
+                        {error || error.message}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <form onSubmit={handleLoginSubmit} className="space-y-6">
+                <div>
+                  <label
+                    htmlFor="loginEmail"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Email Address <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                      type="email"
+                      id="loginEmail"
+                      name="emailAddress"
+                      required
+                      value={loginData.emailAddress}
+                      onChange={handleLoginInputChange}
+                      className="pl-10 py-3 w-full rounded-lg border border-gray-300 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                      placeholder="your@email.com"
+                      autoComplete="email"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="loginPassword"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Password <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      id="loginPassword"
+                      name="password"
+                      required
+                      value={loginData.password}
+                      onChange={handleLoginInputChange}
+                      className="pl-10 pr-10 py-3 w-full rounded-lg border border-gray-300 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                      placeholder="••••••••"
+                      autoComplete="current-password"
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 focus:outline-none hover:text-gray-600"
+                      onClick={handlePasswordToggle}
+                      tabIndex={-1}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4 text-gray-400" />
+                      ) : (
+                        <Eye className="w-4 h-4 text-gray-400" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <>
+                      <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Signing in...
+                    </>
+                  ) : (
+                    <>
+                      <LogIn className="w-5 h-5 mr-2" />
+                      Sign In to Dashboard
+                    </>
+                  )}
+                </button>
+              </form>
+
+              {/* Toggle to Registration */}
+              <div className="mt-6 text-center">
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white text-gray-500">
+                      Don't have an account yet?
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setAuthMode("register")}
+                  className="mt-4 w-full flex justify-center items-center py-3 px-4 border border-teal-300 rounded-lg shadow-sm text-sm font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition duration-200"
+                >
+                  <UserPlus className="w-5 h-5 mr-2" />
+                  Apply as New Veterinarian
+                </button>
+              </div>
+            </div>
+          ) : (
+            <ApplicationForm />
+          )}
 
           {/* Tabs Section */}
           <div className="bg-white rounded-xl shadow-md p-6">
