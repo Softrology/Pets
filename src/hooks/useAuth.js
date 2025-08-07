@@ -54,29 +54,18 @@ export const useLogin = () => {
       }
     },
     onError: (error) => {
-      console.log("Full error object:", error);
-      console.log("Error response:", error.response);
-      console.log("Error response data:", error.response?.data);
-
       const errorMessage = error.response?.data?.message || error.message;
       const statusCode = error.response?.data?.statusCode;
-
-      console.log("Status Code:", statusCode);
-      console.log("Error Message:", errorMessage);
 
       dispatch(loginFailure(errorMessage));
 
       // Check if error is about email verification (403 status code)
       if (statusCode === 403) {
-        console.log("403 error detected, navigating to verify-otp");
-        console.log("Email:", error.response?.data?.data?.emailAddress);
-        console.log("UserId:", error.response?.data?.data?.userId);
-
         // Navigate to OTP verification with user data
         navigate("/verify-otp", {
           state: {
-            emailAddress: error.response?.data?.data?.emailAddress,
-            userId: error.response?.data?.data?.userId,
+            emailAddress: error.response?.data?.error?.emailAddress,
+            userId: error.response?.data?.error?.userId,
             message: errorMessage,
           },
         });

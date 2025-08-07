@@ -30,8 +30,14 @@ const OTPVerificationPage = () => {
 
   useEffect(() => {
     if (location.state?.emailAddress && location.state?.userId) {
-      console.log("location.state?.emailAddress", location.state?.emailAddress);
-      console.log("location.state?.userId", location.state?.userId);
+      // console.log(
+      //   "location.state?.emailAddress in otp page",
+      //   location.state?.emailAddress
+      // );
+      // console.log(
+      //   "location.state?.userId in otp page ",
+      //   location.state?.userId
+      // );
       setEmailAddress(location.state.emailAddress);
       setUserId(location.state.userId);
       setMessage(location.state.message || "");

@@ -13,6 +13,7 @@ import {
   FiHeart,
   FiCalendar,
   FiActivity,
+  FiHome,
 } from "react-icons/fi";
 
 export default function RoleBasedHeader({
@@ -68,6 +69,10 @@ export default function RoleBasedHeader({
       console.error("Error during logout:", error);
       window.location.href = "/";
     }
+  };
+
+  const handleHomeClick = () => {
+    navigate("/");
   };
 
   const getInitials = () => {
@@ -126,11 +131,12 @@ export default function RoleBasedHeader({
     else if (time < 18) greeting = "Good afternoon";
     else greeting = "Good evening";
 
-    const roleTitle = {
-      PET_OWNER: "Pet Parent",
-      VET: "Doctor",
-      SUPER_ADMIN: "Admin",
-    }[userRole] || "User";
+    const roleTitle =
+      {
+        PET_OWNER: "Pet Parent",
+        VET: "Doctor",
+        SUPER_ADMIN: "Admin",
+      }[userRole] || "User";
 
     return `${greeting}, ${roleTitle}!`;
   };
@@ -140,18 +146,42 @@ export default function RoleBasedHeader({
     switch (userRole) {
       case "PET_OWNER":
         return [
-          { icon: FiCalendar, label: "Book Appointment", action: () => navigate("/pet-owner/appointments") },
-          { icon: FiHeart, label: "My Pets", action: () => navigate("/pet-owner/my-pets") },
+          {
+            icon: FiCalendar,
+            label: "Book Appointment",
+            action: () => navigate("/pet-owner/appointments"),
+          },
+          {
+            icon: FiHeart,
+            label: "My Pets",
+            action: () => navigate("/pet-owner/my-pets"),
+          },
         ];
       case "VET":
         return [
-          { icon: FiCalendar, label: "Today's Schedule", action: () => navigate("/vet/schedule") },
-          { icon: FiUser, label: "Patient Records", action: () => navigate("/vet/patients") },
+          {
+            icon: FiCalendar,
+            label: "Today's Schedule",
+            action: () => navigate("/vet/schedule"),
+          },
+          {
+            icon: FiUser,
+            label: "Patient Records",
+            action: () => navigate("/vet/patients"),
+          },
         ];
       case "SUPER_ADMIN":
         return [
-          { icon: FiUser, label: "User Management", action: () => navigate("/super-admin/users") },
-          { icon: FiActivity, label: "Vet Management", action: () => navigate("/super-admin/vets") },
+          {
+            icon: FiUser,
+            label: "User Management",
+            action: () => navigate("/super-admin/users"),
+          },
+          {
+            icon: FiActivity,
+            label: "Vet Management",
+            action: () => navigate("/super-admin/vets"),
+          },
         ];
       default:
         return [];
@@ -243,13 +273,24 @@ export default function RoleBasedHeader({
               )}
             </button>
 
+            {/* Home Button */}
+            <button
+              onClick={handleHomeClick}
+              className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-[#39a2a1] hover:bg-gray-50 rounded-md transition-colors duration-200 border border-gray-200 hover:border-[#39a2a1]"
+              title="Go to Homepage"
+            >
+              <FiHome className="h-4 w-4" />
+              <span className="hidden sm:block text-sm font-medium">Home</span>
+            </button>
+
             {/* Welcome Message */}
             <div className="hidden md:block">
               <h2 className="text-lg font-semibold text-gray-800">
                 {getWelcomeMessage()}
               </h2>
               <p className="text-sm text-gray-500">
-                Welcome to your {userRole?.replace("_", " ").toLowerCase()} dashboard
+                Welcome to your {userRole?.replace("_", " ").toLowerCase()}{" "}
+                dashboard
               </p>
             </div>
           </div>
@@ -262,7 +303,13 @@ export default function RoleBasedHeader({
               </div>
               <input
                 type="text"
-                placeholder={`Search ${userRole === 'PET_OWNER' ? 'vets, appointments...' : userRole === 'VET' ? 'patients, appointments...' : 'users, vets...'}`}
+                placeholder={`Search ${
+                  userRole === "PET_OWNER"
+                    ? "vets, appointments..."
+                    : userRole === "VET"
+                    ? "patients, appointments..."
+                    : "users, vets..."
+                }`}
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200"
               />
             </div>
@@ -290,7 +337,7 @@ export default function RoleBasedHeader({
               <FiBell className="h-6 w-6" />
               {notificationCount > 0 && (
                 <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                  {notificationCount > 9 ? '9+' : notificationCount}
+                  {notificationCount > 9 ? "9+" : notificationCount}
                 </span>
               )}
             </button>
@@ -301,7 +348,9 @@ export default function RoleBasedHeader({
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 transition-colors duration-200"
               >
-                <div className={`h-8 w-8 rounded-full bg-gradient-to-r ${getRoleColor()} flex items-center justify-center text-white font-medium shadow-sm`}>
+                <div
+                  className={`h-8 w-8 rounded-full bg-gradient-to-r ${getRoleColor()} flex items-center justify-center text-white font-medium shadow-sm`}
+                >
                   {getInitials()}
                 </div>
                 <div className="hidden md:block text-left">
@@ -326,7 +375,9 @@ export default function RoleBasedHeader({
                   {/* User Info Section */}
                   <div className="px-4 py-3 border-b border-gray-100">
                     <div className="flex items-center space-x-3">
-                      <div className={`h-12 w-12 rounded-full bg-gradient-to-r ${getRoleColor()} flex items-center justify-center text-white font-medium shadow-sm`}>
+                      <div
+                        className={`h-12 w-12 rounded-full bg-gradient-to-r ${getRoleColor()} flex items-center justify-center text-white font-medium shadow-sm`}
+                      >
                         {getInitials()}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -336,7 +387,9 @@ export default function RoleBasedHeader({
                         <p className="text-sm text-gray-500 truncate">
                           {getDisplayValue(userData.emailAddress)}
                         </p>
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gradient-to-r ${getRoleColor()} text-white`}>
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gradient-to-r ${getRoleColor()} text-white`}
+                        >
                           {getRoleIcon()}
                           <span className="ml-1">{getFormattedRole()}</span>
                         </span>
@@ -363,11 +416,12 @@ export default function RoleBasedHeader({
                               Verified
                             </span>
                           )}
-                          {!userData.isActivated && !userData.isEmailVerified && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs bg-gray-100 text-gray-800">
-                              N/A
-                            </span>
-                          )}
+                          {!userData.isActivated &&
+                            !userData.isEmailVerified && (
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs bg-gray-100 text-gray-800">
+                                N/A
+                              </span>
+                            )}
                         </div>
                       </div>
                       <div className="flex justify-between">
@@ -407,6 +461,13 @@ export default function RoleBasedHeader({
 
                   {/* Menu Items */}
                   <div className="py-1">
+                    <button
+                      onClick={handleHomeClick}
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 w-full text-left transition-colors duration-200"
+                    >
+                      <FiHome className="h-4 w-4 mr-3" />
+                      Go to Homepage
+                    </button>
                     <button
                       onClick={() => {
                         const profilePath = {

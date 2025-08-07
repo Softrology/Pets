@@ -24,7 +24,7 @@ export default function RoleBasedSidebar({ onClose, collapsed, userRole }) {
           { name: "Appointments", icon: FiCalendar, to: "appointments" },
           { name: "Find Vet", icon: FiSearch, to: "find-vet" },
           { name: "Profile", icon: FiUser, to: "petowner-profile" },
-          { name: "Settings", icon: FiSettings, to: "settings" },
+          { name: "Medical record", icon: FiSettings, to: "medical-record" },
         ];
       case "VET":
         return [
