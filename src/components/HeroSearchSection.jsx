@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { MapPin, Search, ChevronDown, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useDebouncedSearch, useFilteredVets } from "../hooks/useHomepage";
+import { diseases, symptoms } from "../utitlities/SymtomsDiseaseList";
 
 const HeroSearchSection = ({
   availableVets = [],
@@ -10,6 +12,8 @@ const HeroSearchSection = ({
   const [searchType, setSearchType] = useState("Specialty");
   const [searchQuery, setSearchQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const navigate = useNavigate();
 
   // Use search hooks
   const {
@@ -22,15 +26,56 @@ const HeroSearchSection = ({
 
   const { applyFilters } = useFilteredVets();
 
+  // Internal suggestion functions
+  const searchSymptoms = (query) => {
+    if (!query || query.trim() === "") return [];
+    const searchTerm = query.toLowerCase().trim();
+    return symptoms.filter(
+      (symptom) =>
+        symptom.name.toLowerCase().includes(searchTerm) ||
+        symptom.category.toLowerCase().includes(searchTerm)
+    );
+  };
+
+  const searchDiseases = (query) => {
+    if (!query || query.trim() === "") return [];
+    const searchTerm = query.toLowerCase().trim();
+    return diseases.filter(
+      (disease) =>
+        disease.name.toLowerCase().includes(searchTerm) ||
+        disease.category.toLowerCase().includes(searchTerm)
+    );
+  };
+
+  const getSuggestions = (query) => {
+    if (!query || query.trim().length < 2) return [];
+
+    const symptomResults = searchSymptoms(query);
+    const diseaseResults = searchDiseases(query);
+
+    const suggestions = [
+      ...symptomResults.slice(0, 3).map((s) => ({ ...s, type: "symptom" })),
+      ...diseaseResults.slice(0, 3).map((d) => ({ ...d, type: "disease" })),
+    ];
+
+    return suggestions.slice(0, 5); // Limit to 5 suggestions
+  };
+
   // Handle search input change
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
 
-    if (value.trim()) {
+    if (value.trim().length >= 2) {
+      // Get suggestions from symptoms/diseases data
+      const staticSuggestions = getSuggestions(value);
+      setSuggestions(staticSuggestions);
+
+      // Also search vets
       search(value);
       setShowResults(true);
     } else {
+      setSuggestions([]);
       clearResults();
       setShowResults(false);
     }
@@ -39,33 +84,35 @@ const HeroSearchSection = ({
   // Handle search submit
   const handleSearchSubmit = () => {
     if (searchQuery.trim()) {
-      // Apply filters based on search type
-      const filters = {
-        page: 1,
-        limit: 10,
-      };
-
-      if (searchType === "Specialty") {
-        filters.specialization = searchQuery;
-      } else if (searchType === "VET") {
-        filters.name = searchQuery;
-      }
-
-      applyFilters(filters);
-      setShowResults(false);
-
-      // You might want to navigate to a search results page here
-      // navigate('/find-doctor', { state: { filters, results: searchResults } });
+      // Navigate to search results page with search data
+      navigate("/search-results", {
+        state: {
+          query: searchQuery,
+          type: searchType.toLowerCase(),
+          results: searchResults,
+        },
+      });
     }
   };
 
-  // Handle search result click
+  // Handle search result click (vet)
   const handleResultClick = (vet) => {
-    setSearchQuery(`${vet.firstName} ${vet.lastName}`);
+    navigate("/vet-details", { state: { vet } });
+  };
+
+  // Handle suggestion click (symptom/disease)
+  const handleSuggestionClick = (suggestion) => {
+    setSearchQuery(suggestion.name);
     setShowResults(false);
 
-    // You might want to navigate to vet detail page or show vet info
-    console.log("Selected vet:", vet);
+    // Navigate to search results with the suggestion
+    navigate("/search-results", {
+      state: {
+        query: suggestion.name,
+        type: suggestion.type,
+        searchCategory: suggestion.category,
+      },
+    });
   };
 
   // Close results when clicking outside
@@ -90,11 +137,21 @@ const HeroSearchSection = ({
       .join(" ");
   };
 
+  // Get severity color for suggestions
+  const getSeverityColor = (severity) => {
+    const colors = {
+      low: "text-green-600 bg-green-50",
+      medium: "text-yellow-600 bg-yellow-50",
+      high: "text-red-600 bg-red-50",
+      critical: "text-red-800 bg-red-100",
+    };
+    return colors[severity] || "text-gray-600 bg-gray-50";
+  };
+
   return (
     <div className="relative min-h-[500px] bg-gradient-to-br from-teal-100 to-teal-200 overflow-hidden">
-      {/* Background placeholder - you can replace this with your background image */}
+      {/* Background placeholder */}
       <div className="absolute inset-0 bg-gradient-to-br from-teal-100/80 to-teal-200/80">
-        {/* Add your background image here */}
         <div className="absolute inset-0 bg-black/10"></div>
       </div>
 
@@ -105,13 +162,16 @@ const HeroSearchSection = ({
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
             FIND THE BEST DOCTOR NEAR YOU
           </h1>
+          <p className="text-gray-600 text-lg">
+            Search by symptoms, diseases, specialties, or veterinarian names
+          </p>
         </div>
 
         {/* Search Bar */}
         <div className="max-w-2xl mx-auto mb-16 search-container relative">
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
             <div className="flex flex-col sm:flex-row">
-              {/* Location Dropdown */}
+              {/* Search Type Dropdown */}
               <div className="flex items-center bg-teal-600 text-white px-4 py-4 sm:py-3 min-w-0 sm:min-w-[200px]">
                 <MapPin className="w-5 h-5 mr-2 flex-shrink-0" />
                 <select
@@ -124,6 +184,9 @@ const HeroSearchSection = ({
                   </option>
                   <option value="Disease" className="text-gray-800">
                     Disease
+                  </option>
+                  <option value="Symptom" className="text-gray-800">
+                    Symptom
                   </option>
                   <option value="VET" className="text-gray-800">
                     VET
@@ -157,73 +220,146 @@ const HeroSearchSection = ({
                 </button>
 
                 {/* Search Results Dropdown */}
-                {showResults && (searchResults.length > 0 || searchLoading) && (
-                  <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-lg shadow-lg z-50 max-h-60 overflow-y-auto">
-                    {searchLoading ? (
-                      <div className="p-4 text-center text-gray-500">
-                        <div className="flex items-center justify-center space-x-2">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-600"></div>
-                          <span>Searching...</span>
-                        </div>
-                      </div>
-                    ) : searchResults.length > 0 ? (
-                      <>
-                        {searchResults.map((vet) => (
-                          <div
-                            key={vet._id}
-                            className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
-                            onClick={() => handleResultClick(vet)}
-                          >
-                            <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
-                                <User className="w-5 h-5 text-teal-600" />
-                              </div>
-                              <div className="flex-1">
-                                <p className="font-semibold text-gray-800">
-                                  {vet.firstName} {vet.lastName}
-                                </p>
-                                <div className="flex flex-wrap gap-1 mt-1">
-                                  {vet.specialization
-                                    .slice(0, 2)
-                                    .map((spec, index) => (
-                                      <span
-                                        key={index}
-                                        className="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded"
-                                      >
-                                        {formatSpecialization(spec)}
-                                      </span>
-                                    ))}
-                                  {vet.specialization.length > 2 && (
-                                    <span className="text-xs text-gray-500">
-                                      +{vet.specialization.length - 2} more
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="text-sm text-gray-600 mt-1">
-                                  ${vet.consultationFee} consultation
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                        <div className="p-3 bg-gray-50 border-t">
-                          <button
-                            onClick={handleSearchSubmit}
-                            className="w-full text-center text-teal-600 hover:text-teal-700 font-medium text-sm"
-                          >
-                            View All Results ({searchStats.resultCount})
-                          </button>
-                        </div>
-                      </>
-                    ) : (
-                      searchQuery.trim() && (
+                {showResults &&
+                  (suggestions.length > 0 ||
+                    searchResults.length > 0 ||
+                    searchLoading) && (
+                    <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-lg shadow-lg z-50 max-h-80 overflow-y-auto">
+                      {searchLoading ? (
                         <div className="p-4 text-center text-gray-500">
-                          No results found for "{searchQuery}"
+                          <div className="flex items-center justify-center space-x-2">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-600"></div>
+                            <span>Searching...</span>
+                          </div>
                         </div>
-                      )
-                    )}
-                  </div>
-                )}
+                      ) : (
+                        <>
+                          {/* Symptoms/Diseases Suggestions */}
+                          {suggestions.length > 0 && (
+                            <>
+                              <div className="px-4 py-2 bg-gray-50 border-b text-xs font-medium text-gray-500 uppercase">
+                                Symptoms & Diseases
+                              </div>
+                              {suggestions.map((suggestion, index) => (
+                                <div
+                                  key={`suggestion-${index}`}
+                                  className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100"
+                                  onClick={() =>
+                                    handleSuggestionClick(suggestion)
+                                  }
+                                >
+                                  <div className="flex items-center space-x-3">
+                                    <div
+                                      className={`w-8 h-8 rounded-full flex items-center justify-center ${getSeverityColor(
+                                        suggestion.severity
+                                      )}`}
+                                    >
+                                      <span className="text-xs font-bold">
+                                        {suggestion.type === "symptom"
+                                          ? "S"
+                                          : "D"}
+                                      </span>
+                                    </div>
+                                    <div className="flex-1">
+                                      <p className="font-semibold text-gray-800">
+                                        {suggestion.name}
+                                      </p>
+                                      <div className="flex items-center space-x-2 mt-1">
+                                        <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded capitalize">
+                                          {suggestion.type}
+                                        </span>
+                                        <span className="text-xs text-gray-500 capitalize">
+                                          {suggestion.category.replace(
+                                            "_",
+                                            " "
+                                          )}
+                                        </span>
+                                        <span
+                                          className={`text-xs px-2 py-1 rounded capitalize ${getSeverityColor(
+                                            suggestion.severity
+                                          )}`}
+                                        >
+                                          {suggestion.severity}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </>
+                          )}
+
+                          {/* Veterinarians */}
+                          {searchResults.length > 0 && (
+                            <>
+                              {suggestions.length > 0 && (
+                                <div className="border-t border-gray-200"></div>
+                              )}
+                              <div className="px-4 py-2 bg-gray-50 border-b text-xs font-medium text-gray-500 uppercase">
+                                Veterinarians
+                              </div>
+                              {searchResults.map((vet) => (
+                                <div
+                                  key={vet._id}
+                                  className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100"
+                                  onClick={() => handleResultClick(vet)}
+                                >
+                                  <div className="flex items-center space-x-3">
+                                    <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+                                      <User className="w-5 h-5 text-teal-600" />
+                                    </div>
+                                    <div className="flex-1">
+                                      <p className="font-semibold text-gray-800">
+                                        Dr. {vet.firstName} {vet.lastName}
+                                      </p>
+                                      <div className="flex flex-wrap gap-1 mt-1">
+                                        {vet.specialization
+                                          .slice(0, 2)
+                                          .map((spec, index) => (
+                                            <span
+                                              key={index}
+                                              className="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded"
+                                            >
+                                              {formatSpecialization(spec)}
+                                            </span>
+                                          ))}
+                                      </div>
+                                      <p className="text-sm text-gray-600 mt-1">
+                                        ${vet.consultationFee} consultation
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </>
+                          )}
+
+                          {/* View All Results Button */}
+                          {(suggestions.length > 0 ||
+                            searchResults.length > 0) && (
+                            <div className="p-3 bg-gray-50 border-t">
+                              <button
+                                onClick={handleSearchSubmit}
+                                className="w-full text-center text-teal-600 hover:text-teal-700 font-medium text-sm"
+                              >
+                                View All Results (
+                                {suggestions.length + searchResults.length})
+                              </button>
+                            </div>
+                          )}
+
+                          {/* No Results */}
+                          {suggestions.length === 0 &&
+                            searchResults.length === 0 &&
+                            searchQuery.trim() && (
+                              <div className="p-4 text-center text-gray-500">
+                                No results found for "{searchQuery}"
+                              </div>
+                            )}
+                        </>
+                      )}
+                    </div>
+                  )}
               </div>
             </div>
           </div>
@@ -270,6 +406,7 @@ const HeroSearchSection = ({
             availableVets.slice(0, 3).map((vet) => (
               <div
                 key={vet._id}
+                onClick={() => navigate("/vet-details", { state: { vet } })}
                 className="bg-teal-600 rounded-lg p-6 text-white shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer"
               >
                 <div className="flex items-center mb-4">
@@ -303,9 +440,8 @@ const HeroSearchSection = ({
               </div>
             ))
           ) : (
-            // Default placeholder cards when no vets available
+            // Default placeholder cards
             <>
-              {/* Dr. Paws */}
               <div className="bg-teal-600 rounded-lg p-6 text-white shadow-lg transform hover:scale-105 transition-transform duration-300">
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mr-4">
@@ -319,7 +455,6 @@ const HeroSearchSection = ({
                 </div>
               </div>
 
-              {/* Dr. Whiskers */}
               <div className="bg-teal-600 rounded-lg p-6 text-white shadow-lg transform hover:scale-105 transition-transform duration-300">
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mr-4">
@@ -333,7 +468,6 @@ const HeroSearchSection = ({
                 </div>
               </div>
 
-              {/* Dr. Petpulse */}
               <div className="bg-teal-600 rounded-lg p-6 text-white shadow-lg transform hover:scale-105 transition-transform duration-300">
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mr-4">
