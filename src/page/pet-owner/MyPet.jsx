@@ -15,6 +15,8 @@ import {
   Save,
   Upload,
   Image as ImageIcon,
+  Palette,
+  Award,
 } from "lucide-react";
 import { get, post, patch, del } from "../../services/apiService";
 import {
@@ -26,8 +28,11 @@ import {
 } from "../../services/apiRoutes";
 import { getUserToken } from "../../utitlities/Globals";
 import AlertDialog from "../../utitlities/Alert";
+import { CiMedicalClipboard } from "react-icons/ci";
+import { useNavigate } from "react-router-dom";
 
 const MyPet = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [genderFilter, setGenderFilter] = useState("all");
@@ -50,6 +55,9 @@ const MyPet = () => {
     gender: "MALE",
     feed: [],
     images: [],
+    dateOfBirth: "",
+    breed: "",
+    color: "",
   });
 
   // Custom hook to fetch all pets
@@ -72,11 +80,11 @@ const MyPet = () => {
       },
       onError: (error) => {
         AlertDialog("Error", error.message, "error");
-      }
+      },
     });
   };
 
-  console.log("This is the user token", getUserToken())
+  console.log("This is the user token", getUserToken());
 
   // Custom hook to add pet
   const useAddPet = () => {
@@ -88,21 +96,24 @@ const MyPet = () => {
         const formData = new FormData();
 
         // Append basic pet information
-        formData.append('name', petData.name);
-        formData.append('category', petData.category);
-        formData.append('age', petData.age.toString());
-        formData.append('weight', petData.weight);
-        formData.append('gender', petData.gender);
+        formData.append("name", petData.name);
+        formData.append("category", petData.category);
+        formData.append("age", petData.age.toString());
+        formData.append("weight", petData.weight);
+        formData.append("gender", petData.gender);
+        formData.append("dateOfBirth", petData.dateOfBirth);
+        formData.append("breed", petData.breed);
+        formData.append("color", petData.color);
 
         // Ensure feed is always sent as an array
         const feedArray = petData.feed || [];
         console.log("Add Pet - Feed array:", feedArray);
-        formData.append('feed', JSON.stringify(feedArray));
+        formData.append("feed", JSON.stringify(feedArray));
 
         // Append image files
         if (petData.imageFiles && petData.imageFiles.length > 0) {
           petData.imageFiles.forEach((file, index) => {
-            formData.append('images', file);
+            formData.append("images", file);
           });
         }
 
@@ -112,7 +123,7 @@ const MyPet = () => {
         }
 
         const response = await post(POST_PET, formData, getUserToken(), {
-          'Content-Type': 'multipart/form-data'
+          "Content-Type": "multipart/form-data",
         });
         return response;
       },
@@ -144,26 +155,32 @@ const MyPet = () => {
         const formData = new FormData();
 
         // Append basic pet information
-        formData.append('name', petData.name);
-        formData.append('category', petData.category);
-        formData.append('age', petData.age.toString());
-        formData.append('weight', petData.weight);
-        formData.append('gender', petData.gender);
+        formData.append("name", petData.name);
+        formData.append("category", petData.category);
+        formData.append("age", petData.age.toString());
+        formData.append("weight", petData.weight);
+        formData.append("gender", petData.gender);
+        formData.append("dateOfBirth", petData.dateOfBirth);
+        formData.append("breed", petData.breed);
+        formData.append("color", petData.color);
 
         // Ensure feed is always sent as an array
         const feedArray = petData.feed || [];
         console.log("Update Pet - Feed array:", feedArray);
-        formData.append('feed', JSON.stringify(feedArray));
+        formData.append("feed", JSON.stringify(feedArray));
 
         // Append existing image URLs
         if (petData.existingImages && petData.existingImages.length > 0) {
-          formData.append('existingImages', JSON.stringify(petData.existingImages));
+          formData.append(
+            "existingImages",
+            JSON.stringify(petData.existingImages)
+          );
         }
 
         // Append new image files
         if (petData.imageFiles && petData.imageFiles.length > 0) {
           petData.imageFiles.forEach((file, index) => {
-            formData.append('images', file);
+            formData.append("images", file);
           });
         }
 
@@ -173,7 +190,7 @@ const MyPet = () => {
         }
 
         const response = await patch(UPDATE_PET(id), formData, getUserToken(), {
-          'Content-Type': 'multipart/form-data'
+          "Content-Type": "multipart/form-data",
         });
         return response;
       },
@@ -241,17 +258,17 @@ const MyPet = () => {
   }, [pets]);
 
   const petCategories = [
-    { value: "all", label: "All Categories" },
     { value: "DOG", label: "Dog" },
     { value: "CAT", label: "Cat" },
     { value: "BIRD", label: "Bird" },
-    { value: "FISH", label: "Fish" },
     { value: "REPTILE", label: "Reptile" },
     { value: "SMALL_MAMMAL", label: "Small Mammal" },
     { value: "AMPHIBIAN", label: "Amphibian" },
     { value: "FARM_ANIMAL", label: "Farm Animal" },
     { value: "EXOTIC", label: "Exotic" },
-    { value: "OTHER", label: "Others" },
+    { value: "DOG", label: "Horse" },
+    { value: "CAT", label: "Donkey" },
+    { value: "BIRD", label: "Mike" },
   ];
 
   // Filter pets
@@ -281,6 +298,9 @@ const MyPet = () => {
       gender: "MALE",
       feed: [],
       images: [],
+      dateOfBirth: "",
+      breed: "",
+      color: "",
     });
     setSelectedFiles([]);
   };
@@ -341,6 +361,9 @@ const MyPet = () => {
       gender: pet.gender,
       feed: pet.feed || [],
       images: pet.images || [],
+      dateOfBirth: pet.dateOfBirth || "",
+      breed: pet.breed || "",
+      color: pet.color || "",
     });
     setSelectedFiles([]);
     setShowEditModal(true);
@@ -353,7 +376,10 @@ const MyPet = () => {
       setPetForm({ ...petForm, feed: [] });
     } else {
       // Split by comma and filter out empty strings
-      const feedArray = value.split(",").map((item) => item.trim()).filter(Boolean);
+      const feedArray = value
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
       setPetForm({ ...petForm, feed: feedArray });
     }
   };
@@ -366,13 +392,13 @@ const MyPet = () => {
 
     try {
       // Store the actual files for upload
-      setSelectedFiles(prev => [...prev, ...files]);
+      setSelectedFiles((prev) => [...prev, ...files]);
 
       // Create preview URLs for display
-      const previewUrls = files.map(file => URL.createObjectURL(file));
-      setPetForm(prev => ({
+      const previewUrls = files.map((file) => URL.createObjectURL(file));
+      setPetForm((prev) => ({
         ...prev,
-        images: [...prev.images, ...previewUrls]
+        images: [...prev.images, ...previewUrls],
       }));
 
       console.log("Files selected:", files);
@@ -384,14 +410,16 @@ const MyPet = () => {
   };
 
   const removeImage = (index) => {
-    setPetForm(prev => {
+    setPetForm((prev) => {
       const newImages = prev.images.filter((_, i) => i !== index);
       return { ...prev, images: newImages };
     });
 
     // Also remove from selected files if it's a new file
-    setSelectedFiles(prev => {
-      const existingImagesCount = editingPet ? (editingPet.images || []).length : 0;
+    setSelectedFiles((prev) => {
+      const existingImagesCount = editingPet
+        ? (editingPet.images || []).length
+        : 0;
       const fileIndex = index - existingImagesCount;
       if (fileIndex >= 0) {
         return prev.filter((_, i) => i !== fileIndex);
@@ -408,7 +436,13 @@ const MyPet = () => {
     return category?.toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
-  console.log("filtered pets =============>>>>", filteredPets)
+  const formatDate = (dateString) => {
+    if (!dateString) return "Not specified";
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
+
+  console.log("filtered pets =============>>>>", filteredPets);
 
   if (isLoading) {
     return (
@@ -429,7 +463,8 @@ const MyPet = () => {
                 My Pets
               </h1>
               <p className="text-emerald-100">
-                Manage your pets, their information, and keep track of their details
+                Manage your pets, their information, and keep track of their
+                details
               </p>
             </div>
             <button
@@ -524,8 +559,9 @@ const MyPet = () => {
               <Filter className="h-5 w-5 mr-2" />
               Filters
               <ChevronDown
-                className={`h-4 w-4 ml-2 transform transition-transform ${showFilters ? "rotate-180" : ""
-                  }`}
+                className={`h-4 w-4 ml-2 transform transition-transform ${
+                  showFilters ? "rotate-180" : ""
+                }`}
               />
             </button>
           </div>
@@ -621,11 +657,22 @@ const MyPet = () => {
                     </div>
                     <div className="mt-1">
                       <p className="text-sm text-gray-600">
-                        {formatCategory(pet.category)} • {pet.gender} • {pet.age} years
+                        {formatCategory(pet.category)} • {pet.gender} •{" "}
+                        {pet.age} years
                       </p>
                       <p className="text-sm text-gray-500 mt-1">
                         Weight: {formatWeight(pet.weight)}
                       </p>
+                      {pet.breed && (
+                        <p className="text-sm text-gray-500">
+                          Breed: {pet.breed}
+                        </p>
+                      )}
+                      {pet.color && (
+                        <p className="text-sm text-gray-500">
+                          Color: {pet.color}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -648,7 +695,13 @@ const MyPet = () => {
                     Details
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Feed
+                    Breed & Color
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Birth Date
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Diet
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
@@ -706,6 +759,32 @@ const MyPet = () => {
                       </div>
                     </td>
 
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      <div className="space-y-1">
+                        {pet.breed && (
+                          <div className="flex items-center">
+                            <Award className="h-3 w-3 mr-1 text-gray-400" />
+                            <span className="text-xs">{pet.breed}</span>
+                          </div>
+                        )}
+                        {pet.color && (
+                          <div className="flex items-center">
+                            <Palette className="h-3 w-3 mr-1 text-gray-400" />
+                            <span className="text-xs">{pet.color}</span>
+                          </div>
+                        )}
+                        {!pet.breed && !pet.color && (
+                          <span className="text-gray-400 text-xs">
+                            Not specified
+                          </span>
+                        )}
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {formatDate(pet.dateOfBirth)}
+                    </td>
+
                     <td className="px-6 py-4">
                       <div className="text-sm text-gray-900">
                         {pet.feed && pet.feed.length > 0 ? (
@@ -725,7 +804,9 @@ const MyPet = () => {
                             )}
                           </div>
                         ) : (
-                          <span className="text-gray-400">No feed specified</span>
+                          <span className="text-gray-400">
+                            No feed specified
+                          </span>
                         )}
                       </div>
                     </td>
@@ -756,6 +837,13 @@ const MyPet = () => {
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
+                        <button
+                          onClick={() => navigate("/pet-owner/medical-record")}
+                          className="text-emerald-600 hover:text-emerald-900 p-1 rounded-full hover:bg-emerald-100 transition-colors"
+                          title="Medical Record"
+                        >
+                          <CiMedicalClipboard className="h-4 w-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -783,7 +871,9 @@ const MyPet = () => {
             <div className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Add New Pet</h2>
+                  <h2 className="text-xl font-bold text-gray-900">
+                    Add New Pet
+                  </h2>
                   <button
                     onClick={() => {
                       setShowAddModal(false);
@@ -824,12 +914,61 @@ const MyPet = () => {
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                       >
-                        {petCategories.filter(cat => cat.value !== 'all').map((category) => (
-                          <option key={category.value} value={category.value}>
-                            {category.label}
-                          </option>
-                        ))}
+                        {petCategories
+                          .filter((cat) => cat.value !== "all")
+                          .map((category) => (
+                            <option key={category.value} value={category.value}>
+                              {category.label}
+                            </option>
+                          ))}
                       </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Breed
+                      </label>
+                      <input
+                        type="text"
+                        value={petForm.breed}
+                        onChange={(e) =>
+                          setPetForm({ ...petForm, breed: e.target.value })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        placeholder="Enter breed"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Color
+                      </label>
+                      <input
+                        type="text"
+                        value={petForm.color}
+                        onChange={(e) =>
+                          setPetForm({ ...petForm, color: e.target.value })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        placeholder="Enter color"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Date of Birth
+                      </label>
+                      <input
+                        type="date"
+                        value={petForm.dateOfBirth}
+                        onChange={(e) =>
+                          setPetForm({
+                            ...petForm,
+                            dateOfBirth: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      />
                     </div>
 
                     <div>
@@ -879,9 +1018,9 @@ const MyPet = () => {
                       </select>
                     </div>
 
-                    <div>
+                    <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Feed (comma separated)
+                        Diet (comma separated)
                       </label>
                       <input
                         type="text"
@@ -902,7 +1041,10 @@ const MyPet = () => {
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
                           <Upload className="h-8 w-8 text-gray-400 mb-2" />
                           <p className="mb-2 text-sm text-gray-500">
-                            <span className="font-semibold">Click to upload</span> or drag and drop
+                            <span className="font-semibold">
+                              Click to upload
+                            </span>{" "}
+                            or drag and drop
                           </p>
                           <p className="text-xs text-gray-500">
                             PNG, JPG, JPEG (MAX. 10MB each)
@@ -940,7 +1082,8 @@ const MyPet = () => {
                               alt={`Preview ${index + 1}`}
                               className="h-24 w-full object-cover rounded-lg"
                               onError={(e) => {
-                                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K';
+                                e.target.src =
+                                  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K";
                               }}
                             />
                             <button
@@ -1034,12 +1177,61 @@ const MyPet = () => {
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                       >
-                        {petCategories.filter(cat => cat.value !== 'all').map((category) => (
-                          <option key={category.value} value={category.value}>
-                            {category.label}
-                          </option>
-                        ))}
+                        {petCategories
+                          .filter((cat) => cat.value !== "all")
+                          .map((category) => (
+                            <option key={category.value} value={category.value}>
+                              {category.label}
+                            </option>
+                          ))}
                       </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Breed
+                      </label>
+                      <input
+                        type="text"
+                        value={petForm.breed}
+                        onChange={(e) =>
+                          setPetForm({ ...petForm, breed: e.target.value })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        placeholder="Enter breed"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Color
+                      </label>
+                      <input
+                        type="text"
+                        value={petForm.color}
+                        onChange={(e) =>
+                          setPetForm({ ...petForm, color: e.target.value })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        placeholder="Enter color"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Date of Birth
+                      </label>
+                      <input
+                        type="date"
+                        value={petForm.dateOfBirth}
+                        onChange={(e) =>
+                          setPetForm({
+                            ...petForm,
+                            dateOfBirth: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      />
                     </div>
 
                     <div>
@@ -1089,7 +1281,7 @@ const MyPet = () => {
                       </select>
                     </div>
 
-                    <div>
+                    <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Feed (comma separated)
                       </label>
@@ -1112,7 +1304,10 @@ const MyPet = () => {
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
                           <Upload className="h-8 w-8 text-gray-400 mb-2" />
                           <p className="mb-2 text-sm text-gray-500">
-                            <span className="font-semibold">Click to upload</span> or drag and drop
+                            <span className="font-semibold">
+                              Click to upload
+                            </span>{" "}
+                            or drag and drop
                           </p>
                           <p className="text-xs text-gray-500">
                             PNG, JPG, JPEG (MAX. 10MB each)
@@ -1150,7 +1345,8 @@ const MyPet = () => {
                               alt={`Preview ${index + 1}`}
                               className="h-24 w-full object-cover rounded-lg"
                               onError={(e) => {
-                                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K';
+                                e.target.src =
+                                  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K";
                               }}
                             />
                             <button
@@ -1188,7 +1384,9 @@ const MyPet = () => {
                       ) : (
                         <Save className="h-4 w-4 mr-2" />
                       )}
-                      {updatePetMutation.isLoading ? "Updating..." : "Update Pet"}
+                      {updatePetMutation.isLoading
+                        ? "Updating..."
+                        : "Update Pet"}
                     </button>
                   </div>
                 </form>
@@ -1231,9 +1429,10 @@ const MyPet = () => {
                               src={image}
                               alt={`${selectedPet.name} ${index + 1}`}
                               className="w-full h-full object-cover hover:scale-105 transition-transform cursor-pointer"
-                              onClick={() => window.open(image, '_blank')}
+                              onClick={() => window.open(image, "_blank")}
                               onError={(e) => {
-                                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K';
+                                e.target.src =
+                                  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K";
                               }}
                             />
                           </div>
@@ -1242,7 +1441,6 @@ const MyPet = () => {
                     </div>
                   )}
 
-                  {/* Pet Information */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <h3 className="text-lg font-medium text-gray-900 mb-3">
@@ -1257,9 +1455,13 @@ const MyPet = () => {
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <span className="text-emerald-600 mr-3 text-lg">🐾</span>
+                          <span className="text-emerald-600 mr-3 text-lg">
+                            🐾
+                          </span>
                           <div>
-                            <span className="text-sm text-gray-500">Category:</span>
+                            <span className="text-sm text-gray-500">
+                              Category:
+                            </span>
                             <p className="font-medium">
                               {formatCategory(selectedPet.category)}
                             </p>
@@ -1267,13 +1469,37 @@ const MyPet = () => {
                         </div>
                         <div className="flex items-center">
                           <span className="text-emerald-600 mr-3 text-lg">
-                            {selectedPet.gender === 'MALE' ? '♂️' : '♀️'}
+                            {selectedPet.gender === "MALE" ? "♂️" : "♀️"}
                           </span>
                           <div>
-                            <span className="text-sm text-gray-500">Gender:</span>
+                            <span className="text-sm text-gray-500">
+                              Gender:
+                            </span>
                             <p className="font-medium">{selectedPet.gender}</p>
                           </div>
                         </div>
+                        {selectedPet.breed && (
+                          <div className="flex items-center">
+                            <Award className="h-5 w-5 text-emerald-600 mr-3" />
+                            <div>
+                              <span className="text-sm text-gray-500">
+                                Breed:
+                              </span>
+                              <p className="font-medium">{selectedPet.breed}</p>
+                            </div>
+                          </div>
+                        )}
+                        {selectedPet.color && (
+                          <div className="flex items-center">
+                            <Palette className="h-5 w-5 text-emerald-600 mr-3" />
+                            <div>
+                              <span className="text-sm text-gray-500">
+                                Color:
+                              </span>
+                              <p className="font-medium">{selectedPet.color}</p>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -1286,18 +1512,35 @@ const MyPet = () => {
                           <Calendar className="h-5 w-5 text-emerald-600 mr-3" />
                           <div>
                             <span className="text-sm text-gray-500">Age:</span>
-                            <p className="font-medium">{selectedPet.age} years old</p>
+                            <p className="font-medium">
+                              {selectedPet.age} years old
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center">
                           <Scale className="h-5 w-5 text-emerald-600 mr-3" />
                           <div>
-                            <span className="text-sm text-gray-500">Weight:</span>
+                            <span className="text-sm text-gray-500">
+                              Weight:
+                            </span>
                             <p className="font-medium">
                               {formatWeight(selectedPet.weight)}
                             </p>
                           </div>
                         </div>
+                        {selectedPet.dateOfBirth && (
+                          <div className="flex items-center">
+                            <Calendar className="h-5 w-5 text-emerald-600 mr-3" />
+                            <div>
+                              <span className="text-sm text-gray-500">
+                                Date of Birth:
+                              </span>
+                              <p className="font-medium">
+                                {formatDate(selectedPet.dateOfBirth)}
+                              </p>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1319,7 +1562,9 @@ const MyPet = () => {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-gray-500 italic">No feed information provided</p>
+                      <p className="text-gray-500 italic">
+                        No feed information provided
+                      </p>
                     )}
                   </div>
 

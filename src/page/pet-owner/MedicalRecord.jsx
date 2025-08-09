@@ -31,6 +31,8 @@ import {
 } from "../../services/apiRoutes";
 import { getUserToken } from "../../utitlities/Globals";
 import AlertDialog from "../../utitlities/Alert";
+import { GiDoctorFace } from "react-icons/gi";
+import { FaUserDoctor } from "react-icons/fa6";
 
 const MedicalRecord = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,7 +53,7 @@ const MedicalRecord = () => {
     type: "CONSULTATION",
     date: new Date().toISOString().slice(0, 16),
     prescription: "",
-    healthCenter: "",
+    clinicName: "",
     isExistingVet: false,
     existingVet: "",
     vet: "",
@@ -138,7 +140,7 @@ const MedicalRecord = () => {
         formData.append("type", recordData.type);
         formData.append("date", recordData.date);
         formData.append("prescription", recordData.prescription || "");
-        formData.append("healthCenter", recordData.healthCenter || "");
+        formData.append("clinicName", recordData.clinicName || "");
         formData.append("isExistingVet", recordData.isExistingVet.toString());
 
         // Only send existingVet if isExistingVet is true
@@ -209,7 +211,7 @@ const MedicalRecord = () => {
         formData.append("type", recordData.type);
         formData.append("date", recordData.date);
         formData.append("prescription", recordData.prescription || "");
-        formData.append("healthCenter", recordData.healthCenter || "");
+        formData.append("clinicName", recordData.clinicName || "");
         formData.append("isExistingVet", recordData.isExistingVet.toString());
 
         // Only send existingVet if isExistingVet is true
@@ -310,19 +312,29 @@ const MedicalRecord = () => {
   const updateRecordMutation = useUpdateMedicalRecord();
   const deleteRecordMutation = useDeleteMedicalRecord();
 
-  // Calculate analytics
   const analytics = useMemo(() => {
     const recordsArray = medicalRecords || [];
-    const total = recordsArray.length;
+
+    // Get unique pet IDs from records
+    const uniquePetIds = new Set(
+      recordsArray.map((record) => record.pet?._id || record.pet)
+    );
+    const totalPetsWithRecords = uniquePetIds.size;
+
     const consultations = recordsArray.filter(
       (record) => record.type === "CONSULTATION"
     ).length;
     const vaccinations = recordsArray.filter(
       (record) => record.type === "VACCINATION"
     ).length;
-    const others = total - consultations - vaccinations;
+    const others = recordsArray.length - consultations - vaccinations;
 
-    return { total, consultations, vaccinations, others };
+    return {
+      total: totalPetsWithRecords, // Now shows unique pets with records
+      consultations,
+      vaccinations,
+      others,
+    };
   }, [medicalRecords]);
 
   // Updated record types to match backend enum values
@@ -339,7 +351,7 @@ const MedicalRecord = () => {
       const matchesSearch =
         record.pet?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         record.vet?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        record.healthCenter?.toLowerCase().includes(searchTerm.toLowerCase());
+        record.clinicName?.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesType = typeFilter === "all" || record.type === typeFilter;
 
@@ -353,7 +365,7 @@ const MedicalRecord = () => {
       type: "CONSULTATION",
       date: new Date().toISOString().slice(0, 16),
       prescription: "",
-      healthCenter: "",
+      clinicName: "",
       isExistingVet: false,
       existingVet: "",
       vet: "",
@@ -398,23 +410,23 @@ const MedicalRecord = () => {
       );
       return;
     }
-
-    if (!recordForm.isExistingVet && !recordForm.vet) {
-      AlertDialog(
-        "Validation Error",
-        "Please enter veterinarian name",
-        "error",
-        2000
-      );
-      return;
-    }
+    //
+    // if (!recordForm.isExistingVet && !recordForm.vet) {
+    //   AlertDialog(
+    //     "Validation Error",
+    //     "Please enter veterinarian name",
+    //     "error",
+    //     2000
+    //   );
+    //   return;
+    // }
 
     const recordData = {
       pet: recordForm.pet, // This should be the pet ID
       type: recordForm.type,
       date: new Date(recordForm.date).toISOString(),
       prescription: recordForm.prescription,
-      healthCenter: recordForm.healthCenter,
+      clinicName: recordForm.clinicName,
       isExistingVet: recordForm.isExistingVet,
       existingVet: recordForm.existingVet,
       vet: recordForm.vet,
@@ -464,7 +476,7 @@ const MedicalRecord = () => {
       type: recordForm.type,
       date: new Date(recordForm.date).toISOString(),
       prescription: recordForm.prescription,
-      healthCenter: recordForm.healthCenter,
+      clinicName: recordForm.clinicName,
       isExistingVet: recordForm.isExistingVet,
       existingVet: recordForm.existingVet,
       vet: recordForm.vet,
@@ -493,7 +505,7 @@ const MedicalRecord = () => {
       type: record.type,
       date: new Date(record.date).toISOString().slice(0, 16),
       prescription: record.prescription || "",
-      healthCenter: record.healthCenter || "",
+      clinicName: record.clinicName || "",
       isExistingVet: record.isExistingVet || false,
       existingVet: record.existingVet || "",
       vet: record.vet || "",
@@ -637,7 +649,7 @@ const MedicalRecord = () => {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">
-                  Total Records
+                  Pets with Records
                 </p>
                 <p className="text-2xl font-bold text-gray-900">
                   {analytics.total}
@@ -766,7 +778,9 @@ const MedicalRecord = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <h3 className="text-lg font-medium text-gray-900 truncate">
-                        {record.pet?.name || "Unknown Pet"}
+                        {pets.find(
+                          (p) => p._id === (record.pet?._id || record.pet)
+                        )?.name || "Unknown Pet"}
                       </h3>
                       <div className="flex items-center space-x-2">
                         <button
@@ -849,7 +863,9 @@ const MedicalRecord = () => {
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            {record.pet?.name || "Unknown Pet"}
+                            {pets.find(
+                              (p) => p._id === (record.pet?._id || record.pet)
+                            )?.name || "Unknown Pet"}
                           </div>
                           <span
                             className={`px-2 py-1 text-xs font-semibold rounded-full ${getTypeColor(
@@ -866,6 +882,15 @@ const MedicalRecord = () => {
                       <div className="flex items-center">
                         <Calendar className="h-4 w-4 mr-1 text-gray-400" />
                         <span className="text-sm text-gray-900">
+                          {formatDate(record.date) || "Not specified"}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <FaUserDoctor className="h-4 w-4 mr-1 text-gray-400" />
+                        <span className="text-sm text-gray-900">
                           {record.vet || "Not specified"}
                         </span>
                       </div>
@@ -875,7 +900,7 @@ const MedicalRecord = () => {
                       <div className="flex items-center">
                         <MapPin className="h-4 w-4 mr-1 text-gray-400" />
                         <span className="text-sm text-gray-900">
-                          {record.healthCenter || "Not specified"}
+                          {record.clinicName || "Not specified"}
                         </span>
                       </div>
                     </td>
@@ -934,7 +959,7 @@ const MedicalRecord = () => {
               <div className="p-6">
                 <div className="flex justify-between items-start mb-6">
                   <h2 className="text-xl font-bold text-gray-900">
-                    Add New Medical Record
+                    Add New/Past Medical Record
                   </h2>
                   <button
                     onClick={() => {
@@ -1013,15 +1038,15 @@ const MedicalRecord = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Health Center
+                        Clinic Name
                       </label>
                       <input
                         type="text"
-                        value={recordForm.healthCenter}
+                        value={recordForm.clinicName}
                         onChange={(e) =>
                           setRecordForm({
                             ...recordForm,
-                            healthCenter: e.target.value,
+                            clinicName: e.target.value,
                           })
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
@@ -1093,8 +1118,7 @@ const MedicalRecord = () => {
                       ) : (
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Veterinarian Name{" "}
-                            <span className="text-red-500">*</span>
+                            Veterinarian Name
                           </label>
                           <input
                             type="text"
@@ -1109,11 +1133,6 @@ const MedicalRecord = () => {
                             placeholder="Enter veterinarian name"
                             required={!recordForm.isExistingVet}
                           />
-                          {!recordForm.isExistingVet && !recordForm.vet && (
-                            <p className="mt-1 text-sm text-red-600">
-                              Please enter veterinarian name
-                            </p>
-                          )}
                         </div>
                       )}
                     </div>
@@ -1319,19 +1338,19 @@ const MedicalRecord = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Health Center
+                        Clinic Name
                       </label>
                       <input
                         type="text"
-                        value={recordForm.healthCenter}
+                        value={recordForm.clinicName}
                         onChange={(e) =>
                           setRecordForm({
                             ...recordForm,
-                            healthCenter: e.target.value,
+                            clinicName: e.target.value,
                           })
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                        placeholder="Enter health center name"
+                        placeholder="Enter Clinic Name   name"
                       />
                     </div>
 
@@ -1394,7 +1413,7 @@ const MedicalRecord = () => {
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
                             Veterinarian Name{" "}
-                            <span className="text-red-500">*</span>
+                            {/* <span className="text-red-500">*</span> */}
                           </label>
                           <input
                             type="text"
@@ -1407,7 +1426,7 @@ const MedicalRecord = () => {
                             }
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                             placeholder="Enter veterinarian name"
-                            required={!recordForm.isExistingVet}
+                            // required={!recordForm.isExistingVet}
                           />
                         </div>
                       )}
@@ -1595,7 +1614,12 @@ const MedicalRecord = () => {
                           <div>
                             <span className="text-sm text-gray-500">Pet:</span>
                             <p className="font-medium">
-                              {selectedRecord.pet?.name || "Unknown Pet"}
+                              {pets.find(
+                                (p) =>
+                                  p._id ===
+                                  (selectedRecord.pet?._id ||
+                                    selectedRecord.pet)
+                              )?.name || "Unknown Pet"}
                             </p>
                           </div>
                         </div>
@@ -1643,7 +1667,7 @@ const MedicalRecord = () => {
                               Health Center:
                             </span>
                             <p className="font-medium">
-                              {selectedRecord.healthCenter || "Not specified"}
+                              {selectedRecord.clinicName || "Not specified"}
                             </p>
                           </div>
                         </div>
