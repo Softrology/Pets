@@ -370,7 +370,7 @@ const VetProfile = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="animate-spin h-12 w-12 text-blue-600" />
+        <Loader2 className="animate-spin h-12 w-12 text-teal-600" />
       </div>
     );
   }
@@ -383,7 +383,7 @@ const VetProfile = () => {
           <p className="text-gray-700 mb-4">{error.message}</p>
           <button
             onClick={() => queryClient.refetchQueries(['vetProfile'])}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700"
           >
             Retry
           </button>
@@ -396,20 +396,20 @@ const VetProfile = () => {
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg shadow-sm p-6">
+        <div className="bg-gradient-to-r from-teal-500 to-teal-700 rounded-lg shadow-sm p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
                 Veterinarian Profile
               </h1>
-              <p className="text-blue-100">
+              <p className="text-teal-100">
                 Manage your professional information and account settings
               </p>
             </div>
             <button
               onClick={() => setIsEditing(!isEditing)}
               disabled={updateProfileMutation.isLoading}
-              className="mt-4 md:mt-0 bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition-colors flex items-center disabled:opacity-50"
+              className="mt-4 md:mt-0 bg-white text-teal-600 px-4 py-2 rounded-lg font-medium hover:bg-teal-50 transition-colors flex items-center disabled:opacity-50"
             >
               {isEditing ? (
                 <X className="h-5 w-5 mr-2" />
@@ -431,26 +431,26 @@ const VetProfile = () => {
                   {/* Profile Picture */}
                   <div className="relative mb-4 w-full">
                     <h3 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
-                      <User className="h-4 w-4 mr-2 text-blue-600" />
+                      <User className="h-4 w-4 mr-2 text-teal-600" />
                       Profile Picture
                     </h3>
                     {imagePreview ? (
                       <img
                         src={imagePreview}
                         alt="Profile"
-                        className="h-40 w-40 rounded-full object-cover border-4 border-blue-100 mx-auto"
+                        className="h-40 w-40 rounded-full object-cover border-4 border-teal-100 mx-auto"
                         onError={(e) => {
                           e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K';
                         }}
                       />
                     ) : (
-                      <div className="h-40 w-40 rounded-full bg-blue-100 flex items-center justify-center border-4 border-blue-100 mx-auto">
-                        <User className="h-20 w-20 text-blue-600" />
+                      <div className="h-40 w-40 rounded-full bg-teal-100 flex items-center justify-center border-4 border-teal-100 mx-auto">
+                        <User className="h-20 w-20 text-teal-600" />
                       </div>
                     )}
                     {isEditing && (
                       <div className="absolute bottom-0 right-0">
-                        <label className="cursor-pointer bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors">
+                        <label className="cursor-pointer bg-teal-600 text-white p-2 rounded-full hover:bg-teal-700 transition-colors">
                           <Upload className="h-5 w-5" />
                           <input
                             type="file"
@@ -465,7 +465,7 @@ const VetProfile = () => {
                   </div>
                   {uploadingImage && (
                     <div className="text-sm text-gray-500 flex items-center justify-center w-full">
-                      <Loader2 className="animate-spin h-4 w-4 mr-2 text-blue-600" />
+                      <Loader2 className="animate-spin h-4 w-4 mr-2 text-teal-600" />
                       Uploading image...
                     </div>
                   )}
@@ -473,11 +473,11 @@ const VetProfile = () => {
                   {/* License Image */}
                   <div className="relative w-full">
                     <h3 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
-                      <FileText className="h-4 w-4 mr-2 text-blue-600" />
+                      <FileText className="h-4 w-4 mr-2 text-teal-600" />
                       License
                     </h3>
                     {licensePreview ? (
-                      <div className="border-2 border-dashed border-blue-100 rounded-lg p-2">
+                      <div className="border-2 border-dashed border-teal-100 rounded-lg p-2">
                         <img
                           src={licensePreview}
                           alt="License"
@@ -488,13 +488,13 @@ const VetProfile = () => {
                         />
                       </div>
                     ) : (
-                      <div className="h-40 w-full bg-blue-50 flex items-center justify-center border-2 border-dashed border-blue-100 rounded-lg">
-                        <FileText className="h-20 w-20 text-blue-300" />
+                      <div className="h-40 w-full bg-teal-50 flex items-center justify-center border-2 border-dashed border-teal-100 rounded-lg">
+                        <FileText className="h-20 w-20 text-teal-300" />
                       </div>
                     )}
                     {isEditing && (
                       <div className="mt-2">
-                        <label className="cursor-pointer bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700 transition-colors flex items-center justify-center w-full">
+                        <label className="cursor-pointer bg-teal-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-teal-700 transition-colors flex items-center justify-center w-full">
                           <Upload className="h-4 w-4 mr-2" />
                           Upload License
                           <input
@@ -510,7 +510,7 @@ const VetProfile = () => {
                   </div>
                   {uploadingLicense && (
                     <div className="text-sm text-gray-500 flex items-center justify-center w-full">
-                      <Loader2 className="animate-spin h-4 w-4 mr-2 text-blue-600" />
+                      <Loader2 className="animate-spin h-4 w-4 mr-2 text-teal-600" />
                       Uploading license...
                     </div>
                   )}
@@ -518,7 +518,7 @@ const VetProfile = () => {
                   <h2 className="text-xl font-bold text-gray-900 mt-2">
                     {profileForm.firstName} {profileForm.lastName}
                   </h2>
-                  <p className="text-blue-600">
+                  <p className="text-teal-600">
                     {formatUnderscoredString(profileData?.role || '')}
                   </p>
                 </div>
@@ -528,7 +528,7 @@ const VetProfile = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                        <User className="h-4 w-4 mr-2 text-blue-600" />
+                        <User className="h-4 w-4 mr-2 text-teal-600" />
                         First Name *
                       </label>
                       {isEditing ? (
@@ -537,7 +537,7 @@ const VetProfile = () => {
                           name="firstName"
                           value={profileForm.firstName}
                           onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                           required
                         />
                       ) : (
@@ -549,7 +549,7 @@ const VetProfile = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                        <User className="h-4 w-4 mr-2 text-blue-600" />
+                        <User className="h-4 w-4 mr-2 text-teal-600" />
                         Last Name *
                       </label>
                       {isEditing ? (
@@ -558,7 +558,7 @@ const VetProfile = () => {
                           name="lastName"
                           value={profileForm.lastName}
                           onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                           required
                         />
                       ) : (
@@ -571,7 +571,7 @@ const VetProfile = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                      <Mail className="h-4 w-4 mr-2 text-blue-600" />
+                      <Mail className="h-4 w-4 mr-2 text-teal-600" />
                       Email Address
                     </label>
                     <p className="px-3 py-2 bg-gray-50 rounded-lg">
@@ -581,7 +581,7 @@ const VetProfile = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                      <Phone className="h-4 w-4 mr-2 text-blue-600" />
+                      <Phone className="h-4 w-4 mr-2 text-teal-600" />
                       Phone Number
                     </label>
                     {isEditing ? (
@@ -590,7 +590,7 @@ const VetProfile = () => {
                         name="phoneNumber"
                         value={profileForm.phoneNumber}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         pattern="[0-9]{10,15}"
                         title="Please enter a valid phone number"
                       />
@@ -604,7 +604,7 @@ const VetProfile = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                        <Calendar className="h-4 w-4 mr-2 text-blue-600" />
+                        <Calendar className="h-4 w-4 mr-2 text-teal-600" />
                         Date of Birth
                       </label>
                       {isEditing ? (
@@ -613,7 +613,7 @@ const VetProfile = () => {
                           name="dateOfBirth"
                           value={profileForm.dateOfBirth}
                           onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                           max={new Date().toISOString().split("T")[0]}
                         />
                       ) : (
@@ -625,7 +625,7 @@ const VetProfile = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                        <VenusAndMars className="h-4 w-4 mr-2 text-blue-600" />
+                        <VenusAndMars className="h-4 w-4 mr-2 text-teal-600" />
                         Gender
                       </label>
                       {isEditing ? (
@@ -633,7 +633,7 @@ const VetProfile = () => {
                           name="gender"
                           value={profileForm.gender}
                           onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         >
                           <option value="MALE">Male</option>
                           <option value="FEMALE">Female</option>
@@ -650,7 +650,7 @@ const VetProfile = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                        <MapPin className="h-4 w-4 mr-2 text-blue-600" />
+                        <MapPin className="h-4 w-4 mr-2 text-teal-600" />
                         Country
                       </label>
                       {isEditing ? (
@@ -659,7 +659,7 @@ const VetProfile = () => {
                           name="country"
                           value={profileForm.country}
                           onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         />
                       ) : (
                         <p className="px-3 py-2 bg-gray-50 rounded-lg">
@@ -670,7 +670,7 @@ const VetProfile = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                        <MapPin className="h-4 w-4 mr-2 text-blue-600" />
+                        <MapPin className="h-4 w-4 mr-2 text-teal-600" />
                         City
                       </label>
                       {isEditing ? (
@@ -679,7 +679,7 @@ const VetProfile = () => {
                           name="city"
                           value={profileForm.city}
                           onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         />
                       ) : (
                         <p className="px-3 py-2 bg-gray-50 rounded-lg">
@@ -692,7 +692,7 @@ const VetProfile = () => {
                   {/* Consultation Fee */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                      <DollarSign className="h-4 w-4 mr-2 text-blue-600" />
+                      <DollarSign className="h-4 w-4 mr-2 text-teal-600" />
                       Consultation Fee
                     </label>
                     {isEditing ? (
@@ -701,7 +701,7 @@ const VetProfile = () => {
                         name="consultationFee"
                         value={profileForm.consultationFee}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         min="0"
                         step="0.01"
                         placeholder="Enter consultation fee"
@@ -716,7 +716,7 @@ const VetProfile = () => {
                   {/* Specializations */}
                   <div className="pt-4 mt-4">
                     <h3 className="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                      <Stethoscope className="h-4 w-4 mr-2 text-blue-600" />
+                      <Stethoscope className="h-4 w-4 mr-2 text-teal-600" />
                       Specializations
                     </h3>
                     {isEditing ? (
@@ -727,7 +727,7 @@ const VetProfile = () => {
                               type="text"
                               value={spec}
                               onChange={(e) => handleSpecializationChange(e, index)}
-                              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                               placeholder="Enter specialization"
                             />
                             <button
@@ -742,7 +742,7 @@ const VetProfile = () => {
                         <button
                           type="button"
                           onClick={addSpecialization}
-                          className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+                          className="text-sm text-teal-600 hover:text-teal-800 flex items-center"
                         >
                           <span className="mr-1">+</span> Add Specialization
                         </button>
@@ -752,7 +752,7 @@ const VetProfile = () => {
                         {profileForm.specialization.length > 0 ? (
                           <div className="flex flex-wrap gap-2">
                             {profileForm.specialization.map((spec, index) => (
-                              <span key={index} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                              <span key={index} className="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded">
                                 {spec}
                               </span>
                             ))}
@@ -767,7 +767,7 @@ const VetProfile = () => {
                   {/* Qualifications */}
                   <div className="pt-4">
                     <h3 className="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                      <Award className="h-4 w-4 mr-2 text-blue-600" />
+                      <Award className="h-4 w-4 mr-2 text-teal-600" />
                       Qualifications
                     </h3>
                     {isEditing ? (
@@ -778,7 +778,7 @@ const VetProfile = () => {
                               type="text"
                               value={qual}
                               onChange={(e) => handleQualificationChange(e, index)}
-                              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                               placeholder="Enter qualification"
                             />
                             <button
@@ -793,7 +793,7 @@ const VetProfile = () => {
                         <button
                           type="button"
                           onClick={addQualification}
-                          className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+                          className="text-sm text-teal-600 hover:text-teal-800 flex items-center"
                         >
                           <span className="mr-1">+</span> Add Qualification
                         </button>
@@ -819,37 +819,37 @@ const VetProfile = () => {
                       Account Status
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="bg-blue-50 p-3 rounded-lg">
+                      <div className="bg-teal-50 p-3 rounded-lg">
                         <p className="text-xs text-gray-600">Email Verified</p>
                         <p className="font-medium">
                           {profileData?.isEmailVerified ? (
-                            <span className="text-blue-600">Yes</span>
+                            <span className="text-teal-600">Yes</span>
                           ) : (
                             <span className="text-red-600">No</span>
                           )}
                         </p>
                       </div>
-                      <div className="bg-blue-50 p-3 rounded-lg">
+                      <div className="bg-teal-50 p-3 rounded-lg">
                         <p className="text-xs text-gray-600">Account Active</p>
                         <p className="font-medium">
                           {profileData?.isActivated ? (
-                            <span className="text-blue-600">Yes</span>
+                            <span className="text-teal-600">Yes</span>
                           ) : (
                             <span className="text-red-600">No</span>
                           )}
                         </p>
                       </div>
-                      <div className="bg-blue-50 p-3 rounded-lg">
+                      <div className="bg-teal-50 p-3 rounded-lg">
                         <p className="text-xs text-gray-600">Approved</p>
                         <p className="font-medium">
                           {profileData?.isApproved ? (
-                            <span className="text-blue-600">Yes</span>
+                            <span className="text-teal-600">Yes</span>
                           ) : (
                             <span className="text-red-600">No</span>
                           )}
                         </p>
                       </div>
-                      <div className="bg-blue-50 p-3 rounded-lg">
+                      <div className="bg-teal-50 p-3 rounded-lg">
                         <p className="text-xs text-gray-600">Member Since</p>
                         <p className="font-medium">
                           {profileData?.createdAt ? formatTime(profileData.createdAt) : 'N/A'}
@@ -864,7 +864,7 @@ const VetProfile = () => {
                       <button
                         type="submit"
                         disabled={updateProfileMutation.isLoading || uploadingImage || uploadingLicense}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center"
+                        className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 flex items-center"
                       >
                         {updateProfileMutation.isLoading ? (
                           <Loader2 className="animate-spin h-4 w-4 mr-2" />

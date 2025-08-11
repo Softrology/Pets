@@ -52,18 +52,26 @@ export default function RoleBasedSidebar({ onClose, collapsed, userRole }) {
     switch (userRole) {
       case "PET_OWNER":
         return {
-          gradient: "from-[#10B981] to-[#059669]", // Green gradient
-          primary: "#10B981",
-          secondary: "#059669",
-          accent: "#064E3B",
+          // gradient: "from-[#10B981] to-[#059669]", // Green gradient
+          // primary: "#10B981",
+          // secondary: "#059669",
+          // accent: "#064E3B",
+           gradient: "from-[#39a2a1] to-[#21527b]", // Teal gradient
+          primary: "#39a2a1",
+          secondary: "#21527b",
+          accent: "#2d8a89",
           text: "Pet Owner",
         };
       case "VET":
         return {
-          gradient: "from-[#3B82F6] to-[#1D4ED8]", // Blue gradient
-          primary: "#3B82F6",
-          secondary: "#1D4ED8",
-          accent: "#1E3A8A",
+          // gradient: "from-[#3B82F6] to-[#1D4ED8]", // Blue gradient
+          // primary: "#3B82F6",
+          // secondary: "#1D4ED8",
+          // accent: "#1E3A8A",
+           gradient: "from-[#39a2a1] to-[#21527b]", // Teal gradient
+          primary: "#39a2a1",
+          secondary: "#21527b",
+          accent: "#2d8a89",
           text: "Veterinarian",
         };
       case "SUPER_ADMIN":

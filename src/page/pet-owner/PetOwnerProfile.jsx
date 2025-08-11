@@ -259,7 +259,7 @@ const PetOwnerProfile = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="animate-spin h-12 w-12 text-emerald-600" />
+        <Loader2 className="animate-spin h-12 w-12 text-teal-600" />
       </div>
     );
   }
@@ -272,7 +272,7 @@ const PetOwnerProfile = () => {
           <p className="text-gray-700 mb-4">{error.message}</p>
           <button
             onClick={() => queryClient.refetchQueries(['petOwnerProfile'])}
-            className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700"
+            className="px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700"
           >
             Retry
           </button>
@@ -285,20 +285,20 @@ const PetOwnerProfile = () => {
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-500 to-emerald-700 rounded-lg shadow-sm p-6">
+        <div className="bg-gradient-to-r from-teal-500 to-teal-700 rounded-lg shadow-sm p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
                 My Profile
               </h1>
-              <p className="text-emerald-100">
+              <p className="text-teal-100">
                 Manage your personal information and account settings
               </p>
             </div>
             <button
               onClick={() => isEditing ? handleCancelEdit() : setIsEditing(true)}
               disabled={updateProfileMutation.isLoading}
-              className="mt-4 md:mt-0 bg-white text-emerald-600 px-4 py-2 rounded-lg font-medium hover:bg-emerald-50 transition-colors flex items-center disabled:opacity-50"
+              className="mt-4 md:mt-0 bg-white text-teal-600 px-4 py-2 rounded-lg font-medium hover:bg-teal-50 transition-colors flex items-center disabled:opacity-50"
             >
               {isEditing ? (
                 <X className="h-5 w-5 mr-2" />
@@ -322,19 +322,19 @@ const PetOwnerProfile = () => {
                       <img
                         src={imagePreview}
                         alt="Profile"
-                        className="h-40 w-40 rounded-full object-cover border-4 border-emerald-100"
+                        className="h-40 w-40 rounded-full object-cover border-4 border-teal-100"
                         onError={(e) => {
                           e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5VjEzTTEyIDEzVjE3TTE2IDEzSDE2LjAxTTggMTNIOC4wMSIgc3Ryb2tlPSIjOUM5Qzk5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K';
                         }}
                       />
                     ) : (
-                      <div className="h-40 w-40 rounded-full bg-emerald-100 flex items-center justify-center border-4 border-emerald-100">
-                        <User className="h-20 w-20 text-emerald-600" />
+                      <div className="h-40 w-40 rounded-full bg-teal-100 flex items-center justify-center border-4 border-teal-100">
+                        <User className="h-20 w-20 text-teal-600" />
                       </div>
                     )}
                     {isEditing && (
                       <div className="absolute bottom-0 right-0">
-                        <label className="cursor-pointer bg-emerald-600 text-white p-2 rounded-full hover:bg-emerald-700 transition-colors">
+                        <label className="cursor-pointer bg-teal-600 text-white p-2 rounded-full hover:bg-teal-700 transition-colors">
                           <Upload className="h-5 w-5" />
                           <input
                             type="file"
@@ -349,19 +349,19 @@ const PetOwnerProfile = () => {
                   </div>
                   {uploadingImage && (
                     <div className="text-sm text-gray-500 flex items-center mb-2">
-                      <Loader2 className="animate-spin h-4 w-4 mr-2 text-emerald-600" />
+                      <Loader2 className="animate-spin h-4 w-4 mr-2 text-teal-600" />
                       Processing image...
                     </div>
                   )}
                   {imageChanged && !uploadingImage && (
-                    <div className="text-sm text-emerald-600 mb-2">
+                    <div className="text-sm text-teal-600 mb-2">
                       New image ready to save
                     </div>
                   )}
                   <h2 className="text-xl font-bold text-gray-900 mt-2">
                     {profileForm.firstName} {profileForm.lastName}
                   </h2>
-                  <p className="text-emerald-600">
+                  <p className="text-teal-600">
                     {formatUnderscoredString(profileData?.role || '')}
                   </p>
                 </div>
@@ -371,7 +371,7 @@ const PetOwnerProfile = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                        <User className="h-4 w-4 mr-2 text-emerald-600" />
+                        <User className="h-4 w-4 mr-2 text-teal-600" />
                         First Name
                       </label>
                       {isEditing ? (
@@ -380,7 +380,7 @@ const PetOwnerProfile = () => {
                           name="firstName"
                           value={profileForm.firstName}
                           onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                           required
                           maxLength={50}
                         />
@@ -393,7 +393,7 @@ const PetOwnerProfile = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                        <User className="h-4 w-4 mr-2 text-emerald-600" />
+                        <User className="h-4 w-4 mr-2 text-teal-600" />
                         Last Name
                       </label>
                       {isEditing ? (
@@ -402,7 +402,7 @@ const PetOwnerProfile = () => {
                           name="lastName"
                           value={profileForm.lastName}
                           onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                           required
                           maxLength={50}
                         />
@@ -416,7 +416,7 @@ const PetOwnerProfile = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                      <Mail className="h-4 w-4 mr-2 text-emerald-600" />
+                      <Mail className="h-4 w-4 mr-2 text-teal-600" />
                       Email Address
                     </label>
                     <p className="px-3 py-2 bg-gray-50 rounded-lg">
@@ -426,7 +426,7 @@ const PetOwnerProfile = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                      <Phone className="h-4 w-4 mr-2 text-emerald-600" />
+                      <Phone className="h-4 w-4 mr-2 text-teal-600" />
                       Phone Number
                     </label>
                     {isEditing ? (
@@ -435,7 +435,7 @@ const PetOwnerProfile = () => {
                         name="phoneNumber"
                         value={profileForm.phoneNumber}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         pattern="[0-9]{10,15}"
                         title="Please enter a valid phone number"
                         maxLength={15}
@@ -450,7 +450,7 @@ const PetOwnerProfile = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                        <Calendar className="h-4 w-4 mr-2 text-emerald-600" />
+                        <Calendar className="h-4 w-4 mr-2 text-teal-600" />
                         Date of Birth
                       </label>
                       {isEditing ? (
@@ -459,7 +459,7 @@ const PetOwnerProfile = () => {
                           name="dateOfBirth"
                           value={profileForm.dateOfBirth}
                           onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                           max={new Date().toISOString().split("T")[0]}
                         />
                       ) : (
@@ -471,7 +471,7 @@ const PetOwnerProfile = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                        <VenusAndMars className="h-4 w-4 mr-2 text-emerald-600" />
+                        <VenusAndMars className="h-4 w-4 mr-2 text-teal-600" />
                         Gender
                       </label>
                       {isEditing ? (
@@ -479,7 +479,7 @@ const PetOwnerProfile = () => {
                           name="gender"
                           value={profileForm.gender}
                           onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         >
                           <option value="MALE">Male</option>
                           <option value="FEMALE">Female</option>
@@ -496,7 +496,7 @@ const PetOwnerProfile = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                        <MapPin className="h-4 w-4 mr-2 text-emerald-600" />
+                        <MapPin className="h-4 w-4 mr-2 text-teal-600" />
                         Country
                       </label>
                       {isEditing ? (
@@ -505,7 +505,7 @@ const PetOwnerProfile = () => {
                           name="country"
                           value={profileForm.country}
                           onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                           maxLength={50}
                         />
                       ) : (
@@ -517,7 +517,7 @@ const PetOwnerProfile = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                        <MapPin className="h-4 w-4 mr-2 text-emerald-600" />
+                        <MapPin className="h-4 w-4 mr-2 text-teal-600" />
                         City
                       </label>
                       {isEditing ? (
@@ -526,7 +526,7 @@ const PetOwnerProfile = () => {
                           name="city"
                           value={profileForm.city}
                           onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                           maxLength={50}
                         />
                       ) : (
@@ -543,33 +543,33 @@ const PetOwnerProfile = () => {
                       Account Status
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="bg-emerald-50 p-3 rounded-lg">
+                      <div className="bg-teal-50 p-3 rounded-lg">
                         <p className="text-xs text-gray-600">Email Verified</p>
                         <p className="font-medium">
                           {profileData?.isEmailVerified ? (
-                            <span className="text-emerald-600">Yes</span>
+                            <span className="text-teal-600">Yes</span>
                           ) : (
                             <span className="text-red-600">No</span>
                           )}
                         </p>
                       </div>
-                      <div className="bg-emerald-50 p-3 rounded-lg">
+                      <div className="bg-teal-50 p-3 rounded-lg">
                         <p className="text-xs text-gray-600">Account Active</p>
                         <p className="font-medium">
                           {profileData?.isActivated ? (
-                            <span className="text-emerald-600">Yes</span>
+                            <span className="text-teal-600">Yes</span>
                           ) : (
                             <span className="text-red-600">No</span>
                           )}
                         </p>
                       </div>
-                      <div className="bg-emerald-50 p-3 rounded-lg">
+                      <div className="bg-teal-50 p-3 rounded-lg">
                         <p className="text-xs text-gray-600">Member Since</p>
                         <p className="font-medium">
                           {profileData?.createdAt ? formatTime(profileData.createdAt) : 'N/A'}
                         </p>
                       </div>
-                      <div className="bg-emerald-50 p-3 rounded-lg">
+                      <div className="bg-teal-50 p-3 rounded-lg">
                         <p className="text-xs text-gray-600">Last Updated</p>
                         <p className="font-medium">
                           {profileData?.updatedAt ? formatTime(profileData.updatedAt) : 'Never'}
@@ -584,7 +584,7 @@ const PetOwnerProfile = () => {
                       <button
                         type="submit"
                         disabled={updateProfileMutation.isLoading || uploadingImage}
-                        className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center"
+                        className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 flex items-center"
                       >
                         {updateProfileMutation.isLoading ? (
                           <Loader2 className="animate-spin h-4 w-4 mr-2" />

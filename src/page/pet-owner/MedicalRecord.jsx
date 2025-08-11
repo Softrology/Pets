@@ -93,6 +93,7 @@ const MedicalRecord = () => {
           const response = await get(GET_ALL_VETS, token);
           console.log("Vets response:", response.data);
           return response.data || [];
+          console.log("this is hte vet data", response.data)
         } catch (error) {
           console.error("Fetch vets error:", error);
           throw error;
@@ -103,6 +104,7 @@ const MedicalRecord = () => {
       },
     });
   };
+
 
   // Custom hook to fetch all medical records
   const useGetMedicalRecords = (token) => {
@@ -461,15 +463,15 @@ const MedicalRecord = () => {
       return;
     }
 
-    if (!recordForm.isExistingVet && !recordForm.vet) {
-      AlertDialog(
-        "Validation Error",
-        "Please enter veterinarian name",
-        "error",
-        2000
-      );
-      return;
-    }
+    // if (!recordForm.isExistingVet && !recordForm.vet) {
+    //   AlertDialog(
+    //     "Validation Error",
+    //     "Please enter veterinarian name",
+    //     "error",
+    //     2000
+    //   );
+    //   return;
+    // }
 
     const recordData = {
       pet: recordForm.pet,
@@ -607,7 +609,7 @@ const MedicalRecord = () => {
   if (isLoading || isLoadingPets || isLoadingVets) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
       </div>
     );
   }
@@ -619,20 +621,20 @@ const MedicalRecord = () => {
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-500 to-emerald-700 rounded-lg shadow-sm p-6">
+        <div className="bg-gradient-to-r bg-teal-600 to-teal-700 rounded-lg shadow-sm p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
                 Medical Records
               </h1>
-              <p className="text-emerald-100">
+              <p className="text-teal-100">
                 Manage pet medical records, track health history, and maintain
                 veterinary information
               </p>
             </div>
             <button
               onClick={() => setShowAddModal(true)}
-              className="mt-4 md:mt-0 bg-white text-emerald-600 px-4 py-2 rounded-lg font-medium hover:bg-emerald-50 transition-colors flex items-center"
+              className="mt-4 md:mt-0 bg-white text-teal-600 px-4 py-2 rounded-lg font-medium hover:bg-teal-50 transition-colors flex items-center"
             >
               <PlusCircle className="h-5 w-5 mr-2" />
               Add New Record
@@ -644,8 +646,8 @@ const MedicalRecord = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-emerald-100 rounded-lg">
-                <FileText className="h-6 w-6 text-emerald-600" />
+              <div className="p-2 bg-teal-100 rounded-lg">
+                <FileText className="h-6 w-6 text-teal-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">
@@ -714,7 +716,7 @@ const MedicalRecord = () => {
               <input
                 type="text"
                 placeholder="Search by pet name, vet, or health center..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -746,7 +748,7 @@ const MedicalRecord = () => {
                   <select
                     value={typeFilter}
                     onChange={(e) => setTypeFilter(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   >
                     {recordTypes.map((type) => (
                       <option key={type.value} value={type.value}>
@@ -771,7 +773,7 @@ const MedicalRecord = () => {
               >
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0">
-                    <div className="h-16 w-16 rounded-lg bg-emerald-100 flex items-center justify-center">
+                    <div className="h-16 w-16 rounded-lg bg-teal-100 flex items-center justify-center">
                       {getTypeIcon(record.type)}
                     </div>
                   </div>
@@ -785,7 +787,7 @@ const MedicalRecord = () => {
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => setSelectedRecord(record)}
-                          className="text-emerald-600 hover:text-emerald-900 p-1"
+                          className="text-teal-600 hover:text-teal-900 p-1"
                         >
                           <Eye className="h-4 w-4" />
                         </button>
@@ -857,7 +859,7 @@ const MedicalRecord = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-12 w-12">
-                          <div className="h-12 w-12 rounded-lg bg-emerald-100 flex items-center justify-center">
+                          <div className="h-12 w-12 rounded-lg bg-teal-100 flex items-center justify-center">
                             {getTypeIcon(record.type)}
                           </div>
                         </div>
@@ -909,7 +911,7 @@ const MedicalRecord = () => {
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => setSelectedRecord(record)}
-                          className="text-emerald-600 hover:text-emerald-900 p-1 rounded-full hover:bg-emerald-100 transition-colors"
+                          className="text-teal-600 hover:text-teal-900 p-1 rounded-full hover:bg-teal-100 transition-colors"
                           title="View Details"
                         >
                           <Eye className="h-4 w-4" />
@@ -954,7 +956,7 @@ const MedicalRecord = () => {
 
         {/* Add Medical Record Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-[rgba(0,0,0,0.50)] flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-6">
@@ -984,7 +986,7 @@ const MedicalRecord = () => {
                           console.log("Selected pet ID:", e.target.value);
                           setRecordForm({ ...recordForm, pet: e.target.value });
                         }}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         required
                       >
                         <option value="">Select a pet</option>
@@ -1010,7 +1012,7 @@ const MedicalRecord = () => {
                         onChange={(e) =>
                           setRecordForm({ ...recordForm, type: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       >
                         {recordTypes
                           .filter((type) => type.value !== "all")
@@ -1032,7 +1034,7 @@ const MedicalRecord = () => {
                         onChange={(e) =>
                           setRecordForm({ ...recordForm, date: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       />
                     </div>
 
@@ -1049,7 +1051,7 @@ const MedicalRecord = () => {
                             clinicName: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="Enter health center name"
                       />
                     </div>
@@ -1071,7 +1073,7 @@ const MedicalRecord = () => {
                               vet: e.target.checked ? "" : recordForm.vet,
                             });
                           }}
-                          className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
                         />
                         <label
                           htmlFor="isExistingVet"
@@ -1095,7 +1097,7 @@ const MedicalRecord = () => {
                                 existingVet: e.target.value,
                               })
                             }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                             required={recordForm.isExistingVet}
                           >
                             <option value="">Select a veterinarian</option>
@@ -1129,7 +1131,7 @@ const MedicalRecord = () => {
                                 vet: e.target.value,
                               })
                             }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                             placeholder="Enter veterinarian name"
                             required={!recordForm.isExistingVet}
                           />
@@ -1151,7 +1153,7 @@ const MedicalRecord = () => {
                         })
                       }
                       rows={4}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       placeholder="Enter prescription details or notes..."
                     />
                   </div>
@@ -1186,7 +1188,7 @@ const MedicalRecord = () => {
                     </div>
                     {uploadingImages && (
                       <div className="mt-2 text-sm text-gray-500 flex items-center">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600 mr-2"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-600 mr-2"></div>
                         Processing images...
                       </div>
                     )}
@@ -1241,7 +1243,7 @@ const MedicalRecord = () => {
                         uploadingImages ||
                         !recordForm.pet
                       }
-                      className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center"
+                      className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 flex items-center"
                     >
                       {addRecordMutation.isLoading ? (
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -1259,7 +1261,7 @@ const MedicalRecord = () => {
 
         {/* Edit Medical Record Modal */}
         {showEditModal && editingRecord && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-[rgba(0,0,0,0.50)] flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-6">
@@ -1289,7 +1291,7 @@ const MedicalRecord = () => {
                         onChange={(e) =>
                           setRecordForm({ ...recordForm, pet: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         required
                       >
                         <option value="">Select a pet</option>
@@ -1310,7 +1312,7 @@ const MedicalRecord = () => {
                         onChange={(e) =>
                           setRecordForm({ ...recordForm, type: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       >
                         {recordTypes
                           .filter((type) => type.value !== "all")
@@ -1332,7 +1334,7 @@ const MedicalRecord = () => {
                         onChange={(e) =>
                           setRecordForm({ ...recordForm, date: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       />
                     </div>
 
@@ -1349,7 +1351,7 @@ const MedicalRecord = () => {
                             clinicName: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="Enter Clinic Name   name"
                       />
                     </div>
@@ -1371,7 +1373,7 @@ const MedicalRecord = () => {
                               vet: e.target.checked ? "" : recordForm.vet,
                             });
                           }}
-                          className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
                         />
                         <label
                           htmlFor="isExistingVetEdit"
@@ -1395,7 +1397,7 @@ const MedicalRecord = () => {
                                 existingVet: e.target.value,
                               })
                             }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                             required={recordForm.isExistingVet}
                           >
                             <option value="">Select a veterinarian</option>
@@ -1424,7 +1426,7 @@ const MedicalRecord = () => {
                                 vet: e.target.value,
                               })
                             }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                             placeholder="Enter veterinarian name"
                             // required={!recordForm.isExistingVet}
                           />
@@ -1446,7 +1448,7 @@ const MedicalRecord = () => {
                         })
                       }
                       rows={4}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       placeholder="Enter prescription details or notes..."
                     />
                   </div>
@@ -1481,7 +1483,7 @@ const MedicalRecord = () => {
                     </div>
                     {uploadingImages && (
                       <div className="mt-2 text-sm text-gray-500 flex items-center">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600 mr-2"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-600 mr-2"></div>
                         Processing images...
                       </div>
                     )}
@@ -1537,7 +1539,7 @@ const MedicalRecord = () => {
                         uploadingImages ||
                         !recordForm.pet
                       }
-                      className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center"
+                      className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 flex items-center"
                     >
                       {updateRecordMutation.isLoading ? (
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -1557,7 +1559,7 @@ const MedicalRecord = () => {
 
         {/* Medical Record Details Modal */}
         {selectedRecord && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-[rgba(0,0,0,0.50)] flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-lg max-w-4xl w-full max-h-screen overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-6">
@@ -1610,7 +1612,7 @@ const MedicalRecord = () => {
                       </h3>
                       <div className="space-y-3">
                         <div className="flex items-center">
-                          <Heart className="h-5 w-5 text-emerald-600 mr-3" />
+                          <Heart className="h-5 w-5 text-teal-600 mr-3" />
                           <div>
                             <span className="text-sm text-gray-500">Pet:</span>
                             <p className="font-medium">
@@ -1633,7 +1635,7 @@ const MedicalRecord = () => {
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <Calendar className="h-5 w-5 text-emerald-600 mr-3" />
+                          <Calendar className="h-5 w-5 text-teal-600 mr-3" />
                           <div>
                             <span className="text-sm text-gray-500">Date:</span>
                             <p className="font-medium">
@@ -1650,7 +1652,7 @@ const MedicalRecord = () => {
                       </h3>
                       <div className="space-y-3">
                         <div className="flex items-center">
-                          <User className="h-5 w-5 text-emerald-600 mr-3" />
+                          <User className="h-5 w-5 text-teal-600 mr-3" />
                           <div>
                             <span className="text-sm text-gray-500">
                               Veterinarian:
@@ -1661,7 +1663,7 @@ const MedicalRecord = () => {
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <MapPin className="h-5 w-5 text-emerald-600 mr-3" />
+                          <MapPin className="h-5 w-5 text-teal-600 mr-3" />
                           <div>
                             <span className="text-sm text-gray-500">
                               Health Center:
@@ -1672,7 +1674,7 @@ const MedicalRecord = () => {
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <Stethoscope className="h-5 w-5 text-emerald-600 mr-3" />
+                          <Stethoscope className="h-5 w-5 text-teal-600 mr-3" />
                           <div>
                             <span className="text-sm text-gray-500">
                               Existing Vet:

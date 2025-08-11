@@ -34,13 +34,6 @@ const SignUp = () => {
     }));
   };
 
-  const handleRoleToggle = () => {
-    setFormData((prev) => ({
-      ...prev,
-      role: prev.role === "PET_OWNER" ? "VET" : "PET_OWNER",
-    }));
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -58,7 +51,7 @@ const SignUp = () => {
       return;
     }
 
-    const { confirmPassword, ...registrationData } = formData;
+    const { ...registrationData } = formData;
     register(registrationData);
   };
 
@@ -244,54 +237,6 @@ const SignUp = () => {
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                       <FaChevronDown className="h-3 w-3 text-gray-400" />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Register as
-                  </label>
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="flex items-center space-x-4">
-                      <span
-                        className={`text-sm font-medium transition-colors duration-200 ${
-                          formData.role === "VET"
-                            ? "text-teal-600"
-                            : "text-gray-500"
-                        }`}
-                      >
-                        Veterinarian
-                      </span>
-                      <div className="relative">
-                        <button
-                          type="button"
-                          disabled
-                          onClick={handleRoleToggle}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 ${
-                            formData.role === "PET_OWNER"
-                              ? "bg-teal-600"
-                              : "bg-gray-300"
-                          }`}
-                        >
-                          <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-lg transition-transform duration-200 ease-in-out ${
-                              formData.role === "PET_OWNER"
-                                ? "translate-x-6"
-                                : "translate-x-1"
-                            }`}
-                          />
-                        </button>
-                      </div>
-                      <span
-                        className={`text-sm font-medium transition-colors duration-200 ${
-                          formData.role === "PET_OWNER"
-                            ? "text-teal-600"
-                            : "text-gray-500"
-                        }`}
-                      >
-                        Pet Owner
-                      </span>
                     </div>
                   </div>
                 </div>

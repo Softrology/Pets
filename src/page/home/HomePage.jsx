@@ -14,7 +14,6 @@ const HomePage = () => {
   const { availableVets, symptomsAndDiseases, isLoading, errors } =
     useHomepage();
 
-  console.log("homepage rendered");
 
   // Initialize symptoms and diseases data on mount
   useEffect(() => {
@@ -23,7 +22,7 @@ const HomePage = () => {
       symptomsAndDiseases.symptoms.length === 0 &&
       symptomsAndDiseases.diseases.length === 0
     ) {
-      console.log("Setting static symptoms and diseases data");
+      // console.log("Setting static symptoms and diseases data");
       symptomsAndDiseases.setData(symptoms, diseases);
     }
   }, [symptomsAndDiseases]);
@@ -31,20 +30,20 @@ const HomePage = () => {
   // Log data for debugging
   useEffect(() => {
     if (availableVets.vets.length > 0) {
-      console.log("Available vets loaded:", availableVets.vets);
+      // console.log("Available vets loaded:", availableVets.vets);
     }
     if (availableVets.error) {
-      console.error("Available vets error:", availableVets.error);
+      // console.error("Available vets error:", availableVets.error);
     }
   }, [availableVets.vets, availableVets.error]);
 
   // Log symptoms and diseases data
   useEffect(() => {
     if (symptomsAndDiseases.symptoms.length > 0) {
-      console.log("Symptoms data loaded:", symptomsAndDiseases.symptoms.length);
+      // console.log("Symptoms data loaded:", symptomsAndDiseases.symptoms.length);
     }
     if (symptomsAndDiseases.diseases.length > 0) {
-      console.log("Diseases data loaded:", symptomsAndDiseases.diseases.length);
+      // console.log("Diseases data loaded:", symptomsAndDiseases.diseases.length);
     }
   }, [
     symptomsAndDiseases.symptoms.length,

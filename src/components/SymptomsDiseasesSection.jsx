@@ -21,26 +21,6 @@ const SymptomsDiseasesSection = ({ symptoms = [], diseases = [] }) => {
   const diseasesRef = useRef(null);
   const navigate = useNavigate();
 
-  // Default symptoms if none provided from Redux
-  const defaultSymptoms = [
-    { name: "LOSS OF APPETITE", icon: Heart, color: "bg-teal-600" },
-    { name: "HOT EARS OR NOSE", icon: Thermometer, color: "bg-teal-600" },
-    { name: "BAD BREATH", icon: Wind, color: "bg-teal-600" },
-    { name: "SWOLLEN EYES", icon: Eye, color: "bg-teal-600" },
-    { name: "FEVER", icon: Activity, color: "bg-teal-600" },
-    { name: "LETHARGY", icon: Brain, color: "bg-teal-600" },
-  ];
-
-  // Default diseases if none provided from Redux
-  const defaultDiseases = [
-    { name: "HEARTWORM DISEASE", icon: Heart, color: "bg-teal-600" },
-    { name: "HYPOTHYROIDISM", icon: Zap, color: "bg-teal-600" },
-    { name: "BRUCELLOSIS", icon: Stethoscope, color: "bg-teal-600" },
-    { name: "ASPERGILLOSIS", icon: Activity, color: "bg-teal-600" },
-    { name: "DIABETES", icon: Activity, color: "bg-teal-600" },
-    { name: "ARTHRITIS", icon: Activity, color: "bg-teal-600" },
-  ];
-
   // Map symptoms data to display format
   const getDisplaySymptoms = () => {
     // Use data from Redux if available, otherwise use static data
@@ -121,8 +101,8 @@ const SymptomsDiseasesSection = ({ symptoms = [], diseases = [] }) => {
     const colorMap = {
       low: "bg-teal-500",
       medium: "bg-teal-600",
-      high: "bg-red-600",
-      critical: "bg-red-700",
+      high: "bg-pink-500",
+      critical: "bg-pink-600",
       default: "bg-teal-600",
     };
     return colorMap[severity] || colorMap.default;
@@ -304,12 +284,12 @@ const SymptomsDiseasesSection = ({ symptoms = [], diseases = [] }) => {
                             </span>
                           )}
                           {disease.contagious && (
-                            <span className="text-xs bg-red-400/30 px-2 py-1 rounded-full">
+                            <span className="text-xs bg-pink-400/30 px-2 py-1 rounded-full">
                               Contagious
                             </span>
                           )}
                           {disease.zoonotic && (
-                            <span className="text-xs bg-orange-400/30 px-2 py-1 rounded-full">
+                            <span className="text-xs bg-pink-300/40 px-2 py-1 rounded-full">
                               Zoonotic
                             </span>
                           )}
@@ -364,8 +344,8 @@ const SymptomsDiseasesSection = ({ symptoms = [], diseases = [] }) => {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Stethoscope className="w-8 h-8 text-blue-600" />
+              <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Stethoscope className="w-8 h-8 text-pink-500" />
               </div>
               <h4 className="font-semibold text-gray-800 mb-2">
                 Get Diagnosis
@@ -377,8 +357,8 @@ const SymptomsDiseasesSection = ({ symptoms = [], diseases = [] }) => {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Heart className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Heart className="w-8 h-8 text-teal-600" />
               </div>
               <h4 className="font-semibold text-gray-800 mb-2">
                 Start Treatment

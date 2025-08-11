@@ -447,7 +447,7 @@ const MyPet = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
       </div>
     );
   }
@@ -456,20 +456,20 @@ const MyPet = () => {
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-500 to-emerald-700 rounded-lg shadow-sm p-6">
+        <div className="bg-gradient-to-r from-teal-500 to-teal-700 rounded-lg shadow-sm p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
                 My Pets
               </h1>
-              <p className="text-emerald-100">
+              <p className="text-teal-100">
                 Manage your pets, their information, and keep track of their
                 details
               </p>
             </div>
             <button
               onClick={() => setShowAddModal(true)}
-              className="mt-4 md:mt-0 bg-white text-emerald-600 px-4 py-2 rounded-lg font-medium hover:bg-emerald-50 transition-colors flex items-center"
+              className="mt-4 md:mt-0 bg-white text-teal-600 px-4 py-2 rounded-lg font-medium hover:bg-teal-50 transition-colors flex items-center"
             >
               <PlusCircle className="h-5 w-5 mr-2" />
               Add New Pet
@@ -481,8 +481,8 @@ const MyPet = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-emerald-100 rounded-lg">
-                <Heart className="h-6 w-6 text-emerald-600" />
+              <div className="p-2 bg-teal-100 rounded-lg">
+                <Heart className="h-6 w-6 text-teal-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Pets</p>
@@ -545,7 +545,7 @@ const MyPet = () => {
               <input
                 type="text"
                 placeholder="Search pets by name..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -577,7 +577,7 @@ const MyPet = () => {
                   <select
                     value={categoryFilter}
                     onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   >
                     {petCategories.map((category) => (
                       <option key={category.value} value={category.value}>
@@ -594,7 +594,7 @@ const MyPet = () => {
                   <select
                     value={genderFilter}
                     onChange={(e) => setGenderFilter(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   >
                     <option value="all">All Genders</option>
                     <option value="MALE">Male</option>
@@ -624,8 +624,8 @@ const MyPet = () => {
                         alt={pet.name}
                       />
                     ) : (
-                      <div className="h-16 w-16 rounded-lg bg-emerald-100 flex items-center justify-center">
-                        <Heart className="h-8 w-8 text-emerald-600" />
+                      <div className="h-16 w-16 rounded-lg bg-teal-100 flex items-center justify-center">
+                        <Heart className="h-8 w-8 text-teal-600" />
                       </div>
                     )}
                   </div>
@@ -637,7 +637,7 @@ const MyPet = () => {
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => setSelectedPet(pet)}
-                          className="text-emerald-600 hover:text-emerald-900 p-1"
+                          className="text-teal-600 hover:text-teal-900 p-1"
                         >
                           <Eye className="h-4 w-4" />
                         </button>
@@ -724,8 +724,8 @@ const MyPet = () => {
                               alt={pet.name}
                             />
                           ) : (
-                            <div className="h-12 w-12 rounded-lg bg-emerald-100 flex items-center justify-center">
-                              <Heart className="h-6 w-6 text-emerald-600" />
+                            <div className="h-12 w-12 rounded-lg bg-teal-100 flex items-center justify-center">
+                              <Heart className="h-6 w-6 text-teal-600" />
                             </div>
                           )}
                         </div>
@@ -741,7 +741,7 @@ const MyPet = () => {
                     </td>
 
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">
+                      <span className="px-2 py-1 text-xs font-semibold rounded-full bg-teal-100 text-teal-800">
                         {formatCategory(pet.category)}
                       </span>
                     </td>
@@ -815,7 +815,7 @@ const MyPet = () => {
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => setSelectedPet(pet)}
-                          className="text-emerald-600 hover:text-emerald-900 p-1 rounded-full hover:bg-emerald-100 transition-colors"
+                          className="text-teal-600 hover:text-teal-900 p-1 rounded-full hover:bg-teal-100 transition-colors"
                           title="View Details"
                         >
                           <Eye className="h-4 w-4" />
@@ -839,7 +839,7 @@ const MyPet = () => {
                         </button>
                         <button
                           onClick={() => navigate("/pet-owner/medical-record")}
-                          className="text-emerald-600 hover:text-emerald-900 p-1 rounded-full hover:bg-emerald-100 transition-colors"
+                          className="text-teal-600 hover:text-teal-900 p-1 rounded-full hover:bg-teal-100 transition-colors"
                           title="Medical Record"
                         >
                           <CiMedicalClipboard className="h-4 w-4" />
@@ -867,7 +867,7 @@ const MyPet = () => {
 
         {/* Add Pet Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="fixed bg-[rgba(0,0,0,0.50)] flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-6">
@@ -897,7 +897,7 @@ const MyPet = () => {
                         onChange={(e) =>
                           setPetForm({ ...petForm, name: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="Enter pet name"
                         required
                       />
@@ -912,7 +912,7 @@ const MyPet = () => {
                         onChange={(e) =>
                           setPetForm({ ...petForm, category: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       >
                         {petCategories
                           .filter((cat) => cat.value !== "all")
@@ -934,7 +934,7 @@ const MyPet = () => {
                         onChange={(e) =>
                           setPetForm({ ...petForm, breed: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="Enter breed"
                       />
                     </div>
@@ -949,7 +949,7 @@ const MyPet = () => {
                         onChange={(e) =>
                           setPetForm({ ...petForm, color: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="Enter color"
                       />
                     </div>
@@ -967,7 +967,7 @@ const MyPet = () => {
                             dateOfBirth: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       />
                     </div>
 
@@ -981,7 +981,7 @@ const MyPet = () => {
                         onChange={(e) =>
                           setPetForm({ ...petForm, age: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="Enter age"
                         min="0"
                       />
@@ -997,7 +997,7 @@ const MyPet = () => {
                         onChange={(e) =>
                           setPetForm({ ...petForm, weight: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="e.g., 10kg"
                       />
                     </div>
@@ -1011,7 +1011,7 @@ const MyPet = () => {
                         onChange={(e) =>
                           setPetForm({ ...petForm, gender: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       >
                         <option value="MALE">Male</option>
                         <option value="FEMALE">Female</option>
@@ -1026,7 +1026,7 @@ const MyPet = () => {
                         type="text"
                         value={petForm.feed.join(", ")}
                         onChange={handleFeedChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="e.g., Oatmeal, Green Peas"
                       />
                     </div>
@@ -1062,7 +1062,7 @@ const MyPet = () => {
                     </div>
                     {uploadingImages && (
                       <div className="mt-2 text-sm text-gray-500 flex items-center">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600 mr-2"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-600 mr-2"></div>
                         Processing images...
                       </div>
                     )}
@@ -1113,7 +1113,7 @@ const MyPet = () => {
                     <button
                       type="submit"
                       disabled={addPetMutation.isLoading || uploadingImages}
-                      className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center"
+                      className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 flex items-center"
                     >
                       {addPetMutation.isLoading ? (
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -1131,7 +1131,7 @@ const MyPet = () => {
 
         {/* Edit Pet Modal */}
         {showEditModal && editingPet && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-[rgba(0,0,0,0.50)] flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-6">
@@ -1160,7 +1160,7 @@ const MyPet = () => {
                         onChange={(e) =>
                           setPetForm({ ...petForm, name: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="Enter pet name"
                         required
                       />
@@ -1175,7 +1175,7 @@ const MyPet = () => {
                         onChange={(e) =>
                           setPetForm({ ...petForm, category: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       >
                         {petCategories
                           .filter((cat) => cat.value !== "all")
@@ -1197,7 +1197,7 @@ const MyPet = () => {
                         onChange={(e) =>
                           setPetForm({ ...petForm, breed: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="Enter breed"
                       />
                     </div>
@@ -1212,7 +1212,7 @@ const MyPet = () => {
                         onChange={(e) =>
                           setPetForm({ ...petForm, color: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="Enter color"
                       />
                     </div>
@@ -1230,7 +1230,7 @@ const MyPet = () => {
                             dateOfBirth: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       />
                     </div>
 
@@ -1244,7 +1244,7 @@ const MyPet = () => {
                         onChange={(e) =>
                           setPetForm({ ...petForm, age: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="Enter age"
                         min="0"
                       />
@@ -1260,7 +1260,7 @@ const MyPet = () => {
                         onChange={(e) =>
                           setPetForm({ ...petForm, weight: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="e.g., 10kg"
                       />
                     </div>
@@ -1274,7 +1274,7 @@ const MyPet = () => {
                         onChange={(e) =>
                           setPetForm({ ...petForm, gender: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       >
                         <option value="MALE">Male</option>
                         <option value="FEMALE">Female</option>
@@ -1289,7 +1289,7 @@ const MyPet = () => {
                         type="text"
                         value={petForm.feed.join(", ")}
                         onChange={handleFeedChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="e.g., Oatmeal, Green Peas"
                       />
                     </div>
@@ -1325,7 +1325,7 @@ const MyPet = () => {
                     </div>
                     {uploadingImages && (
                       <div className="mt-2 text-sm text-gray-500 flex items-center">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600 mr-2"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-600 mr-2"></div>
                         Processing images...
                       </div>
                     )}
@@ -1377,7 +1377,7 @@ const MyPet = () => {
                     <button
                       type="submit"
                       disabled={updatePetMutation.isLoading || uploadingImages}
-                      className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center"
+                      className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 flex items-center"
                     >
                       {updatePetMutation.isLoading ? (
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -1448,14 +1448,14 @@ const MyPet = () => {
                       </h3>
                       <div className="space-y-3">
                         <div className="flex items-center">
-                          <Heart className="h-5 w-5 text-emerald-600 mr-3" />
+                          <Heart className="h-5 w-5 text-teal-600 mr-3" />
                           <div>
                             <span className="text-sm text-gray-500">Name:</span>
                             <p className="font-medium">{selectedPet.name}</p>
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <span className="text-emerald-600 mr-3 text-lg">
+                          <span className="text-teal-600 mr-3 text-lg">
                             🐾
                           </span>
                           <div>
@@ -1468,7 +1468,7 @@ const MyPet = () => {
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <span className="text-emerald-600 mr-3 text-lg">
+                          <span className="text-teal-600 mr-3 text-lg">
                             {selectedPet.gender === "MALE" ? "♂️" : "♀️"}
                           </span>
                           <div>
@@ -1480,7 +1480,7 @@ const MyPet = () => {
                         </div>
                         {selectedPet.breed && (
                           <div className="flex items-center">
-                            <Award className="h-5 w-5 text-emerald-600 mr-3" />
+                            <Award className="h-5 w-5 text-teal-600 mr-3" />
                             <div>
                               <span className="text-sm text-gray-500">
                                 Breed:
@@ -1491,7 +1491,7 @@ const MyPet = () => {
                         )}
                         {selectedPet.color && (
                           <div className="flex items-center">
-                            <Palette className="h-5 w-5 text-emerald-600 mr-3" />
+                            <Palette className="h-5 w-5 text-teal-600 mr-3" />
                             <div>
                               <span className="text-sm text-gray-500">
                                 Color:
@@ -1509,7 +1509,7 @@ const MyPet = () => {
                       </h3>
                       <div className="space-y-3">
                         <div className="flex items-center">
-                          <Calendar className="h-5 w-5 text-emerald-600 mr-3" />
+                          <Calendar className="h-5 w-5 text-teal-600 mr-3" />
                           <div>
                             <span className="text-sm text-gray-500">Age:</span>
                             <p className="font-medium">
@@ -1518,7 +1518,7 @@ const MyPet = () => {
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <Scale className="h-5 w-5 text-emerald-600 mr-3" />
+                          <Scale className="h-5 w-5 text-teal-600 mr-3" />
                           <div>
                             <span className="text-sm text-gray-500">
                               Weight:
@@ -1530,7 +1530,7 @@ const MyPet = () => {
                         </div>
                         {selectedPet.dateOfBirth && (
                           <div className="flex items-center">
-                            <Calendar className="h-5 w-5 text-emerald-600 mr-3" />
+                            <Calendar className="h-5 w-5 text-teal-600 mr-3" />
                             <div>
                               <span className="text-sm text-gray-500">
                                 Date of Birth:
