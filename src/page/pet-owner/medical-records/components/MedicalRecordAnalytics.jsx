@@ -1,12 +1,7 @@
 import React from "react";
-import {
-  FileText,
-  Stethoscope,
-  Activity,
-  Heart,
-  Zap,
-  TestTube,
-} from "lucide-react";
+import { FileText, Stethoscope, Activity, Heart } from "lucide-react";
+import { LuTestTubeDiagonal } from "react-icons/lu";
+import { GoZap } from "react-icons/go";
 
 const MedicalRecordAnalytics = ({ analytics }) => {
   return (
@@ -56,7 +51,7 @@ const MedicalRecordAnalytics = ({ analytics }) => {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center">
           <div className="p-2 bg-red-100 rounded-lg">
-            <TestTube className="h-6 w-6 text-red-600" />
+            <LuTestTubeDiagonal className="h-6 w-6 text-red-600" />
           </div>
           <div className="ml-4">
             <p className="text-sm font-medium text-gray-600">Blood Tests</p>
@@ -70,7 +65,7 @@ const MedicalRecordAnalytics = ({ analytics }) => {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center">
           <div className="p-2 bg-purple-100 rounded-lg">
-            <Zap className="h-6 w-6 text-purple-600" />
+            <GoZap className="h-6 w-6 text-purple-600" />
           </div>
           <div className="ml-4">
             <p className="text-sm font-medium text-gray-600">X-Rays</p>
