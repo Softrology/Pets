@@ -10,6 +10,8 @@ import {
   Stethoscope,
   FileText,
   Activity,
+  TestTube,
+  Zap,
 } from "lucide-react";
 
 const ViewMedicalRecordModal = ({

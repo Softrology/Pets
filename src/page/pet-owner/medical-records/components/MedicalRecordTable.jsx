@@ -8,6 +8,8 @@ import {
   FileText,
   Stethoscope,
   Activity,
+  TestTube,
+  Zap,
 } from "lucide-react";
 import { FaUserDoctor } from "react-icons/fa6";
 
