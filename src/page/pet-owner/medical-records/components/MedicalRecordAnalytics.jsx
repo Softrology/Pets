@@ -4,8 +4,8 @@ import {
   Stethoscope,
   Activity,
   Heart,
-  TestTube,
   Zap,
+  TestTube,
 } from "lucide-react";
 
 const MedicalRecordAnalytics = ({ analytics }) => {
