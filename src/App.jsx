@@ -38,13 +38,12 @@ import SignUp from "./auth/SignUp";
 import PetOwnerDashboard from "./page/pet-owner/PetOwnerDashboard";
 import MyPets from "./page/pet-owner/MyPet";
 import PetOwnerProfile from "./page/pet-owner/PetOwnerProfile";
-import MedicalRecord from "./page/pet-owner/MedicalRecord";
-
 // Vet Pages
 import VetDashboard from "./page/vet/VetDashboard";
 import VetProfile from "./page/vet-admin/VetProfile";
 import VetDetails from "./page/vet-details/VetDetails";
 import SearchResults from "./page/search-results/SearchResults";
+import MedicalRecord from "./page/pet-owner/medical-records/MedicalRecord";
 
 // Create QueryClient instance
 const queryClient = new QueryClient({

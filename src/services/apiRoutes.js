@@ -26,6 +26,8 @@ export const UPDATE_PET_PROFILE = "/pet-owner/update-my-profile";
 export const POST_MEDICAL_RECORD = "/medical-record/add-medical-record";
 export const GET_ALL_MEDICAL_RECORD = "/medical-record/get-all-medical-records";
 export const GET_MEDICAL_RECORD_BY_ID = (id) => `/medical-record/${id}`;
+export const GET_MEDICAL_RECORD_BY_PETID = (id) =>
+  `/medical-record/get-all-medical-records-by-pet/${id}`;
 export const DELETE_MEDICAL_RECORD = (id) =>
   `/medical-record/delete-medical-record/${id}`;
 export const UPDATE_MEDICAL_RECORD = (id) =>
@@ -38,6 +40,5 @@ export const HOMEPAGE_ROUTES = {
   GET_FILTERED_VETS: "/vet/get-all-vets-for-user",
 };
 
-
 export const GET_VET_PROFILE = "/vet/my-profile";
-export const UPDATE_VET_PROFILE = "/vet/update-my-profile"
+export const UPDATE_VET_PROFILE = "/vet/update-my-profile";

@@ -837,10 +837,18 @@ const MyPet = () => {
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
+
                         <button
-                          onClick={() => navigate("/pet-owner/medical-record")}
-                          className="text-teal-600 hover:text-teal-900 p-1 rounded-full hover:bg-teal-100 transition-colors"
-                          title="Medical Record"
+                          onClick={() =>
+                            navigate("/pet-owner/medical-record", {
+                              state: {
+                                selectedPetId: pet._id,
+                                selectedPetName: pet.name,
+                              },
+                            })
+                          }
+                          className="text-purple-600 hover:text-purple-900 p-1 rounded-full hover:bg-purple-100 transition-colors"
+                          title="Medical Records"
                         >
                           <CiMedicalClipboard className="h-4 w-4" />
                         </button>
@@ -1455,9 +1463,7 @@ const MyPet = () => {
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <span className="text-teal-600 mr-3 text-lg">
-                            🐾
-                          </span>
+                          <span className="text-teal-600 mr-3 text-lg">🐾</span>
                           <div>
                             <span className="text-sm text-gray-500">
                               Category:
