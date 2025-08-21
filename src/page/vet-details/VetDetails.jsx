@@ -15,10 +15,10 @@ import {
   Stethoscope,
   Heart,
   CheckCircle,
-  X,
   MessageCircle,
   Video,
 } from "lucide-react";
+import BookAppointment from "../appointment/BookAppointment";
 
 const VetDetails = () => {
   const location = useLocation();
@@ -26,18 +26,9 @@ const VetDetails = () => {
 
   const vet = location.state?.vet;
   const showBooking = location.state?.showBooking || false;
-
+  console.log("vet=====>", vet);
   const [activeTab, setActiveTab] = useState("overview");
   const [showBookingModal, setShowBookingModal] = useState(showBooking);
-  const [selectedDate, setSelectedDate] = useState("");
-  const [selectedTime, setSelectedTime] = useState("");
-  const [consultationType, setConsultationType] = useState("in-person");
-  const [petDetails, setPetDetails] = useState({
-    name: "",
-    species: "",
-    age: "",
-    symptoms: "",
-  });
 
   useEffect(() => {
     if (!vet) {
@@ -64,83 +55,6 @@ const VetDetails = () => {
       .split(" ")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
-  };
-
-  // Get available dates (next 14 days)
-  const getAvailableDates = () => {
-    const dates = [];
-    const today = new Date();
-    for (let i = 1; i <= 14; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      dates.push(date);
-    }
-    return dates;
-  };
-
-  // Get available time slots for a specific day
-  const getAvailableTimeSlots = (day) => {
-    const dayName = day.toUpperCase();
-    const availability = vet.availability?.find(
-      (avail) => avail.day === dayName
-    );
-
-    if (!availability) return [];
-
-    const slots = [];
-    const start = availability.startTime;
-    const end = availability.endTime;
-
-    // Generate 30-minute slots
-    const startHour = parseInt(start.split(":")[0]);
-    const startMin = parseInt(start.split(":")[1]);
-    const endHour = parseInt(end.split(":")[0]);
-    const endMin = parseInt(end.split(":")[1]);
-
-    for (
-      let hour = startHour;
-      hour < endHour || (hour === endHour && startMin < endMin);
-      hour++
-    ) {
-      for (let min = 0; min < 60; min += 30) {
-        if (hour === endHour && min >= endMin) break;
-        if (hour === startHour && min < startMin) continue;
-
-        const timeSlot = `${hour.toString().padStart(2, "0")}:${min
-          .toString()
-          .padStart(2, "0")}`;
-        slots.push(timeSlot);
-      }
-    }
-
-    return slots;
-  };
-
-  // Handle booking submission
-  const handleBookAppointment = (e) => {
-    e.preventDefault();
-    // Here you would normally send the booking data to your API
-    console.log("Booking details:", {
-      vet: vet._id,
-      date: selectedDate,
-      time: selectedTime,
-      type: consultationType,
-      pet: petDetails,
-    });
-
-    // Show success message and close modal
-    alert("Appointment booked successfully!");
-    setShowBookingModal(false);
-
-    // Reset form
-    setSelectedDate("");
-    setSelectedTime("");
-    setPetDetails({
-      name: "",
-      species: "",
-      age: "",
-      symptoms: "",
-    });
   };
 
   const tabs = [
@@ -595,260 +509,12 @@ const VetDetails = () => {
         </div>
       </div>
 
-      {/* Booking Modal */}
-      {showBookingModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-xl font-semibold text-gray-900">
-                Book Appointment
-              </h2>
-              <button
-                onClick={() => setShowBookingModal(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            <form onSubmit={handleBookAppointment} className="p-6 space-y-4">
-              {/* Date Selection */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select Date
-                </label>
-                <select
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  required
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                >
-                  <option value="">Choose a date</option>
-                  {getAvailableDates().map((date, index) => (
-                    <option
-                      key={index}
-                      value={date.toISOString().split("T")[0]}
-                    >
-                      {date.toLocaleDateString("en-US", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Time Selection */}
-              {selectedDate && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Select Time
-                  </label>
-                  <select
-                    value={selectedTime}
-                    onChange={(e) => setSelectedTime(e.target.value)}
-                    required
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                  >
-                    <option value="">Choose a time</option>
-                    {getAvailableTimeSlots(
-                      [
-                        "SUNDAY",
-                        "MONDAY",
-                        "TUESDAY",
-                        "WEDNESDAY",
-                        "THURSDAY",
-                        "FRIDAY",
-                        "SATURDAY",
-                      ][new Date(selectedDate).getDay()]
-                    ).map((time, index) => (
-                      <option key={index} value={time}>
-                        {time}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
-              {/* Consultation Type */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Consultation Type
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setConsultationType("in-person")}
-                    className={`p-3 border rounded-lg text-center transition-colors ${
-                      consultationType === "in-person"
-                        ? "border-teal-500 bg-teal-50 text-teal-700"
-                        : "border-gray-300 hover:bg-gray-50"
-                    }`}
-                  >
-                    <MapPin className="w-5 h-5 mx-auto mb-1" />
-                    <div className="text-sm font-medium">In-Person</div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setConsultationType("video")}
-                    className={`p-3 border rounded-lg text-center transition-colors ${
-                      consultationType === "video"
-                        ? "border-teal-500 bg-teal-50 text-teal-700"
-                        : "border-gray-300 hover:bg-gray-50"
-                    }`}
-                  >
-                    <Video className="w-5 h-5 mx-auto mb-1" />
-                    <div className="text-sm font-medium">Video Call</div>
-                  </button>
-                </div>
-              </div>
-
-              {/* Pet Details */}
-              <div className="space-y-3">
-                <h3 className="font-medium text-gray-900">Pet Information</h3>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Pet Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={petDetails.name}
-                    onChange={(e) =>
-                      setPetDetails((prev) => ({
-                        ...prev,
-                        name: e.target.value,
-                      }))
-                    }
-                    required
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    placeholder="Enter your pet's name"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Species *
-                    </label>
-                    <select
-                      value={petDetails.species}
-                      onChange={(e) =>
-                        setPetDetails((prev) => ({
-                          ...prev,
-                          species: e.target.value,
-                        }))
-                      }
-                      required
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    >
-                      <option value="">Select species</option>
-                      <option value="dog">Dog</option>
-                      <option value="cat">Cat</option>
-                      <option value="rabbit">Rabbit</option>
-                      <option value="bird">Bird</option>
-                      <option value="reptile">Reptile</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <input
-                      type="text"
-                      value={petDetails.age}
-                      onChange={(e) =>
-                        setPetDetails((prev) => ({
-                          ...prev,
-                          age: e.target.value,
-                        }))
-                      }
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                      placeholder="e.g., 2 years"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Symptoms/Reason for Visit
-                  </label>
-                  <textarea
-                    value={petDetails.symptoms}
-                    onChange={(e) =>
-                      setPetDetails((prev) => ({
-                        ...prev,
-                        symptoms: e.target.value,
-                      }))
-                    }
-                    rows={3}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    placeholder="Describe your pet's symptoms or reason for the visit"
-                  />
-                </div>
-              </div>
-
-              {/* Appointment Summary */}
-              {selectedDate && selectedTime && (
-                <div className="bg-teal-50 p-4 rounded-lg border border-teal-200">
-                  <h4 className="font-medium text-teal-900 mb-2">
-                    Appointment Summary
-                  </h4>
-                  <div className="space-y-1 text-sm text-teal-800">
-                    <div className="flex items-center">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      <span>
-                        Date: {new Date(selectedDate).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="flex items-center">
-                      <Clock className="w-4 h-4 mr-2" />
-                      <span>Time: {selectedTime}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Video className="w-4 h-4 mr-2" />
-                      <span>
-                        Type:{" "}
-                        {consultationType === "in-person"
-                          ? "In-Person Visit"
-                          : "Video Consultation"}
-                      </span>
-                    </div>
-                    <div className="flex items-center">
-                      <DollarSign className="w-4 h-4 mr-2" />
-                      <span>Fee: ${vet.consultationFee}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Submit Button */}
-              <div className="flex space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowBookingModal(false)}
-                  className="flex-1 py-3 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={
-                    !selectedDate ||
-                    !selectedTime ||
-                    !petDetails.name ||
-                    !petDetails.species
-                  }
-                  className="flex-1 py-3 px-4 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Book Appointment
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* BookAppointment Modal */}
+      <BookAppointment
+        vet={vet}
+        isOpen={showBookingModal}
+        onClose={() => setShowBookingModal(false)}
+      />
     </div>
   );
 };

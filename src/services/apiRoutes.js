@@ -42,3 +42,19 @@ export const HOMEPAGE_ROUTES = {
 
 export const GET_VET_PROFILE = "/vet/my-profile";
 export const UPDATE_VET_PROFILE = "/vet/update-my-profile";
+
+//appointmets
+
+//by petowner
+export const REQUEST_APPOINTMENT = "/appointment/request-appointment";
+export const GET_ALL_PETOWNER_APPOINTMENTS =
+  "/appointment/get-all-pet-owner-appointments";
+export const GET_SINGLE_PETOWNER_APPOINTMENTS =
+  "/appointment/get-single-appointment";
+export const PETOWNER_CANCEL_APPOINTMENT = "/appointment/cancel-appointment";
+//by vet
+export const GET_ALL_VET_APPOINTMENTS = "/appointment/get-all-vet-appointments";
+export const GET_SINGLE_VET_APPOINTMENT = "/appointment/get-single-appointment";
+export const VET_CONFIRM_APPOINTMENT = "/appointment/confirm-appointment";
+export const VET_REJECT_APPOINTMENT = "/appointment/reject-appointment";
+export const VET_CANCEL_APPOINTMENT = "/appointment/cancel-appointment";

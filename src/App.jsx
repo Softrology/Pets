@@ -44,6 +44,8 @@ import VetProfile from "./page/vet-admin/VetProfile";
 import VetDetails from "./page/vet-details/VetDetails";
 import SearchResults from "./page/search-results/SearchResults";
 import MedicalRecord from "./page/pet-owner/medical-records/MedicalRecord";
+import VetAppointments from "./page/vet/VetAppointments";
+import PetOwnerAppointments from "./page/pet-owner/appointments/PetOwnerAppointments";
 
 // Create QueryClient instance
 const queryClient = new QueryClient({
@@ -240,6 +242,7 @@ function App() {
                 }
               >
                 <Route path="dashboard" element={<PetOwnerDashboard />} />
+                <Route path="appointments" element={<PetOwnerAppointments />} />
                 <Route path="my-pets" element={<MyPets />} />
                 <Route path="petowner-profile" element={<PetOwnerProfile />} />
                 <Route path="medical-record" element={<MedicalRecord />} />
@@ -257,6 +260,7 @@ function App() {
               >
                 <Route path="dashboard" element={<VetDashboard />} />
                 <Route path="profile" element={<VetProfile />} />
+                <Route path="appointments" element={<VetAppointments />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 
