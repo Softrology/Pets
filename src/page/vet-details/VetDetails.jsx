@@ -142,23 +142,6 @@ const VetDetails = () => {
                   )}
 
                   {/* Contact Info */}
-                  <div className="space-y-2 text-gray-600">
-                    {vet.emailAddress && (
-                      <div className="flex items-center">
-                        <Mail className="w-4 h-4 mr-2" />
-                        <span>{vet.emailAddress}</span>
-                        {vet.isEmailVerified && (
-                          <CheckCircle className="w-4 h-4 ml-2 text-green-500" />
-                        )}
-                      </div>
-                    )}
-                    {vet.phoneNumber && (
-                      <div className="flex items-center">
-                        <Phone className="w-4 h-4 mr-2" />
-                        <span>{vet.phoneNumber}</span>
-                      </div>
-                    )}
-                  </div>
                 </div>
               </div>
             </div>
@@ -448,7 +431,7 @@ const VetDetails = () => {
                   <span>Book Appointment</span>
                 </button>
 
-                <div className="grid grid-cols-2 gap-3">
+                {/* <div className="grid grid-cols-2 gap-3">
                   <button className="flex items-center justify-center space-x-2 py-2 px-3 border border-teal-600 text-teal-600 rounded-lg hover:bg-teal-50 transition-colors">
                     <MessageCircle className="w-4 h-4" />
                     <span>Message</span>
@@ -457,7 +440,7 @@ const VetDetails = () => {
                     <Video className="w-4 h-4" />
                     <span>Video Call</span>
                   </button>
-                </div>
+                </div> */}
               </div>
 
               {/* Quick Info */}
